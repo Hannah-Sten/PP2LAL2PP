@@ -1,0 +1,11 @@
+;##
+;#  Example file of how a PP2 assembly program looks like in PP2LAL2PP.
+;#
+;#  This is just a file with a constants that illustrates that these
+;#  files can be included by other files using the include-keyword.
+;#
+;#  @author Ruben Schellekens
+;##
+
+# The maximum value + 1 that a single digit in the 7-segment display can display.
+define DISPLAY_MAX 16
