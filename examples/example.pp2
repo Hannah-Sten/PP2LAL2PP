@@ -1,0 +1,53 @@
+;##
+;#  Example file of how a PP2 assembly program looks like in PP2LAL2PP.
+;#
+;#  This is exercise 1.2b that turns on the LEDs that correspond with
+;#  the pressed buttons. Pressing buttons 0 and 1 will increase their
+;#  corresponding counter that will be displayed on the 7-segment
+;#  display. Only the most recently pressed button will show its number.
+;#
+;#  @author Ruben Schellekens
+;##
+
+# Include is just for illustration purposes.
+include const
+
+# Global variables. Variables will initialise to 0 when nothing is declared.
+global countOne            #; = 0
+global countTwo            #; = 0
+global previousState       #; = 0
+global currentState        #; = 0
+
+;##
+;#   Main loop that continuously executes until exit() is called or the machine gets
+;#   shut down. I love PP2.
+;##
+main() {
+    # Mark the current state as old
+    previousState = currentState
+    
+    # Update LEDs to accomodate the new buttons states
+    var buttonState = getButtonState()
+    setLEDs(buttonState)
+    
+    # Isolate the last 2 buttons
+    currentState = buttonState & 0b11
+    
+    # Determine what button has been pressed.
+    var button
+    if (previousState != 0b11) {
+        button = previousState ^ currentState
+    }
+    
+    # Makes sure the counters don't exceed the display maximum.
+    countOne %= DISPLAY_MAX
+    countTwo %= DISPLAY_MAX
+    
+    # Display the right counters
+    if (button == 0b01) {
+        set7Segment(0b01, countOne)
+    }
+    else if (button == 0b10) {
+        set7Segment(0b10, countTwo)
+    }
+}
