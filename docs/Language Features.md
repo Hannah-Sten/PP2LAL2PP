@@ -155,17 +155,75 @@ Variants (thank Sten...):
 * `:=` has the exact same effect as `=`.
 * `=:` assigns the left value to the right variable. E.g. `<variable2> =: <variable>`.
 
-### Arithmetic
+### Arithmetic operators
 
-#### Addition (+)
+The following arithmatic operators are supported:
+* `+` Addition
+* `-` Substraction
+* `*` Multiplication
+* `/` Integer division
+* `%` Remainder
+* `**` Power (`2**3` equals 8)
 
-Usage:
-* `<value1/var1> + <value2/var2>` adds up two numbers or values of two variables.
+So if you want to store the product of 5 and 7 in a variable a, do this: `a = 5 * 7`.
 
-Alternatives:
-* `<variable> += <value/variable2>` adds up a number or value of a variable to the given variable and assigns it to the original variable. This is equivalent to `<variable> = <variable> + <value/variable2>`.
+To make it even better, if you want to do arithmetics on a variable and want to store it directly back in the same variable, you can add a `=`-sign to make it automatically assign. Example:
 
-To be continued...
+```
+a = 7 * 3   # a equals 21
+a -= 15     # a equals 6
+a **= 3     # a equals 216
+```
+
+### Bitwise operators
+
+You can do some epic shizzles with binary numbers. These operators are supported on a bitwise level:
+* `|` Bitwise OR
+* `&` Bitwise AND
+* `^` Bitwise XOR
+* `~` Bitwise NOT
+
+Like the arithmetic operators, you can use them in conjunction with the `=`-sign (e.g. `^=`).
+
+### Relational operators
+
+Relational operators are only used in boolean expressions (in If-statements). The following exist:
+* `<` Strictly lesser than
+* `<=` Lesser than or equal to
+* `>` Strictly greater than
+* `>=` Strictly greater than or equal to
+* `==` Equals
+* `!=` Does not equal
+
+#### Example expressions
+
+```
+3 < 4       # true
+5 >= 1      # true
+
+a = 3
+5 == a      # false
+5 != a      # true
+```
+
+### Logical expressions
+
+These are used to tie boolean expressions together.
+* `and` means that the expressions to the left and to the right must be true.
+* `or` means that at least one of the expressions to the left and to the right must be true.
+
+#### Examples
+
+```
+3 < 5 and 5 <= 21           # true
+4 > 5 or 7 != 10            # true
+6 > 7 and 7 > 8 and 9 > 5   # false
+```
+
+### Unary operators
+These are placed right in front of a variable or number.
+* `-` marks a positive number or variable as negative, or a negative number positive.
+* `!` negates a boolean expression. Must be used with parentheses around it (`!(3 == 1)` is true).
 
 ## Assembly injection (`inject`)
 
