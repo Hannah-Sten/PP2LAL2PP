@@ -13,10 +13,10 @@
 include const
 
 # Global variables. Variables will initialise to 0 when nothing is declared.
-global countOne            #; = 0
-global countTwo            #; = 0
-global previousState       #; = 0
-global currentState        #; = 0
+global countOne            # = 0
+global countTwo            # = 0
+global previousState       # = 0
+global currentState        # = 0
 
 ;##
 ;#   Main loop that continuously executes until exit() is called or the machine gets
@@ -37,6 +37,13 @@ main() {
     var button
     if (previousState != 0b11) {
         button = previousState ^ currentState
+    }
+    
+    # Do nothing, just showoff stuff.
+    loop (i from 2 to 3) {
+    }
+    
+    loop (i from 2 to 100 step 2) {
     }
     
     # Makes sure the counters don't exceed the display maximum.
