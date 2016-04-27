@@ -13,7 +13,7 @@ Also, use camelCase.
 
 The entire contents of another file can be included in your code with the `include` keyword at the exact place you put the statement. Usage: `include <fileName>`.
 
-*fileName* must be the name of the source file. If the source file has a `.pp2` or `.pp2lal2pp` file extension, you do not need to specify the extension. E.g. you can include the file "constants.pp2" by using `include constants`. When both a `.pp2` and `.pp2lal2pp` file exist, the `.pp2lal2pp` file will be chosen. Files from different directories must include their directory names. The name does not have to be between qoutes. E.g. the file "peanut saussage.cheese" can be includied using `include peanut saussage.cheese`.
+*fileName* must be the name of the source file. If the source file has a `.pp2` or `.pp2lal2pp` file extension, you do not need to specify the extension. E.g. you can include the file "constants.pp2" by using `include constants`. When an extensionless file, a `.pp2` and a `.pp2lal2pp` file exists with the same name, the extensionless file will be chosen first, then the `.pp2lal2pp` file and finally the `.pp2` file. Files from different directories must include their directory names. The name does not have to be between qoutes. E.g. the file "peanut saussage.cheese" can be includied using `include peanut saussage.cheese`.
 
 ## Global variables (`global`)
 
