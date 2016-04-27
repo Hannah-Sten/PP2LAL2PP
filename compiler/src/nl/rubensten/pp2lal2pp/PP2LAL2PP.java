@@ -1,5 +1,8 @@
 package nl.rubensten.pp2lal2pp;
 
+import nl.rubensten.pp2lal2pp.lang.GlobalVariable;
+import nl.rubensten.pp2lal2pp.lang.Variable;
+
 /**
  * Practicum Processor To Learn Assembly Language To Preserve Prosperity-Language compiler.
  *
@@ -14,7 +17,6 @@ public class PP2LAL2PP {
     public static int globalId = 0;
 
     public static void main(String[] args) {
-        System.out.println("Hello!");
     }
 
 }

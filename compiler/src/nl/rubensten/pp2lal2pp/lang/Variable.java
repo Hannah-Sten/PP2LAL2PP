@@ -46,6 +46,13 @@ public class Variable implements Identifyable, Element {
         return name;
     }
 
+    /**
+     * Checks if this is a global variable.
+     */
+    public boolean isGlobal() {
+        return this instanceof GlobalVariable;
+    }
+
     @Override
     public int getId() {
         return id;
@@ -56,4 +63,12 @@ public class Variable implements Identifyable, Element {
         return new Value(Constants.REG_VARIABLE);
     }
 
+    @Override
+    public String toString() {
+        return "Variable{" + "id=" + id +
+                ", pointer=" + pointer +
+                ", name='" + name + '\'' +
+                ", global=" + isGlobal() +
+                '}';
+    }
 }
