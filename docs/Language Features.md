@@ -145,7 +145,7 @@ howeverThisFunctionDoesnt()
 
 ## Operators
 
-### Assignment
+### Assignment operators
 
 Usage:
 * `<variable> = <number>` assigns the given number to the variable.
@@ -206,7 +206,7 @@ a = 3
 5 != a      # true
 ```
 
-### Logical expressions
+### Logical operators
 
 These are used to tie boolean expressions together.
 * `and` means that the expressions to the left and to the right must be true.
