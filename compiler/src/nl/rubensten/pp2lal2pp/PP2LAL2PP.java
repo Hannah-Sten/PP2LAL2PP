@@ -8,6 +8,11 @@ package nl.rubensten.pp2lal2pp;
  */
 public class PP2LAL2PP {
 
+    /**
+     * Tracks the latest global ID, must be increased on each assignment.
+     */
+    public static int globalId = 0;
+
     public static void main(String[] args) {
         System.out.println("Hello!");
     }

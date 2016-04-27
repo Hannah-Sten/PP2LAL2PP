@@ -1,18 +1,59 @@
 package nl.rubensten.pp2lal2pp.lang;
 
+import nl.rubensten.pp2lal2pp.Constants;
+import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+
 /**
  * @author Ruben Schellekens
  */
-public interface Variable extends Identifyable {
+public class Variable implements Identifyable, Element {
+
+    /**
+     * The unique id of the variable.
+     */
+    private int id;
+
+    /**
+     * The offset from the stack pointer where the value of the variable is stored.
+     */
+    private int pointer;
+
+    /**
+     * The name of the variable.
+     */
+    private String name;
+
+    public Variable(String name) {
+        this.id = PP2LAL2PP.globalId++;
+        this.name = name;
+    }
+
+    protected void setPointer(int pointer) {
+        this.pointer = pointer;
+    }
 
     /**
      * @return The memory address where the value of the variable is stored.
      */
-    int getPointer();
+    public int getPointer() {
+        return pointer;
+    }
 
     /**
      * @return The name of the variable.
      */
-    String getName();
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public Value getValue() {
+        return new Value(Constants.REG_VARIABLE);
+    }
 
 }
