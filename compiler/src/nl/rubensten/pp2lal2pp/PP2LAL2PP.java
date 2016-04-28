@@ -1,8 +1,5 @@
 package nl.rubensten.pp2lal2pp;
 
-import nl.rubenlib.io.FileWorker;
-import nl.rubensten.pp2lal2pp.compiler.LineTokeniser;
-import nl.rubensten.pp2lal2pp.compiler.Tokeniser;
 import nl.rubensten.pp2lal2pp.parser.FileParser;
 
 import java.io.File;
