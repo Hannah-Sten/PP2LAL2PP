@@ -3,8 +3,7 @@ package nl.rubensten.pp2lal2pp.compiler;
 import com.sun.javafx.UnmodifiableArrayList;
 import nl.rubensten.pp2lal2pp.lang.Operator;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Ruben Schellekens
@@ -20,7 +19,9 @@ public class Tokeniser implements Iterable<String> {
         String code2 = code.replace("{", " { ")
                 .replace("}", " } ")
                 .replace("-", " - ")
-                .replace("!", " !");
+                .replace("!", " !")
+                .replace("(", " ( ")
+                .replace(")", " ) ");
 
         for (Operator op : Operator.values()) {
             code2 = code2.replace(op.getSign(), "櫓\uF214(" + op.name() + ")");
@@ -31,7 +32,14 @@ public class Tokeniser implements Iterable<String> {
         }
 
         String[] strings = code2.split("\\s+");
-        tokens = new UnmodifiableArrayList<>(strings, strings.length);
+
+        tokens = new ArrayList<>();
+        for (String string : strings) {
+            if (!string.isEmpty()) {
+                tokens.add(string);
+            }
+        }
+        tokens = Collections.unmodifiableList(tokens);
     }
 
     /**
