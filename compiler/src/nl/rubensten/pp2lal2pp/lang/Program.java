@@ -1,6 +1,7 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import com.sun.javafx.UnmodifiableArrayList;
+import com.sun.javafx.collections.UnmodifiableListSet;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 
 import java.util.*;
@@ -51,6 +52,13 @@ public class Program {
         globalVariableIndices = new HashMap<>();
         apiFunctionTypes = new HashSet<>();
         apiFunctions = new HashSet<>();
+    }
+
+    /**
+     * @return An <b>unmodifyable</b> set containing all API functions that have been called.
+     */
+    public Set<APIFunction> getApiFunctions() {
+        return Collections.unmodifiableSet(apiFunctions);
     }
 
     /**
