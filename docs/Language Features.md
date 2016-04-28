@@ -50,6 +50,8 @@ Functions are declared as follows:
 
 *return* exits the function-loop. If return is not called, the function would start over again after the end of the block has been reached. If you add a *returnValue* beind return the function will return said value. However, if you don't want to return a value you can ommit it.
 
+Using the keyword `continue` forces the function to quit and start over.
+
 ## Main function (`main()`)
 
 The main function is a special function, as this is where the program will start.
@@ -71,6 +73,8 @@ loop (<variable> from <beginning> to <endInclusive> [step <stepSize>]) {
 *endInclusive* is the value where the loop should end. That means that if the variable has a value that surpasses the end value, the loop will terminate. If the loop variable has the same value as endInclusive, it will enter its last iteration. If the value is greater/smaller (depends on if the loop counts up or down) the loop will not have a terminal iteration.
 
 *stepSize (optional)* by default the loop will have a step size of either 1 or -1. However, adding `step <stepSize>` will change the amount by which the variable changes.
+
+The keyword `continue` will force the loop to enter its next iteration if there is any.
 
 ### Examples
 
