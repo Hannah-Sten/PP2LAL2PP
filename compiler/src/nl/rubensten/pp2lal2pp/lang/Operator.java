@@ -84,11 +84,11 @@ public enum Operator implements Identifyable {
         throw new PP2LAL2PPException("Assignment operator = not supported on two numbers.");
     }),
 
-    LOGICAL_OR("or", OperatorType.LOGICAL, (n1, n2) -> {
+    LOGICAL_OR(" or ", OperatorType.LOGICAL, (n1, n2) -> {
         return (n1.getIntValue() == 1 || n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
 
-    LOGICAL_AND("and", OperatorType.LOGICAL, (n1, n2) -> {
+    LOGICAL_AND(" and ", OperatorType.LOGICAL, (n1, n2) -> {
         return (n1.getIntValue() == 1 && n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
 
