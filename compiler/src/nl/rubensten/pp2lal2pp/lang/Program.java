@@ -1,7 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import com.sun.javafx.UnmodifiableArrayList;
-import jdk.nashorn.internal.objects.Global;
 
 import java.util.ArrayList;
 import java.util.HashMap;

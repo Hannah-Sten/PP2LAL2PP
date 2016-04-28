@@ -1,6 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class FunctionCall implements Element, Identifyable {
     private List<Variable> arguments;
 
     public FunctionCall(Function called, List<Variable> arguments) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.called = called;
         this.arguments = arguments;
     }

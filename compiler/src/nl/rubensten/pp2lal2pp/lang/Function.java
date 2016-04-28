@@ -1,9 +1,11 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import nl.rubensten.pp2lal2pp.Constants;
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Ruben Schellekens
@@ -37,7 +39,7 @@ public class Function implements Identifyable, Element {
      * Automatically assigns pointers to the variables.
      */
     public Function(Variable... arguments) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.arguments = new ArrayList<>();
 
         for (int i = 0; i < arguments.length; i++) {

@@ -1,7 +1,7 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import nl.rubensten.pp2lal2pp.Constants;
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
 /**
  * @author Ruben Schellekens
@@ -24,7 +24,7 @@ public class Variable implements Identifyable, Element {
     private String name;
 
     public Variable(String name) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.name = name;
     }
 

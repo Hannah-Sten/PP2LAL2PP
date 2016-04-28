@@ -2,7 +2,6 @@ package nl.rubensten.pp2lal2pp.parser;
 
 import nl.rubensten.pp2lal2pp.ParseException;
 
-import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
