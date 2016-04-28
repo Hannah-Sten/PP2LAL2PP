@@ -1,9 +1,7 @@
 package nl.rubensten.pp2lal2pp.lang;
 
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
-
-import java.util.function.Function;
 
 /**
  * @author Ruben Schellekens
@@ -151,7 +149,7 @@ public enum Operator implements Identifyable {
     private OperationFunction<Number> numbersFunction;
 
     Operator(String sign, OperatorType type, OperationFunction<Number> numbersFunction) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.sign = sign;
         this.type = type;
     }

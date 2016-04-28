@@ -3,9 +3,6 @@ package nl.rubensten.pp2lal2pp.parser;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.lang.Program;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Takes one big code string and parses it to a {@link Program}.
  * <p>

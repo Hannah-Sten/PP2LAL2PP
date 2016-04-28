@@ -1,6 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
 /**
  * @author Ruben Schellekens
@@ -38,7 +38,7 @@ public class Loop implements Element, Identifyable {
     private Block content;
 
     public Loop(Block content, Variable base, Value from, Value to, Value step) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.content = content;
         this.base = base;
         this.from = from;

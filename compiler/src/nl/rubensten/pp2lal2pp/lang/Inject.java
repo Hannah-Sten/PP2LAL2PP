@@ -1,6 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
 /**
  * @author Ruben Schellekens
@@ -18,7 +18,7 @@ public class Inject implements Element, Identifyable {
     private String contents;
 
     public Inject(String contents) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.contents = contents;
     }
 

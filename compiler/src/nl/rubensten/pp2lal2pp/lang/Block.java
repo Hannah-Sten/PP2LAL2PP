@@ -1,7 +1,7 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import com.sun.javafx.UnmodifiableArrayList;
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,12 +33,12 @@ public class Block implements Iterable, Identifyable {
      * Creates an empty block.
      */
     public Block() {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         contents = new ArrayList<>();
     }
 
     public Block(List<Element> contents) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.contents = contents;
     }
 

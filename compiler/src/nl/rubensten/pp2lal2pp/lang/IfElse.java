@@ -1,6 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
+import nl.rubensten.pp2lal2pp.IDManager;
 
 /**
  * Represents an if-else statement.
@@ -33,14 +33,14 @@ public class IfElse implements Element, Identifyable {
     private Block elseBlock;
 
     public IfElse(Element expression, Block ifBlock) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.expression = expression;
         this.ifBlock = ifBlock;
         this.elseBlock = Block.EMPTY;
     }
 
     public IfElse(Element expression, Block ifBlock, Block elseBlock) {
-        this.id = PP2LAL2PP.globalId++;
+        this.id = IDManager.newId();
         this.expression = expression;
         this.ifBlock = ifBlock;
         this.elseBlock = elseBlock;
