@@ -8,6 +8,44 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
  */
 public enum Operator implements Identifyable {
 
+    ADD_ASSIGN("+=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator += not supported on two numbers.");
+    }),
+
+    SUBSTRACT_ASSIGN("-=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator -= not supported on two numbers.");
+    }),
+
+    POWER_ASSIGN("**=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator **= not supported on two numbers.");
+    }),
+
+    MULTIPLY_ASSIGN("*=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator *= not supported on two numbers.");
+    }),
+
+    DIVIDE_ASSIGN("/=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator /= not supported on two numbers.");
+    }),
+
+    REMAINDER_ASSIGN("%=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator %= not supported on two numbers.");
+    }),
+
+    BITWISE_AND_ASSIGN("&=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator &= not supported on two numbers.");
+    }),
+
+    BITWISE_OR_ASSIGN("|=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator |= not supported on two numbers.");
+    }),
+
+    BITWISE_XOR_ASSIGN("^=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Operator ^= not supported on two numbers.");
+    }),
+
+    ////
+
     ASSIGN_ALT_LEFT(":=", OperatorType.ASSIGNMENT, (n1, n2) -> {
         throw new PP2LAL2PPException("Assignment operator := not supported on two numbers.");
     }),
