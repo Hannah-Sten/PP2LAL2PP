@@ -8,11 +8,6 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
  */
 public enum Operator implements Identifyable {
 
-    // Assignment operators
-    ASSIGN("=", OperatorType.ASSIGNMENT, (n1, n2) -> {
-        throw new PP2LAL2PPException("Assignment operator = not supported on two numbers.");
-    }),
-
     ASSIGN_ALT_LEFT(":=", OperatorType.ASSIGNMENT, (n1, n2) -> {
         throw new PP2LAL2PPException("Assignment operator := not supported on two numbers.");
     }),
@@ -21,13 +16,20 @@ public enum Operator implements Identifyable {
         throw new PP2LAL2PPException("Assignment operator =: not supported on two numbers.");
     }),
 
-    // Arithmetic operators
+    ASSIGN("=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Assignment operator = not supported on two numbers.");
+    }),
+
     ADDITION("+", OperatorType.ARITHMETIC, (n1, n2) -> {
         return new Number(n1.getIntValue() + n2.getIntValue());
     }),
 
     SUBSTRACTION("-", OperatorType.ARITHMETIC, (n1, n2) -> {
         return new Number(n1.getIntValue() - n2.getIntValue());
+    }),
+
+    POWER("**", OperatorType.ARITHMETIC, (n1, n2) -> {
+        return new Number((int)Math.pow(n1.getIntValue(), n2.getIntValue()));
     }),
 
     MULTIPLICATION("*", OperatorType.ARITHMETIC, (n1, n2) -> {
@@ -42,12 +44,6 @@ public enum Operator implements Identifyable {
         return new Number(n1.getIntValue() % n2.getIntValue());
     }),
 
-    POWER("**", OperatorType.ARITHMETIC, (n1, n2) -> {
-        return new Number((int)Math.pow(n1.getIntValue(), n2.getIntValue()));
-    }),
-
-
-    // Bitwise operators
     BITWISE_OR("|", OperatorType.BITWISE, (n1, n2) -> {
         return new Number(n1.getIntValue() | n2.getIntValue());
     }),
@@ -64,20 +60,6 @@ public enum Operator implements Identifyable {
         throw new PP2LAL2PPException("Operator ~ not supported on two numbers.");
     }),
 
-
-    // Relational operators
-    LESSER_THAN("<", OperatorType.RELATIONAL, (n1, n2) -> {
-        return (n1.getIntValue() < n2.getIntValue() ? Number.ONE : Number.ZERO);
-    }),
-
-    LESSER_THAN_EQUAL("<=", OperatorType.RELATIONAL, (n1, n2) -> {
-        return (n1.getIntValue() <= n2.getIntValue() ? Number.ONE : Number.ZERO);
-    }),
-
-    GREATER_THAN(">", OperatorType.RELATIONAL, (n1, n2) -> {
-        return (n1.getIntValue() > n2.getIntValue() ? Number.ONE : Number.ZERO);
-    }),
-
     GREATHER_THAN_EQUAL(">=", OperatorType.RELATIONAL, (n1, n2) -> {
         return (n1.getIntValue() >= n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
@@ -90,8 +72,18 @@ public enum Operator implements Identifyable {
         return (n1.getIntValue() != n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
+    LESSER_THAN_EQUAL("<=", OperatorType.RELATIONAL, (n1, n2) -> {
+        return (n1.getIntValue() <= n2.getIntValue() ? Number.ONE : Number.ZERO);
+    }),
 
-    // Logical operators
+    GREATER_THAN(">", OperatorType.RELATIONAL, (n1, n2) -> {
+        return (n1.getIntValue() > n2.getIntValue() ? Number.ONE : Number.ZERO);
+    }),
+
+    LESSER_THAN("<", OperatorType.RELATIONAL, (n1, n2) -> {
+        return (n1.getIntValue() < n2.getIntValue() ? Number.ONE : Number.ZERO);
+    }),
+
     LOGICAL_OR("or", OperatorType.LOGICAL, (n1, n2) -> {
         return (n1.getIntValue() == 1 || n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
@@ -100,8 +92,6 @@ public enum Operator implements Identifyable {
         return (n1.getIntValue() == 1 && n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
 
-
-    // Unary operators
     NUMBER_NEGATION("-", OperatorType.UNARY, (n1, n2) -> {
         throw new PP2LAL2PPException("Unary operator - not supported on two numbers.");
     }) {

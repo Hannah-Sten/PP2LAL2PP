@@ -1,4 +1,4 @@
-package nl.rubensten.pp2lal2pp.parser;
+package nl.rubensten.pp2lal2pp.compiler;
 
 import com.sun.javafx.UnmodifiableArrayList;
 
