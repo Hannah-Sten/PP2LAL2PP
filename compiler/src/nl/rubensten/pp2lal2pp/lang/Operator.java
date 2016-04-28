@@ -16,10 +16,6 @@ public enum Operator implements Identifyable {
         throw new PP2LAL2PPException("Assignment operator =: not supported on two numbers.");
     }),
 
-    ASSIGN("=", OperatorType.ASSIGNMENT, (n1, n2) -> {
-        throw new PP2LAL2PPException("Assignment operator = not supported on two numbers.");
-    }),
-
     ADDITION("+", OperatorType.ARITHMETIC, (n1, n2) -> {
         return new Number(n1.getIntValue() + n2.getIntValue());
     }),
@@ -64,6 +60,10 @@ public enum Operator implements Identifyable {
         return (n1.getIntValue() >= n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
+    LESSER_THAN_EQUAL("<=", OperatorType.RELATIONAL, (n1, n2) -> {
+        return (n1.getIntValue() <= n2.getIntValue() ? Number.ONE : Number.ZERO);
+    }),
+
     EQUALS("==", OperatorType.RELATIONAL, (n1, n2) -> {
         return (n1.getIntValue() == n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
@@ -72,16 +72,16 @@ public enum Operator implements Identifyable {
         return (n1.getIntValue() != n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    LESSER_THAN_EQUAL("<=", OperatorType.RELATIONAL, (n1, n2) -> {
-        return (n1.getIntValue() <= n2.getIntValue() ? Number.ONE : Number.ZERO);
-    }),
-
     GREATER_THAN(">", OperatorType.RELATIONAL, (n1, n2) -> {
         return (n1.getIntValue() > n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
     LESSER_THAN("<", OperatorType.RELATIONAL, (n1, n2) -> {
         return (n1.getIntValue() < n2.getIntValue() ? Number.ONE : Number.ZERO);
+    }),
+
+    ASSIGN("=", OperatorType.ASSIGNMENT, (n1, n2) -> {
+        throw new PP2LAL2PPException("Assignment operator = not supported on two numbers.");
     }),
 
     LOGICAL_OR("or", OperatorType.LOGICAL, (n1, n2) -> {
