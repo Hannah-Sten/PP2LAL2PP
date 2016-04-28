@@ -1,11 +1,9 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import com.sun.javafx.UnmodifiableArrayList;
+import nl.rubensten.pp2lal2pp.api.APIFunction;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Ruben Schellekens
@@ -16,6 +14,18 @@ public class Program {
      * All the functions that are in the program.
      */
     private List<Function> functions;
+
+    /**
+     * A set of all types of API-functions that are included in the program.
+     * <p>
+     * Based on this information, certain assembly parts have to be included in the source code.
+     */
+    private Set<Class> apiFunctionTypes;
+
+    /**
+     * A set of all api functions that are included in the program.
+     */
+    private Set<APIFunction> apiFunctions;
 
     /**
      * Dictionary where the names of the functions are mapped to their location in {@link
@@ -29,8 +39,8 @@ public class Program {
     private List<GlobalVariable> globalVariables;
 
     /**
-     * Dictionary where the names of the global variables are mapped to their location in
-     * {@link Program#globalVariables}.
+     * Dictionary where the names of the global variables are mapped to their location in {@link
+     * Program#globalVariables}.
      */
     private Map<String, Integer> globalVariableIndices;
 
@@ -39,6 +49,19 @@ public class Program {
         functionIndices = new HashMap<>();
         globalVariables = new ArrayList<>();
         globalVariableIndices = new HashMap<>();
+        apiFunctionTypes = new HashSet<>();
+        apiFunctions = new HashSet<>();
+    }
+
+    /**
+     * Registers that the given APIFunction is being used by the program.
+     */
+    public void addAPIFunction(APIFunction apiFunction) {
+        boolean newElt = apiFunctionTypes.add(apiFunction.getClass());
+
+        if (newElt) {
+            apiFunctions.add(apiFunction);
+        }
     }
 
     /**
