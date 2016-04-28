@@ -33,11 +33,11 @@ public class Constants {
     /**
      * The string that denotes the start of a multi-line comment.
      */
-    public static final String MULTI_COMMENT_START = "#;";
+    public static final String MULTI_COMMENT_START = ";#";
 
     /**
      * The string that denotes the end of a multi-line-comment.
      */
-    public static final String MULTI_COMMENT_END = ";#";
+    public static final String MULTI_COMMENT_END = ";##";
 
 }
