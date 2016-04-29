@@ -19,7 +19,7 @@ public class Tokeniser implements Iterable<String> {
         String code2 = code.replace("{", " { ")
                 .replace("}", " } ")
                 .replace("-", " - ")
-                .replace("!", " !")
+                .replace("!", " ! ")
                 .replace("(", " ( ")
                 .replace(")", " ) ")
                 .replace(",", " , ");
