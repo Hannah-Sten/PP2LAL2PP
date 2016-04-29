@@ -21,7 +21,8 @@ public class Tokeniser implements Iterable<String> {
                 .replace("-", " - ")
                 .replace("!", " !")
                 .replace("(", " ( ")
-                .replace(")", " ) ");
+                .replace(")", " ) ")
+                .replace(",", " , ");
 
         for (Operator op : Operator.values()) {
             code2 = code2.replace(op.getSign(), "櫓\uF214(" + op.name() + ")");
