@@ -57,6 +57,21 @@ public class Tokeniser implements Iterable<String> {
         return tokens.size();
     }
 
+    /**
+     * Checks if there is a first token, if there is then it checks if the first token equals the
+     * given string.
+     *
+     * @return <code>true</code> if there is a first token AND if the first token equals the
+     * given string, <code>false</code> otherwise.
+     */
+    public boolean isFirst(String string) {
+        if (size() == 0) {
+            return false;
+        }
+
+        return tokens.get(0).equals(string);
+    }
+
     @Override
     public Iterator<String> iterator() {
         return tokens.iterator();

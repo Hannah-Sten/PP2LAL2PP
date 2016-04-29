@@ -76,15 +76,14 @@ public class Program {
      * @return An unmodifyable list of the functions.
      */
     public List<Function> getFunctions() {
-        return new UnmodifiableArrayList<>((Function[])functions.toArray(), functions.size());
+        return Collections.unmodifiableList(functions);
     }
 
     /**
      * @return An unmodifyable list of the global variables.
      */
     public List<GlobalVariable> getGlobalVariables() {
-        return new UnmodifiableArrayList<>((GlobalVariable[])globalVariables.toArray(),
-                globalVariables.size());
+        return Collections.unmodifiableList(globalVariables);
     }
 
     /**
