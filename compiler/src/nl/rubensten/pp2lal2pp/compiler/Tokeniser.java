@@ -44,9 +44,9 @@ public class Tokeniser implements Iterable<String> {
     }
 
     /**
-     * Gets the line with line number <code>index</code> starting with 0.
+     * Gets the token with token number <code>index</code> starting with 0.
      */
-    public String getLine(int index) {
+    public String getToken(int index) {
         return tokens.get(index);
     }
 
