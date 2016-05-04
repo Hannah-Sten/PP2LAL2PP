@@ -133,17 +133,10 @@ Comments are extra pieces of information that are functionally ignored by the co
 ### Line comments
 Line commments will make a whole line ignored by the compiler. You start a line comment with a hash sign `#`.
 
-### Multiline comments
-Multiline comments are able to let a whole block of text be ignored by the compiler. You start a block by typing `#;` and you close it again with `;#`.
-
 ### Example
 ```
 someFunction();
-;# THIS ALL WILL
-beee  ignooorreeed YAA LLOOO YOLOOO
-OO ;#
-anotherFunction();
-# Also ignored
+# Ignored comment
 howeverThisFunctionDoesnt()
 ```
 
