@@ -4,6 +4,8 @@ import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.lang.Program;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * @author Ruben Schellekens
@@ -29,7 +31,14 @@ public class Compiler {
      * Compiles the input and writes it to the given output file.
      */
     public void compile() throws CompilerException {
-        // TODO: Compile the program.
+        try {
+            FileWriter fw = new FileWriter(output);
+            fw.write("\nTEST\n");
+            fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

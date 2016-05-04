@@ -1,10 +1,9 @@
 package nl.rubensten.pp2lal2pp;
 
-import nl.rubenlib.io.FileWorker;
-import nl.rubensten.pp2lal2pp.compiler.LineTokeniser;
-import nl.rubensten.pp2lal2pp.compiler.Tokeniser;
+import nl.rubensten.pp2lal2pp.compiler.Compiler;
 import nl.rubensten.pp2lal2pp.lang.Program;
 import nl.rubensten.pp2lal2pp.parser.FileParser;
+import nl.rubensten.pp2lal2pp.parser.Parser;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,6 +19,8 @@ import java.util.List;
 public class PP2LAL2PP {
 
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+
         if (args.length == 0) {
             printHelp();
             return;
@@ -46,6 +47,19 @@ public class PP2LAL2PP {
 
             dest = new File(argList.get(index + 1));
         }
+
+        // Parse file
+        Parser parser = new FileParser(file);
+        Program program = parser.parse();
+
+        // Compile file
+        Compiler compiler = new Compiler(dest, program);
+        compiler.compile();
+
+        // Finish
+        long delta = System.currentTimeMillis() - start;
+        float time = (float)delta / 1000f;
+        System.out.println("Done (" + time + "s). Compiled to " + dest.getName() + ".");
     }
 
     private static String readFile(File file) {

@@ -1,15 +1,11 @@
 package nl.rubensten.pp2lal2pp.parser;
 
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
-import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.compiler.LineTokeniser;
 import nl.rubensten.pp2lal2pp.compiler.Tokeniser;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 
-import javax.lang.model.element.VariableElement;
-import javax.swing.text.html.Option;
 import java.util.*;
 
 /**
@@ -297,7 +293,6 @@ public class Parser {
                 Operation op = parseOperation(line.iterator(), line);
 
                 if (op != null) {
-                    System.out.println(op + " (LINE: '" + line.getOriginal() + "')");
                     body.add(op);
                 }
             }
