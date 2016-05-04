@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Class-Path: PP2LAL2PP.jar
+Main-Class: nl.rubensten.pp2lal2pp.PP2LAL2PP
+
