@@ -22,7 +22,7 @@ global currentState        # = 0
 ;#   Main loop that continuously executes until exit() is called or the machine gets
 ;#   shut down. I love PP2.
 ;##
-main() {
+function main() {
     # Mark the current state as old
     previousState = currentState
     

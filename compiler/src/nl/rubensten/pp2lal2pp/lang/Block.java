@@ -4,6 +4,7 @@ import com.sun.javafx.UnmodifiableArrayList;
 import nl.rubensten.pp2lal2pp.IDManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,6 +43,13 @@ public class Block implements Iterable, Identifyable {
         this.contents = contents;
     }
 
+    /**
+     * Copies the elements and put them in a new arraylist.
+     */
+    public void setContents(List<Element> contents) {
+        this.contents = new ArrayList<>(contents);
+    }
+
     public List<Element> getContents() {
         return contents;
     }
@@ -54,6 +62,13 @@ public class Block implements Iterable, Identifyable {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "Block{" + "contents=" + contents +
+                ", id=" + id +
+                '}';
     }
 
 }

@@ -76,4 +76,9 @@ public class Loop implements Element, Identifyable {
         return Value.EMPTY;
     }
 
+    @Override
+    public String toString() {
+        return "loop(" + base + " from " + from + " to " + to + " step " + step + "){" + content
+                + "}";
+    }
 }

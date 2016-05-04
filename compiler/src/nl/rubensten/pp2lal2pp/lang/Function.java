@@ -38,12 +38,27 @@ public class Function implements Identifyable, Element {
     /**
      * Automatically assigns pointers to the variables.
      */
-    public Function(Variable... arguments) {
+    public Function(String name, Variable... arguments) {
         this.id = IDManager.newId();
+        this.name = name;
         this.arguments = new ArrayList<>();
 
         for (int i = 0; i < arguments.length; i++) {
             Variable var = arguments[i];
+            var.setPointer(i + 1);
+        }
+    }
+
+    /**
+     * Automatically assigns pointers to the variables.
+     */
+    public Function(String name, List<Variable> arguments) {
+        this.id = IDManager.newId();
+        this.name = name;
+        this.arguments = new ArrayList<>(arguments);
+
+        for (int i = 0; i < arguments.size(); i++) {
+            Variable var = arguments.get(i);
             var.setPointer(i + 1);
         }
     }
@@ -69,6 +84,10 @@ public class Function implements Identifyable, Element {
         return name;
     }
 
+    public void setContents(Block contents) {
+        this.contents = contents;
+    }
+
     public Block getContents() {
         return contents;
     }
@@ -83,4 +102,12 @@ public class Function implements Identifyable, Element {
         return new Value(Constants.REG_RETURN);
     }
 
+    @Override
+    public String toString() {
+        return "Function{" + "arguments=" + arguments +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", contents=" + contents +
+                '}';
+    }
 }

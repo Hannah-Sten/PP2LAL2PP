@@ -2,6 +2,7 @@ package nl.rubensten.pp2lal2pp.lang;
 
 import com.sun.javafx.UnmodifiableArrayList;
 import com.sun.javafx.collections.UnmodifiableListSet;
+import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 
 import java.util.*;
@@ -90,8 +91,8 @@ public class Program {
      * Adds a function to the program.
      */
     public void addFunction(Function function) {
-        functions.add(function);
         functionIndices.put(function.getName(), functions.size());
+        functions.add(function);
     }
 
     /**
@@ -101,9 +102,25 @@ public class Program {
      *         The name of the function to look up.
      * @return The function with the given name.
      */
-    public Function getFunction(String name) {
+    public Optional<Function> getFunction(String name) {
+        if (!functionIndices.containsKey(name)) {
+            return Optional.empty();
+        }
+
         int index = functionIndices.get(name);
-        return functions.get(index);
+        return Optional.of(functions.get(index));
+    }
+
+    /**
+     * @return Looks up the main function.
+     */
+    public Function getMainFunction() throws ParseException {
+        Optional<Function> main = getFunction("main");
+        if (!main.isPresent()) {
+            throw new ParseException("Program must contain a main method!");
+        }
+
+        return main.get();
     }
 
     /**
@@ -126,4 +143,14 @@ public class Program {
         return globalVariables.get(index);
     }
 
+    @Override
+    public String toString() {
+        return "Program{" + "apiFunctions=" + apiFunctions +
+                ", functions=" + functions +
+                ", apiFunctionTypes=" + apiFunctionTypes +
+                ", functionIndices=" + functionIndices +
+                ", globalVariables=" + globalVariables +
+                ", globalVariableIndices=" + globalVariableIndices +
+                '}';
+    }
 }
