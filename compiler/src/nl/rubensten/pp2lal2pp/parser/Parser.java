@@ -197,7 +197,13 @@ public class Parser {
             List<Variable> args = new ArrayList<>();
 
             for (int i = 2; i < line.sizeNoComments(); i += 2) {
-                args.add(new Variable(line.getToken(i)));
+                Value value = Value.parse(line.getToken(i));
+                if (value.getObject() instanceof String) {
+                    args.add(new Variable(line.getToken(i)));
+                }
+                else {
+                    args.add(new Variable("number" + i, value).setJustNumber(true));
+                }
             }
 
             String name = line.getToken(0);

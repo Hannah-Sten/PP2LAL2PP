@@ -28,6 +28,11 @@ public class Variable implements Identifyable, Element {
      */
     private Value defaultValue;
 
+    /**
+     * Determines if the variable is just a number.
+     */
+    private boolean justNumber;
+
     public Variable(String name) {
         this.id = IDManager.newId();
         this.name = name;
@@ -41,6 +46,15 @@ public class Variable implements Identifyable, Element {
 
     protected void setPointer(int pointer) {
         this.pointer = pointer;
+    }
+
+    public Variable setJustNumber(boolean justNumber) {
+        this.justNumber = justNumber;
+        return this;
+    }
+
+    public boolean isJustNumber() {
+        return justNumber;
     }
 
     public Value getDefaultValue() {
@@ -82,6 +96,9 @@ public class Variable implements Identifyable, Element {
     public String toString() {
         if (isGlobal()) {
             return "(global " + name + "=" + defaultValue + " #" + id + " *" + pointer + ")";
+        }
+        else if (isJustNumber()) {
+            return "(number " + name + "=" + defaultValue + " #" + id + " *" + pointer + ")";
         }
         else {
             return "(var " + name + "=" + defaultValue + " #" + id + " *" + pointer + ")";
