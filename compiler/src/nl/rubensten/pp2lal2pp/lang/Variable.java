@@ -23,13 +23,28 @@ public class Variable implements Identifyable, Element {
      */
     private String name;
 
+    /**
+     * The default value of the variable.
+     */
+    private Value defaultValue;
+
     public Variable(String name) {
         this.id = IDManager.newId();
         this.name = name;
+        this.defaultValue = Number.ZERO;
+    }
+
+    public Variable(String name, Value defaultValue) {
+        this(name);
+        this.defaultValue = defaultValue;
     }
 
     protected void setPointer(int pointer) {
         this.pointer = pointer;
+    }
+
+    public Value getDefaultValue() {
+        return defaultValue;
     }
 
     /**
@@ -65,10 +80,11 @@ public class Variable implements Identifyable, Element {
 
     @Override
     public String toString() {
-        return "Variable{" + "id=" + id +
-                ", pointer=" + pointer +
-                ", name='" + name + '\'' +
-                ", global=" + isGlobal() +
-                '}';
+        if (isGlobal()) {
+            return "(global " + name + "=" + defaultValue + " #" + id + " *" + pointer + ")";
+        }
+        else {
+            return "(var " + name + "=" + defaultValue + " #" + id + " *" + pointer + ")";
+        }
     }
 }

@@ -3,6 +3,8 @@ package nl.rubensten.pp2lal2pp.lang;
 import nl.rubensten.pp2lal2pp.IDManager;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 
+import java.util.Optional;
+
 /**
  * @author Ruben Schellekens
  */
@@ -180,6 +182,24 @@ public enum Operator implements Identifyable {
         this.id = IDManager.newId();
         this.sign = sign;
         this.type = type;
+        this.numbersFunction = numbersFunction;
+    }
+
+    /**
+     * Looks up the operator with the given sign.
+     *
+     * @param sign
+     *         The sign to get the operator of.
+     * @return The operator object corresponding to the given sign.
+     */
+    public static Optional<Operator> getBySign(String sign) {
+        for (Operator op : values()) {
+            if (op.getSign().equals(sign)) {
+                return Optional.of(op);
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**
@@ -213,6 +233,11 @@ public enum Operator implements Identifyable {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return sign;
     }
 
     enum OperatorType {

@@ -32,8 +32,6 @@ public class FileParser extends Parser {
             e.printStackTrace();
             throw new ParseException("The define statements were not correctly setup.");
         }
-
-        System.out.println(input);
     }
 
     private FileParser(String input) {

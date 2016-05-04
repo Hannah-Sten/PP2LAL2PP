@@ -67,4 +67,9 @@ public class IfElse implements Element, Identifyable {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "if (" + expression + "){" + ifBlock + "}\nelse{" + elseBlock + "}";
+    }
 }

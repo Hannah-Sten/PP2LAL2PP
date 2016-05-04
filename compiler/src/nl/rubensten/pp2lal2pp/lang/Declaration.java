@@ -22,13 +22,13 @@ public class Declaration implements Element {
      */
     private final DeclarationScope scope;
 
-    private Declaration(Variable variable, DeclarationScope scope) {
+    public Declaration(Variable variable, DeclarationScope scope) {
         this.variable = variable;
         this.declaration = Number.ZERO;
         this.scope = scope;
     }
 
-    private Declaration(Variable variable, Value value, DeclarationScope scope) {
+    public Declaration(Variable variable, Value value, DeclarationScope scope) {
         this.variable = variable;
         this.declaration = value;
         this.scope = scope;
@@ -79,8 +79,12 @@ public class Declaration implements Element {
         return Value.EMPTY;
     }
 
-    enum DeclarationScope {
-        LOCAL, GLOBAL;
+    @Override
+    public String toString() {
+        return "(" + variable + ":=" + getValue().stringRepresentation() + ")";
     }
 
+    public enum DeclarationScope {
+        LOCAL, GLOBAL;
+    }
 }

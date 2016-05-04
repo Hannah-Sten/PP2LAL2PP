@@ -23,4 +23,8 @@ public class Comment implements Element {
         return new Value(contents);
     }
 
+    @Override
+    public String toString() {
+        return "/*" + contents + "*/";
+    }
 }

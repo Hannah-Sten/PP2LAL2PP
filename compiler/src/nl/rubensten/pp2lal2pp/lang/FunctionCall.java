@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Ruben Schellekens
  */
-public class FunctionCall implements Element, Identifyable {
+public class FunctionCall extends Value implements Element, Identifyable {
 
     /**
      * Unique id of the function call.
@@ -15,16 +15,17 @@ public class FunctionCall implements Element, Identifyable {
     private int id;
 
     /**
-     * The function that is called.
+     * The name of the function that is called.
      */
-    private Function called;
+    private String called;
 
     /**
      * The list of arguments to call the function with.
      */
     private List<Variable> arguments;
 
-    public FunctionCall(Function called, List<Variable> arguments) {
+    public FunctionCall(String called, List<Variable> arguments) {
+        super(called);
         this.id = IDManager.newId();
         this.called = called;
         this.arguments = arguments;
@@ -34,7 +35,7 @@ public class FunctionCall implements Element, Identifyable {
         return arguments;
     }
 
-    public Function getCalled() {
+    public String getCalled() {
         return called;
     }
 
@@ -45,7 +46,11 @@ public class FunctionCall implements Element, Identifyable {
 
     @Override
     public Value getValue() {
-        return called.getValue();
+        return new Value(called);
     }
 
+    @Override
+    public String toString() {
+        return called + arguments;
+    }
 }

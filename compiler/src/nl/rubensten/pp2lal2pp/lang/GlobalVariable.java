@@ -15,4 +15,9 @@ public class GlobalVariable extends Variable {
         setPointer(++pointerCounter);
     }
 
+    public GlobalVariable(String name, Value value) {
+        super(name, value);
+        setPointer(++pointerCounter);
+    }
+
 }
