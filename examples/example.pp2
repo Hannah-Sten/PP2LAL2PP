@@ -32,7 +32,7 @@ function main() {
     
     # Isolate the last 2 buttons
     currentState = buttonState & 0b11
-    
+
     # Determine what button has been pressed.
     var button
     if (previousState != 0b11) {
