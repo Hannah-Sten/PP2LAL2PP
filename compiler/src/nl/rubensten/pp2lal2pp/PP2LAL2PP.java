@@ -59,16 +59,19 @@ public class PP2LAL2PP {
         // Finish
         long delta = System.currentTimeMillis() - start;
         float time = (float)delta / 1000f;
-        System.out.println("Done (" + time + "s). Compiled to " + dest.getName() + ".");
+        System.out.println("Done (" + time + "s). " +
+                "Compiled '" + file.getName() + "' to '" + dest.getName() + "'.");
     }
 
     private static void printHelp() {
         System.out.println("");
-        System.out.println("-=---------------------------------------------------------=-");
-        System.out.println("Compile PP2LAL2PP: 'java -jar JARNAME.jar [-args] <fileName>'");
-        System.out.println("-=---------------------------------------------------------=-");
+        System.out.println("-=-----------------------------------------------------------------=-");
+        System.out.println(" Practicum Processor 2 Learn Assembly Language 2 Preserve Prosperity");
+        System.out.println("        PP2LAL2PP: 'java -jar JARNAME.jar [-args] <fileName>'");
+        System.out.println("-=-----------------------------------------------------------------=-");
         System.out.println("Arguments:");
-        System.out.println("    -d <destination.asm>\tdestination assembly file");
+        System.out.println("    -d <destination>\tdestination file");
+        System.out.println("    -r \t\t\t\t\trefactor file");
         System.out.println("");
     }
 
