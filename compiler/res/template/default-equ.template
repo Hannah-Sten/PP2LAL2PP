@@ -1,0 +1,5 @@
+IOAREA          EQU    -16                  ; address of the I/O-Area, modulo 2^18
+INPUT           EQU     7                   ; position of the input buttons (relative to IOAREA)
+OUTPUT          EQU     11                  ; relative position of the power outputs
+DSPDIG          EQU     9                   ; relative position of the 7-segment display's digit selector
+DSPSEG          EQU     8                   ; relative position of the 7-segment display's segments
