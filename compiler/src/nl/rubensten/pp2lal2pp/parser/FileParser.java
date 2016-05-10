@@ -1,11 +1,9 @@
 package nl.rubensten.pp2lal2pp.parser;
 
 import nl.rubensten.pp2lal2pp.ParseException;
+import nl.rubensten.pp2lal2pp.util.FileWorker;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -102,22 +100,7 @@ public class FileParser extends Parser {
      * Reads all the contents of the given file.
      */
     private String getFileContents(File file) {
-        StringBuilder total = new StringBuilder();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                total.append(line).append("\n");
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            throw new ParseException("Could not read file " + file);
-        }
-
-        return total.toString();
+        return new FileWorker(file).read();
     }
 
     /**

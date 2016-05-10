@@ -5,7 +5,7 @@ import nl.rubensten.pp2lal2pp.lang.Program;
 import nl.rubensten.pp2lal2pp.parser.FileParser;
 import nl.rubensten.pp2lal2pp.parser.Parser;
 
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,36 +62,10 @@ public class PP2LAL2PP {
         System.out.println("Done (" + time + "s). Compiled to " + dest.getName() + ".");
     }
 
-    private static String readFile(File file) {
-        try {
-            StringBuilder contents = new StringBuilder();
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                contents.append(line).append("\n");
-            }
-            return contents.toString();
-        }
-        catch (IOException e) {
-            throw new PP2LAL2PPException(e.getMessage());
-        }
-    }
-
-    private static void writeFile(File file, String contents) {
-        try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(contents);
-            fw.close();
-        }
-        catch (IOException e) {
-            throw new PP2LAL2PPException(e.getMessage());
-        }
-    }
-
     private static void printHelp() {
         System.out.println("");
         System.out.println("-=---------------------------------------------------------=-");
-        System.out.println("Compile PP2LAL2PP: 'java -jar JARNAME.jar <file.pp2> [-args]'");
+        System.out.println("Compile PP2LAL2PP: 'java -jar JARNAME.jar [-args] <fileName>'");
         System.out.println("-=---------------------------------------------------------=-");
         System.out.println("Arguments:");
         System.out.println("    -d <destination.asm>\tdestination assembly file");
