@@ -35,7 +35,12 @@ public enum Template {
      * <p>
      * <code>{$VALUE}</code> The numerical value.
      */
-    EQU("equ.template");
+    EQU("equ.template"),
+
+    /**
+     * The Hex7Seg routine to load standard number patterns from 0-15.
+     */
+    HEX7SEG("hex7seg.template");
 
     /**
      * The directory where the templates are stored followed by a slash.
