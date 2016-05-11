@@ -33,14 +33,37 @@ public enum Template {
      * <code>{$NAME%#}</code> The name of the variable filled up with spaces to reach # characters
      * in total length.
      * <p>
-     * <code>{$VALUE}</code> The numerical value.
+     * <code>{$VALUE%#}</code> The numerical value filled up with spaces to reach # characters.
+     * <p>
+     * <code>{$COMMENT}</code> The comment that must be placed after the statement.
      */
     EQU("equ.template"),
 
     /**
      * The Hex7Seg routine to load standard number patterns from 0-15.
      */
-    HEX7SEG("hex7seg.template");
+    HEX7SEG("hex7seg.template"),
+
+    /**
+     * An assembly statement/instruction.
+     * <p>
+     * <b>Variables:</b>
+     * <p>
+     * <code>{LABEL%#}</code> The name of the label filled up with spaces to reach # characters in
+     * total length.
+     * <p>
+     * <code>{INSTRUCTION%#}</code> The name of the instruction filled up with spaces to reach #
+     * characters in total length.
+     * <p>
+     * <code>{ARG1%#}</code> The name of the first argument of the instruction filled up with spaces
+     * to reach # characters in total length.
+     * <p>
+     * <code>{ARG2%#}</code> The name of the second argument of the instruction filled up with
+     * spaces to reach # characters in total length.
+     * <p>
+     * <code>{$COMMENT}</code> The comment that must be placed after the statement.
+     */
+    STATEMENT("statement.template");
 
     /**
      * The directory where the templates are stored followed by a slash.
