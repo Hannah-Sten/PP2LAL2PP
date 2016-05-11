@@ -13,9 +13,14 @@
 include const
 
 # Global variables. Variables will initialise to 0 when nothing is declared.
+
+# The first counter.
 global countOne            # = 0
+# The second counter.
 global countTwo            # = 0
+# The previous state of the buttons.
 global previousState       # = 0
+# The current state of the buttons.
 global currentState        # = 0
 
 ;##

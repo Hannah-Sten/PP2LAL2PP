@@ -68,21 +68,35 @@ public class Compiler {
     private void compileGlobal() {
         String equ = Template.EQU.load();
 
-        int space = -1;
+        int spaceName = -1;
         try {
-            space = Integer.parseInt(equ.replaceAll(".*\\{\\$NAME%", "").replaceAll("\\}.*", ""));
+            spaceName = Integer.parseInt(equ.replaceAll(".*\\{\\$NAME%", "")
+                    .replaceAll("\\}.*", ""));
         }
         catch (NumberFormatException nfe) {
-            throw new CompilerException("EQU template hasn't been set up correctly.");
+            throw new CompilerException("EQU template hasn't been set up correctly ({$NAME%#}).");
+        }
+
+        int spaceValue = -1;
+        try {
+            spaceValue = Integer.parseInt(equ.replaceAll(".*\\{\\$VALUE%", "")
+                    .replaceAll("\\}.*", ""));
+        }
+        catch (NumberFormatException nfe) {
+            throw new CompilerException("EQU template hasn't been set up correctly ({VALUE%#}).");
         }
 
         for (GlobalVariable gv : input.getGlobalVariables()) {
-            int count = gv.getName().length();
-            int tab = Math.max(1, space - count);
+            int countName = gv.getName().length();
+            int countValue = Integer.toString(gv.getPointer()).length();
+            int tabName = Math.max(1, spaceName - countName);
+            int tabValue = Math.max(1, spaceValue - countValue);
 
             String result = equ.replace("{$NAME", gv.getName())
-                    .replaceAll("%[0-9]+\\}", Util.makeString(" ", tab))
-                    .replace("{$VALUE}", gv.getPointer() + "");
+                    .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tabName))
+                    .replace("{$VALUE", gv.getPointer() + "")
+                    .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tabValue))
+                    .replace("{$COMMENT}", gv.getComment().getContents());
 
             assembly.append(result);
             assembly.append("\n");
