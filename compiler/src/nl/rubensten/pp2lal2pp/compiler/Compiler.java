@@ -62,7 +62,7 @@ public class Compiler {
      * Writes the compiled output to the output file.
      */
     private void write() {
-        new FileWorker(output).write(assembly.toString(), true);
+        new FileWorker(output).write(assembly.toString(), false);
     }
 
 }

@@ -1,6 +1,7 @@
 package nl.rubensten.pp2lal2pp;
 
 import nl.rubensten.pp2lal2pp.compiler.Compiler;
+import nl.rubensten.pp2lal2pp.lang.GlobalVariable;
 import nl.rubensten.pp2lal2pp.lang.Program;
 import nl.rubensten.pp2lal2pp.parser.FileParser;
 import nl.rubensten.pp2lal2pp.parser.Parser;
@@ -29,14 +30,14 @@ public class PP2LAL2PP {
         List<String> argList = new ArrayList<>(Arrays.asList(args));
 
         // Parse file name.
-        File file = new File(args[0]);
+        File file = new File(args[args.length - 1]);
         if (!file.exists()) {
             System.out.println("File '" + file.getName() + "' does not exist!");
             return;
         }
 
-        // Destination argument.
-        File dest = new File(args[0].replaceAll("(\\.[a-zA-Z0-9_\\-]*)$", ".asm"));
+        // Destination flag.
+        File dest = new File(args[args.length - 1].replaceAll("(\\.[a-zA-Z0-9_\\-]*)$", ".asm"));
         if (argList.contains("-d")) {
             int index = argList.indexOf("-d");
 
@@ -48,6 +49,28 @@ public class PP2LAL2PP {
             dest = new File(argList.get(index + 1));
         }
 
+        // Banned global base flag.
+        if (argList.contains("-b")) {
+            int index = argList.indexOf("-b");
+
+            if (index + 1 >= argList.size()) {
+                System.out.println("No number sequence has been specified.");
+                return;
+            }
+
+            String sequence = argList.get(index + 1);
+            String[] numbers = sequence.split(",");
+            for (String num : numbers) {
+                try {
+                    GlobalVariable.banPointer(Integer.parseInt(num));
+                }
+                catch (NumberFormatException nfe) {
+                    System.out.println("Number sequence is not entered properly.");
+                    return;
+                }
+            }
+        }
+
         // Parse file
         Parser parser = new FileParser(file);
         Program program = parser.parse();
@@ -55,6 +78,7 @@ public class PP2LAL2PP {
         // Compile file
         Compiler compiler = new Compiler(dest, program);
         compiler.compile();
+
 
         // Finish
         long delta = System.currentTimeMillis() - start;
@@ -69,7 +93,8 @@ public class PP2LAL2PP {
         System.out.println(" Practicum Processor 2 Learn Assembly Language 2 Preserve Prosperity");
         System.out.println("        PP2LAL2PP: 'java -jar JARNAME.jar [-args] <fileName>'");
         System.out.println("-=-----------------------------------------------------------------=-");
-        System.out.println("Arguments:");
+        System.out.println("Flags:");
+        System.out.println("    -b #,#,#,#,...\t\tSequence of banned global base locations");
         System.out.println("    -d <destination>\tdestination file");
         System.out.println("    -r \t\t\t\t\trefactor file");
         System.out.println("");
