@@ -39,6 +39,10 @@ public class Compiler {
      * Compiles the input and writes it to the given output file.
      */
     public void compile() throws CompilerException {
+        // Comment header.
+        compileHeader();
+        assembly.append("\n");
+
         // Standard header
         assembly.append(Template.BEGIN_CODE);
         assembly.append("\n\n");
@@ -60,6 +64,25 @@ public class Compiler {
 
         // Write to file
         write();
+    }
+
+    /**
+     * Nicely prints the header to the file.
+     */
+    private void compileHeader() {
+        if (input.getHeader().size() <= 0) {
+            return;
+        }
+
+        boolean first = true;
+        for (String line : input.getHeader()) {
+            if (!first) {
+                assembly.append("\n");
+            }
+            first = false;
+
+            assembly.append(";# ").append(line);
+        }
     }
 
     /**

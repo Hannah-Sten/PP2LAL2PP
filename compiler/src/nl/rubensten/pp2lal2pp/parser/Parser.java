@@ -46,6 +46,7 @@ public class Parser {
      */
     public Program parse() throws ParseException {
         program = new Program();
+        program.setHeader(parseHeaderComment(input));
 
         Function function;
 
@@ -60,7 +61,7 @@ public class Parser {
             }
 
             if (line.startsWith("#")) {
-                lastComment = new Comment(line.replaceAll("^# *", ""));
+                lastComment = new Comment(line.replaceAll("^#\\s*", ""));
                 continue;
             }
 
@@ -185,6 +186,26 @@ public class Parser {
         }
 
         return program;
+    }
+
+    /**
+     * Parses the header comment lines.
+     * @return A list of all lines in the header comment WITHOUT #s.
+     */
+    private List<String> parseHeaderComment(String contents) {
+        List<String> header = new ArrayList<>();
+
+        for (String string : contents.split("\n")) {
+            String line = string.trim();
+
+            if (!line.startsWith("#")) {
+                return header;
+            }
+
+            header.add(line.replaceAll("^#\\s*;\\s*", ""));
+        }
+
+        return header;
     }
 
     /**
