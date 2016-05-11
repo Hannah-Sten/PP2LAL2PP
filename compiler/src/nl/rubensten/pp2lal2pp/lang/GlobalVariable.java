@@ -11,7 +11,7 @@ public class GlobalVariable extends Variable {
     /**
      * Counter that tracks the location of the previous global variable.
      */
-    private static int pointerCounter = 0;
+    private static int pointerCounter = 1;
 
     /**
      * A list containing all the global base addresses that can't be used to store values.
@@ -42,7 +42,7 @@ public class GlobalVariable extends Variable {
     /**
      * Updates the pointer counter to make sure the counter doesn't contain a banned number.
      */
-    private static void adjustCounter() {
+    public static void adjustCounter() {
         while (bannedLocations.contains(pointerCounter)) {
             pointerCounter++;
         }
@@ -51,13 +51,13 @@ public class GlobalVariable extends Variable {
     public GlobalVariable(String name) {
         super(name);
         adjustCounter();
-        setPointer(++pointerCounter);
+        setPointer(pointerCounter++);
     }
 
     public GlobalVariable(String name, Value value) {
         super(name, value);
         adjustCounter();
-        setPointer(++pointerCounter);
+        setPointer(pointerCounter++);
     }
 
 }
