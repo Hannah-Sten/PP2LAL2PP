@@ -69,6 +69,7 @@ public class PP2LAL2PP {
                     return;
                 }
             }
+            GlobalVariable.adjustCounter();
         }
 
         // Parse file

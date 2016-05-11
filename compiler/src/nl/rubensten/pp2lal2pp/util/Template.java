@@ -23,7 +23,19 @@ public enum Template {
     /**
      * Denotes the end of the program.
      */
-    END("end.template");
+    END("end.template"),
+
+    /**
+     * Equals statement.
+     * <p>
+     * <b>Variables:</b>
+     * <p>
+     * <code>{$NAME%#}</code> The name of the variable filled up with spaces to reach # characters
+     * in total length.
+     * <p>
+     * <code>{$VALUE}</code> The numerical value.
+     */
+    EQU("equ.template");
 
     /**
      * The directory where the templates are stored followed by a slash.

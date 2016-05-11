@@ -1,9 +1,11 @@
 package nl.rubensten.pp2lal2pp.compiler;
 
 import nl.rubensten.pp2lal2pp.CompilerException;
+import nl.rubensten.pp2lal2pp.lang.GlobalVariable;
 import nl.rubensten.pp2lal2pp.lang.Program;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
 import nl.rubensten.pp2lal2pp.util.Template;
+import nl.rubensten.pp2lal2pp.util.Util;
 
 import java.io.File;
 
@@ -42,6 +44,8 @@ public class Compiler {
         assembly.append("\n\n");
         assembly.append(Template.DEFAULT_EQU);
         assembly.append("\n\n");
+        compileGlobal();
+        assembly.append("\n");
         assembly.append(Template.BEGIN_MAIN);
         assembly.append("\n\n");
 
@@ -56,6 +60,33 @@ public class Compiler {
 
         // Write to file
         write();
+    }
+
+    /**
+     * Writes all the global variables of the program to the assembly-StringBuilder.
+     */
+    private void compileGlobal() {
+        String equ = Template.EQU.load();
+
+        int space = -1;
+        try {
+            space = Integer.parseInt(equ.replaceAll(".*\\{\\$NAME%", "").replaceAll("\\}.*", ""));
+        }
+        catch (NumberFormatException nfe) {
+            throw new CompilerException("EQU template hasn't been set up correctly.");
+        }
+
+        for (GlobalVariable gv : input.getGlobalVariables()) {
+            int count = gv.getName().length();
+            int tab = Math.max(1, space - count);
+
+            String result = equ.replace("{$NAME", gv.getName())
+                    .replaceAll("%[0-9]+\\}", Util.makeString(" ", tab))
+                    .replace("{$VALUE}", gv.getPointer() + "");
+
+            assembly.append(result);
+            assembly.append("\n");
+        }
     }
 
     /**
