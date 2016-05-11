@@ -22,6 +22,6 @@ Hex7Seg_tbl:    CONS    %01111110           ; 7-segment pattern for '0'
                 CONS    %01001111           ; 7-segment pattern for 'E'
                 CONS    %01000111           ; 7-segment pattern for 'F'
 Hex7Seg_bgn:    AND     R0  %01111          ; R0 := R0 MOD 16 , just to be safe...
-                LOAD    R1  [ SP ++ ]       ; R1 = address(tbl) (retrieve from stack)
-                LOAD    R1  [ R1 + R0 ]     ; R1 = tbl[R0]
+                LOAD    R1  [SP++]          ; R1 = address(tbl) (retrieve from stack)
+                LOAD    R1  [R1+R0]         ; R1 = tbl[R0]
                 RTS
