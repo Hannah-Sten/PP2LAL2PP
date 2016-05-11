@@ -48,6 +48,11 @@ public class GlobalVariable extends Variable {
         }
     }
 
+    /**
+     * The comment that is placed directly above the global variable.
+     */
+    private Comment comment;
+
     public GlobalVariable(String name) {
         super(name);
         adjustCounter();
@@ -58,6 +63,20 @@ public class GlobalVariable extends Variable {
         super(name, value);
         adjustCounter();
         setPointer(pointerCounter++);
+    }
+
+    public GlobalVariable(String name, Value value, Comment comment) {
+        this(name, value);
+        this.comment = comment;
+    }
+
+    public GlobalVariable(String name, Comment comment) {
+        this(name);
+        this.comment = comment;
+    }
+
+    public Comment getComment() {
+        return comment;
     }
 
 }

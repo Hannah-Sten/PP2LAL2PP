@@ -32,6 +32,11 @@ public class Parser {
      */
     private String currentFunction;
 
+    /**
+     * The last comment covered.
+     */
+    private Comment lastComment;
+
     Parser(String input) {
         this.input = input;
     }
@@ -55,6 +60,7 @@ public class Parser {
             }
 
             if (line.startsWith("#")) {
+                lastComment = new Comment(line.replaceAll("^# *", ""));
                 continue;
             }
 
@@ -673,10 +679,10 @@ public class Parser {
 
         // If there is no value specified
         if (line.sizeNoComments() == 2) {
-            var = new GlobalVariable(firstToken);
+            var = new GlobalVariable(firstToken, lastComment);
         }
         else {
-            var = new GlobalVariable(firstToken, Value.parse(line.getToken(3)));
+            var = new GlobalVariable(firstToken, Value.parse(line.getToken(3)), lastComment);
         }
 
         program.addGlobalVariable(var);
