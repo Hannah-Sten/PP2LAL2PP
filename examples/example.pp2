@@ -1,13 +1,13 @@
-;##
-;#  Example file of how a PP2 assembly program looks like in PP2LAL2PP.
-;#
-;#  This is exercise 1.2b that turns on the LEDs that correspond with
-;#  the pressed buttons. Pressing buttons 0 and 1 will increase their
-;#  corresponding counter that will be displayed on the 7-segment
-;#  display. Only the most recently pressed button will show its number.
-;#
-;#  @author Ruben Schellekens
-;##
+#;
+#;  Example file of how a PP2 assembly program looks like in PP2LAL2PP.
+#;
+#;  This is exercise 1.2b that turns on the LEDs that correspond with
+#;  the pressed buttons. Pressing buttons 0 and 1 will increase their
+#;  corresponding counter that will be displayed on the 7-segment
+#;  display. Only the most recently pressed button will show its number.
+#;
+#;  @author Ruben Schellekens
+#;
 
 # Include is just for illustration purposes.
 include const
@@ -23,10 +23,10 @@ global previousState       # = 0
 # The current state of the buttons.
 global currentState        # = 0
 
-;##
-;#   Main loop that continuously executes until exit() is called or the machine gets
-;#   shut down. I love PP2.
-;##
+#;
+#;   Main loop that continuously executes until exit() is called or the machine gets
+#;   shut down. I love PP2.
+#;
 function main() {
     # Mark the current state as old
     previousState = currentState
