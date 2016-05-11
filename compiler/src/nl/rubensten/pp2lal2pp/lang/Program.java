@@ -1,7 +1,5 @@
 package nl.rubensten.pp2lal2pp.lang;
 
-import com.sun.javafx.UnmodifiableArrayList;
-import com.sun.javafx.collections.UnmodifiableListSet;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 
@@ -11,6 +9,11 @@ import java.util.*;
  * @author Ruben Schellekens
  */
 public class Program {
+
+    /**
+     * The lines of the header comment.
+     */
+    private List<String> header;
 
     /**
      * All the functions that are in the program.
@@ -141,6 +144,14 @@ public class Program {
     public GlobalVariable getGlobalVariable(String name) {
         int index = globalVariableIndices.get(name);
         return globalVariables.get(index);
+    }
+
+    public void setHeader(List<String> header) {
+        this.header = header;
+    }
+
+    public List<String> getHeader() {
+        return header;
     }
 
     @Override
