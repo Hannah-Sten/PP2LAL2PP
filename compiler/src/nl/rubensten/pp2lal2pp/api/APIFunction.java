@@ -6,8 +6,13 @@ package nl.rubensten.pp2lal2pp.api;
 public interface APIFunction {
 
     /**
-     * @return The standard code for the API-function.
+     * The name of the function.
      */
-    String getAssembly();
+    String getName();
+
+    /**
+     * The assembly implementation of the function.
+     */
+    String getDeclaration();
 
 }
