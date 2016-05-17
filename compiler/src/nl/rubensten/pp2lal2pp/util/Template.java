@@ -5,6 +5,8 @@ package nl.rubensten.pp2lal2pp.util;
  */
 public enum Template {
 
+    API_EXIT("api-exit.template"),
+
     /**
      * Denotes the start of the program.
      */
