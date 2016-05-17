@@ -85,7 +85,7 @@ public class Compiler {
             }
             first = false;
 
-            assembly.append(";# ").append(line);
+            assembly.append(";#  ").append(line);
         }
     }
 
@@ -110,6 +110,10 @@ public class Compiler {
      *         The function to compile.
      */
     private void compileFunction(Function function) {
+        for (String string : function.getPp2doc()) {
+            assembly.append(";#  ").append(string).append("\n");
+        }
+
         String line = Template.STATEMENT.load();
 
         int spaceLabel = getSpace(line, "LABEL");
