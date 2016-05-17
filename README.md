@@ -12,6 +12,9 @@ Not possible (yet).
 ## How to compile
 Not possible (yet).
 
+## How to refactor
+Not possible (yet).
+
 ## Syntax and language features
 See [Language Features.md](docs/Language Features.md).
 
