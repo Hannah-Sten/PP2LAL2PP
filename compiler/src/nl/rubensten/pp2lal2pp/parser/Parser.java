@@ -1,8 +1,6 @@
 package nl.rubensten.pp2lal2pp.parser;
 
 import nl.rubensten.pp2lal2pp.ParseException;
-import nl.rubensten.pp2lal2pp.compiler.LineTokeniser;
-import nl.rubensten.pp2lal2pp.compiler.Tokeniser;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 

@@ -1,13 +1,14 @@
-package nl.rubensten.pp2lal2pp.compiler;
+package nl.rubensten.pp2lal2pp.parser;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import nl.rubensten.pp2lal2pp.Constants;
-import nl.rubensten.pp2lal2pp.PP2LAL2PP;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.lang.Operator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Ruben Schellekens
