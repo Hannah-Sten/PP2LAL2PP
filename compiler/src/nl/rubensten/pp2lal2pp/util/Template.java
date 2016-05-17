@@ -1,5 +1,8 @@
 package nl.rubensten.pp2lal2pp.util;
 
+import nl.rubensten.pp2lal2pp.CompilerException;
+import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
+
 /**
  * @author Ruben Schellekens
  */
@@ -80,6 +83,46 @@ public enum Template {
 
     Template(String filePath) {
         this.filePath = filePath;
+    }
+
+    /**
+     * Replaces all given keys with the given values.
+     *
+     * @param keyValue
+     *         key value, key value, key value, ...
+     * @return The string where all keys are replaced by their values.
+     */
+    public String replace(String... keyValue) {
+        if (keyValue.length % 2 == 1) {
+            throw new PP2LAL2PPException("keys don't match up with the values (odd length).");
+        }
+
+        String total = load();
+
+        for (int i = 0; i < keyValue.length; i += 2) {
+            int space = getSpace(total, keyValue[i]);
+            int count = keyValue[i + 1].length();
+            int tab = Math.max(1, space - count);
+
+            total = total.replace("{$" + keyValue[i], keyValue[i + 1])
+                    .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tab));
+        }
+
+        return total;
+    }
+
+    /**
+     * Get the amount of characters of space is reserved for the given variable idk.
+     */
+    private int getSpace(String source, String name) {
+        try {
+            return Integer.parseInt(source.replaceAll(".*\\{\\$" + name + "%", "")
+                    .replaceAll("\\}.*", ""));
+        }
+        catch (NumberFormatException nfe) {
+            throw new CompilerException("Template hasn't been set up correctly ({$" +
+                    name + "%#}).");
+        }
     }
 
     /**

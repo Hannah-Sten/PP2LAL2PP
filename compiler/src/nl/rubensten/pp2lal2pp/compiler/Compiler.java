@@ -7,7 +7,6 @@ import nl.rubensten.pp2lal2pp.lang.GlobalVariable;
 import nl.rubensten.pp2lal2pp.lang.Program;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
 import nl.rubensten.pp2lal2pp.util.Template;
-import nl.rubensten.pp2lal2pp.util.Util;
 
 import java.io.File;
 import java.util.List;
@@ -53,13 +52,36 @@ public class Compiler {
         assembly.append("\n\n");
         compileGlobal();
         assembly.append("\n");
-        assembly.append(Template.BEGIN_MAIN);
-        assembly.append("\n\n");
+
+        // Initialisation
+        assembly.append(";#\n;#  Initialisation of the program.\n;#\n");
+        int R0 = -1;
+        for (GlobalVariable gv : input.getGlobalVariables()) {
+
+
+            assembly.append("                LOAD    R0  ")
+                    .append(gv.getDefaultValue())
+                    .append("\n");
+            assembly.append("                STOR    R0  [GB+")
+                    .append(gv.getName())
+                    .append("]\n");
+        }
+        assembly.append("\n");
 
         // Main function
         compileFunction(input.getMainFunction());
 
         // Other functions
+        for (Function function : input.getFunctions()) {
+            if (function.equals(input.getMainFunction())) {
+                continue;
+            }
+
+            assembly.append("\n");
+            compileFunction(function);
+        }
+
+        // Used API functions
 
 
         // @END
@@ -90,20 +112,6 @@ public class Compiler {
     }
 
     /**
-     * Get the amount of characters of space is reserved for the given variable idk.
-     */
-    private int getSpace(String source, String name) {
-        try {
-            return Integer.parseInt(source.replaceAll(".*\\{\\$" + name + "%", "")
-                    .replaceAll("\\}.*", ""));
-        }
-        catch (NumberFormatException nfe) {
-            throw new CompilerException("EQU template hasn't been set up correctly ({$" +
-                    name + "%#}).");
-        }
-    }
-
-    /**
      * Writes the given function to the assembly-StringBuilder.
      *
      * @param function
@@ -114,19 +122,7 @@ public class Compiler {
             assembly.append(";#  ").append(string).append("\n");
         }
 
-        String line = Template.STATEMENT.load();
-
-        int spaceLabel = getSpace(line, "LABEL");
-        int spaceInstruction = getSpace(line, "INSTRUCTION");
-        int spaceArg1 = getSpace(line, "ARG1");
-        int spaceArg2 = getSpace(line, "ARG2");
-
-        // Label
-        int labelLength = function.getName().length() + 1;
-        int labelFill = Math.max(1, spaceLabel - labelLength);
-
-        String result = line.replace("{$LABEL", function.getName() + ":")
-                .replaceFirst("%[0-9]+\\}", Util.makeString(" ", labelFill));
+        String result = Template.STATEMENT.replace("LABEL", function.getName() + ":");
 
         // First statement
         List<Element> contents = function.getContents().getContents();
@@ -139,24 +135,10 @@ public class Compiler {
      * Writes all the global variables of the program to the assembly-StringBuilder.
      */
     private void compileGlobal() {
-        String equ = Template.EQU.load();
-
-        int spaceName = getSpace(equ, "NAME");
-        int spaceValue = getSpace(equ, "VALUE");
-
         for (GlobalVariable gv : input.getGlobalVariables()) {
-            int countName = gv.getName().length();
-            int countValue = Integer.toString(gv.getPointer()).length();
-            int tabName = Math.max(1, spaceName - countName);
-            int tabValue = Math.max(1, spaceValue - countValue);
 
-            String result = equ.replace("{$NAME", gv.getName())
-                    .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tabName))
-                    .replace("{$VALUE", gv.getPointer() + "")
-                    .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tabValue))
-                    .replace("{$COMMENT}", gv.getComment().getContents());
-
-            assembly.append(result);
+            assembly.append(Template.EQU.replace("NAME", gv.getName(), "VALUE", gv.getPointer() +
+                    "").replace("{$COMMENT}", gv.getComment().getContents()));
             assembly.append("\n");
         }
     }
