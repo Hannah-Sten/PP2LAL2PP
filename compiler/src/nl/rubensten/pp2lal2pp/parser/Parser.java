@@ -120,6 +120,11 @@ public class Parser {
             StringBuilder comment = new StringBuilder();
             boolean parsed = false;
 
+            // Function is done.
+            if (line.isFirst("}")) {
+                break;
+            }
+
             // Variable declarations.
             if (line.isFirst("var")) {
                 body.add(parseVariable(line));
