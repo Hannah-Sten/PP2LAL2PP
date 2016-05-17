@@ -154,6 +154,11 @@ public class Parser {
                 body.add(new Continue());
                 parsed = true;
             }
+            // Return
+            else if (line.isFirst("return")) {
+                body.add(parseReturn(line));
+                parsed = true;
+            }
             // Full line comment.
             else if (line.equals(0, "#")) {
                 parsed = true;
@@ -203,7 +208,24 @@ public class Parser {
     }
 
     /**
+     * Parses a return statement.
+     *
+     * @param line
+     *         The line the return statement is on.
+     * @return The return object.
+     */
+    private Return parseReturn(Tokeniser line) {
+        if (line.size() == 1) {
+            return new Return();
+        }
+        else {
+            return new Return(Value.parse(line.getToken(1)));
+        }
+    }
+
+    /**
      * Parses the header comment lines.
+     *
      * @return A list of all lines in the header comment WITHOUT #s.
      */
     private List<String> parseHeaderComment(String contents) {
@@ -323,6 +345,11 @@ public class Parser {
             // Function calls.
             else if (isFunctionCall(line)) {
                 body.add(parseFunctionCall(line));
+                parsed = true;
+            }
+            // Return
+            else if (line.isFirst("return")) {
+                body.add(parseReturn(line));
                 parsed = true;
             }
             // Continue

@@ -19,7 +19,7 @@ public class Return implements Element, Identifyable {
 
     public Return() {
         this.id = IDManager.newId();
-        this.returnValue = Number.ZERO;
+        this.returnValue = null;
     }
 
     public Return(Value returnValue) {
@@ -41,4 +41,8 @@ public class Return implements Element, Identifyable {
         return Value.EMPTY;
     }
 
+    @Override
+    public String toString() {
+        return "{return " + returnValue + "}";
+    }
 }

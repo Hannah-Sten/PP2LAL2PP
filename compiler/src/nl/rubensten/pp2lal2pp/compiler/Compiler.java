@@ -187,7 +187,43 @@ public class Compiler {
                 compileFunctionContinue(label);
                 continue;
             }
+
+            // Function Return
+            if (elt instanceof Return && functionName != null) {
+                compileFunctionReturn((Return)elt, label);
+            }
         }
+    }
+
+    /**
+     * Compiles a function return.
+     *
+     * @param ret
+     *         The Return element.
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileFunctionReturn(Return ret, String label) {
+        // If there is a return value.
+        if (ret.getReturnValue() != null) {
+            assembly.append(Template.STATEMENT.replace(
+                    "LABEL", label,
+                    "INSTRUCTION", "LOAD",
+                    "ARG1", Constants.REG_RETURN,
+                    "ARG2", ret.getReturnValue().toString())
+                    .replace("{$COMMENT}", "; Load the return value.")
+            ).append("\n");
+
+            label = "";
+        }
+
+        assembly.append(Template.STATEMENT.replace(
+                "LABEL", label,
+                "INSTRUCTION", "RTS",
+                "ARG1", "",
+                "ARG2", "")
+                .replace("{$COMMENT}", "; Return from function " + function.getName() + ".")
+        );
     }
 
     /**
