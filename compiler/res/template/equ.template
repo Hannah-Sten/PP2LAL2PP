@@ -1,1 +1,1 @@
-{$NAME%16}EQU     {$VALUE%20}; {$COMMENT}
+{$NAME%16}EQU     {$VALUE%28}; {$COMMENT}

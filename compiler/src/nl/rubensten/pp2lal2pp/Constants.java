@@ -16,6 +16,11 @@ public class Constants {
     public static final String REG_STACK_POINTER = "SP";
 
     /**
+     * The register that stores where the location of the IOAREA is.
+     */
+    public static final String REG_IOAREA = "R5";
+
+    /**
      * The register that is used for return values.
      */
     public static final String REG_RETURN = "R4";

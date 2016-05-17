@@ -1,14 +1,14 @@
 package nl.rubensten.pp2lal2pp.compiler;
 
 import nl.rubensten.pp2lal2pp.CompilerException;
-import nl.rubensten.pp2lal2pp.lang.Element;
-import nl.rubensten.pp2lal2pp.lang.Function;
-import nl.rubensten.pp2lal2pp.lang.GlobalVariable;
-import nl.rubensten.pp2lal2pp.lang.Program;
+import nl.rubensten.pp2lal2pp.Constants;
+import nl.rubensten.pp2lal2pp.lang.*;
+import nl.rubensten.pp2lal2pp.lang.Number;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
 import nl.rubensten.pp2lal2pp.util.Template;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,18 +55,51 @@ public class Compiler {
 
         // Initialisation
         assembly.append(";#\n;#  Initialisation of the program.\n;#\n");
-        int R0 = -1;
-        for (GlobalVariable gv : input.getGlobalVariables()) {
+        String label = "init:";
+        Number R0 = Number.MINUS_ONE;
+        List<GlobalVariable> globalVariables = new ArrayList<>(input.getGlobalVariables());
+        globalVariables.sort((c1, c2) ->
+                Integer.valueOf(
+                        ((Number)c1.getDefaultValue()).getIntValue()).compareTo(
+                        ((Number)c2.getDefaultValue()).getIntValue()));
 
+        // Initialisation: Global Variables.
+        for (GlobalVariable gv : globalVariables) {
+            if (R0 != gv.getDefaultValue()) {
+                R0 = (Number)gv.getDefaultValue();
 
-            assembly.append("                LOAD    R0  ")
-                    .append(gv.getDefaultValue())
+                assembly.append(
+                        Template.STATEMENT.replace(
+                            "LABEL", label,
+                            "INSTRUCTION", "LOAD",
+                            "ARG1", "R0",
+                            "ARG2", "" + gv.getDefaultValue())
+                            .replace("{$COMMENT}", "; Default value to load in global base."))
+                        .append("\n");
+            }
+
+            assembly.append(
+                    Template.STATEMENT.replace(
+                            "LABEL", "",
+                            "INSTRUCTION", "STOR",
+                            "ARG1", "R0",
+                            "ARG2", "[GB+" + gv.getName() + "]")
+                            .replace("{$COMMENT}", "; Give global variable " +
+                                    gv.getName() + " initial value " + gv.getDefaultValue() + "."))
                     .append("\n");
-            assembly.append("                STOR    R0  [GB+")
-                    .append(gv.getName())
-                    .append("]\n");
+
+            label = "";
         }
-        assembly.append("\n");
+
+        // Initialisation: IOAREA
+        assembly.append(
+                Template.STATEMENT.replace(
+                        "LABEL", "",
+                        "INSTRUCTION", "LOAD",
+                        "ARG1", Constants.REG_IOAREA,
+                        "ARG2", "IOAREA")
+                        .replace("{$COMMENT}", "; Store the address of the IOAREA for later use."))
+                .append("\n\n");
 
         // Main function
         compileFunction(input.getMainFunction());
