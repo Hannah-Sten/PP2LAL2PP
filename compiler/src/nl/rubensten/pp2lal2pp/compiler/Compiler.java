@@ -31,6 +31,11 @@ public class Compiler {
      */
     private StringBuilder assembly;
 
+    /**
+     * The function the compiler is currently working with.
+     */
+    private Function function;
+
     public Compiler(File output, Program input) {
         this.output = output;
         this.input = input;
@@ -70,11 +75,11 @@ public class Compiler {
 
                 assembly.append(
                         Template.STATEMENT.replace(
-                            "LABEL", label,
-                            "INSTRUCTION", "LOAD",
-                            "ARG1", "R0",
-                            "ARG2", "" + gv.getDefaultValue())
-                            .replace("{$COMMENT}", "; Default value to load in global base."))
+                                "LABEL", label,
+                                "INSTRUCTION", "LOAD",
+                                "ARG1", Constants.REG_GENERAL,
+                                "ARG2", "" + gv.getDefaultValue())
+                                .replace("{$COMMENT}", "; Default value to load in global base."))
                         .append("\n");
             }
 
@@ -82,8 +87,8 @@ public class Compiler {
                     Template.STATEMENT.replace(
                             "LABEL", "",
                             "INSTRUCTION", "STOR",
-                            "ARG1", "R0",
-                            "ARG2", "[GB+" + gv.getName() + "]")
+                            "ARG1", Constants.REG_GENERAL,
+                            "ARG2", "[" + Constants.REG_GLOBAL_BASE + "+" + gv.getName() + "]")
                             .replace("{$COMMENT}", "; Give global variable " +
                                     gv.getName() + " initial value " + gv.getDefaultValue() + "."))
                     .append("\n");
@@ -151,17 +156,54 @@ public class Compiler {
      *         The function to compile.
      */
     private void compileFunction(Function function) {
+        this.function = function;
+
         for (String string : function.getPp2doc()) {
             assembly.append(";#  ").append(string).append("\n");
         }
 
-        String result = Template.STATEMENT.replace("LABEL", function.getName() + ":");
-
-        // First statement
-        List<Element> contents = function.getContents().getContents();
-
-        assembly.append(result);
+        compileBlock(function.getContents(), function.getName(), Function.class);
         assembly.append("\n");
+    }
+
+    /**
+     * Writes the given block to the assembly-StringBuilder.
+     *
+     * @param block
+     *         The block to compile.
+     * @param functionName
+     *         The name of the function if it is the function's code block, or <code>null</code> if
+     *         it is a nested block.
+     * @param inside
+     *         In what kind of element the block contains the contents of.
+     */
+    private void compileBlock(Block block, String functionName, Class inside) {
+        List<Element> elts = block.getContents();
+        String label = (functionName == null ? "" : functionName + ":");
+
+        for (Element elt : elts) {
+            // Function Continue
+            if (elt instanceof Continue && functionName != null && inside != Loop.class) {
+                compileFunctionContinue(label);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Compiles a function continue.
+     *
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileFunctionContinue(String label) {
+        assembly.append(Template.STATEMENT.replace(
+                "LABEL", label,
+                "INSTRUCTION", "BRA",
+                "ARG1", function.getName(),
+                "ARG2", "")
+                .replace("{$COMMENT}", "; Repeat function " + function.getName() + ".")
+        );
     }
 
     /**

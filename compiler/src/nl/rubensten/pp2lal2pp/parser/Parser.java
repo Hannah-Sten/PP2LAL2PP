@@ -149,6 +149,11 @@ public class Parser {
                 body.add(parseFunctionCall(line));
                 parsed = true;
             }
+            // Continue
+            else if (line.isFirst("continue")) {
+                body.add(new Continue());
+                parsed = true;
+            }
             // Full line comment.
             else if (line.equals(0, "#")) {
                 parsed = true;
@@ -284,8 +289,9 @@ public class Parser {
             return new Block(body);
         }
 
-        line = new Tokeniser(lines.next());
         while (true) {
+            line = new Tokeniser(lines.next());
+
             if (line.isFirst("}")) {
                 break;
             }
@@ -317,6 +323,11 @@ public class Parser {
             // Function calls.
             else if (isFunctionCall(line)) {
                 body.add(parseFunctionCall(line));
+                parsed = true;
+            }
+            // Continue
+            else if (line.isFirst("continue")) {
+                body.add(new Continue());
                 parsed = true;
             }
             // Full line comment.
@@ -355,8 +366,6 @@ public class Parser {
                     break;
                 }
             }
-
-            line = new Tokeniser(lines.next());
         }
 
         return new Block(body);
@@ -558,6 +567,8 @@ public class Parser {
             }
 
             if (!line.isFirstIgnore("else", "}")) {
+                ListIterator<String> listIterator = (ListIterator<String>)lines;
+                listIterator.previous();
                 return new IfElse(expression, ifBlock, Block.EMPTY);
             }
 

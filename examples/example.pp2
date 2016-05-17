@@ -62,4 +62,6 @@ function main() {
     else if (button == 0b10) {
         set7Segment(0b10, countTwo)
     }
+    
+    continue
 }

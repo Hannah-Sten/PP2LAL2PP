@@ -31,6 +31,11 @@ public class Constants {
     public static final String REG_VARIABLE = "R3";
 
     /**
+     * The general purpose register.
+     */
+    public static final String REG_GENERAL = "R0";
+
+    /**
      * The string that denotes the start of a line comment.
      */
     public static final String LINE_COMMENT_START = "#";

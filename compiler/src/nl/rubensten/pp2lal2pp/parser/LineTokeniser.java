@@ -2,8 +2,6 @@ package nl.rubensten.pp2lal2pp.parser;
 
 import com.sun.javafx.UnmodifiableArrayList;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class LineTokeniser implements Iterable<String> {
 
     @Override
     public Iterator<String> iterator() {
-        return lines.iterator();
+        return lines.listIterator();
     }
 
 }
