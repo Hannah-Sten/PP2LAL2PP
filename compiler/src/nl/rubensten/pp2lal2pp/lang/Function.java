@@ -36,11 +36,19 @@ public class Function implements Identifyable, Element {
     private Block contents;
 
     /**
+     * The pp2doc documentation comment.
+     *
+     * Every line is a new element int he list.
+     */
+    private List<String> pp2doc;
+
+    /**
      * Automatically assigns pointers to the variables.
      */
-    public Function(String name, Variable... arguments) {
+    public Function(String name, List<String> pp2doc, Variable... arguments) {
         this.id = IDManager.newId();
         this.name = name;
+        this.pp2doc = pp2doc;
         this.arguments = new ArrayList<>();
 
         for (int i = 0; i < arguments.length; i++) {
@@ -52,9 +60,10 @@ public class Function implements Identifyable, Element {
     /**
      * Automatically assigns pointers to the variables.
      */
-    public Function(String name, List<Variable> arguments) {
+    public Function(String name, List<String> pp2doc, List<Variable> arguments) {
         this.id = IDManager.newId();
         this.name = name;
+        this.pp2doc = pp2doc;
         this.arguments = new ArrayList<>(arguments);
 
         for (int i = 0; i < arguments.size(); i++) {
@@ -78,6 +87,10 @@ public class Function implements Identifyable, Element {
         }
 
         return Optional.empty();
+    }
+
+    public List<String> getPp2doc() {
+        return pp2doc;
     }
 
     public String getName() {
@@ -108,6 +121,7 @@ public class Function implements Identifyable, Element {
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", contents=" + contents +
+                ", pp2doc=" + pp2doc +
                 '}';
     }
 }

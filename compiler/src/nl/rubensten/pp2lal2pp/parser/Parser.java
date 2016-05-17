@@ -51,17 +51,22 @@ public class Parser {
         Function function;
 
         LineTokeniser lines = new LineTokeniser(input);
+        List<String> pp2doc = new ArrayList<>();
+
         for (Iterator<String> it = lines.iterator(); it.hasNext(); ) {
             String line = it.next();
             Tokeniser tokens = new Tokeniser(line);
 
             // Parse global variables.
             if (parseGlobal(program, tokens)) {
+                pp2doc.clear();
                 continue;
             }
 
             if (line.startsWith("#")) {
-                lastComment = new Comment(line.replaceAll("^#\\s*", ""));
+                String comment = line.replaceAll("^#;?\\s*", "");
+                lastComment = new Comment(comment);
+                pp2doc.add(comment);
                 continue;
             }
 
@@ -96,7 +101,8 @@ public class Parser {
                 arguments.add(new Variable(name));
             }
 
-            function = new Function(currentFunction, arguments);
+            function = new Function(currentFunction, new ArrayList<>(pp2doc), arguments);
+            pp2doc.clear();
             Block block = parseFunction(it);
             function.setContents(block);
             program.addFunction(function);
