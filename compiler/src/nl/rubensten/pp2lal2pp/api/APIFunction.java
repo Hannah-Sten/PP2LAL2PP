@@ -16,10 +16,10 @@ public class APIFunction {
 
     private static Set<String> apiFunctions = new HashSet<String>() {{
         add("exit");
-        add("getButtonStates");
-        add("isButtonPressed");
-        add("setLEDs");
-        add("setLED");
+        add("getInputStates");
+        add("isInputOn");
+        add("setOutput");
+        add("setSingleOutput");
         add("set7Segment");
     }};
 
