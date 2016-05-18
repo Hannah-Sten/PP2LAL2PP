@@ -127,11 +127,10 @@ public class Compiler {
 
         if (input.getApiFunctions().contains("exit")) {
             assembly.append(APIFunction.getImplementationTemplate("exit").get().load());
-            assembly.append("\n");
+            assembly.append("\n\n");
         }
 
         // @END
-        assembly.append("\n");
         assembly.append(Template.END);
 
         // Write to file
@@ -277,6 +276,10 @@ public class Compiler {
             String textArg1 = getVariableValue(arg1);
             String textArg2 = getVariableValue(arg2);
 
+            if (arg2.isJustNumber()) {
+                textArg2 = "%" + Integer.toBinaryString(Integer.parseInt(textArg2));
+            }
+
             String result = Template.API_INVOKE_SET7SEGMENT.replace(
                     "ARG1", textArg1,
                     "ARG2", textArg2)
@@ -297,6 +300,21 @@ public class Compiler {
             assembly.append("\n");
             skipVariables = true;
             skipCall = true;
+            label = "";
+        }
+        // API isInputOn(num)
+        else if (call.getCalled().equals("isInputOn")) {
+            String text = getVariableValue(vars.get(0));
+            if (vars.get(0).isJustNumber()) {
+                text = "%" + Integer.toBinaryString(Integer.parseInt(text));
+            }
+
+            String result = insertLabel(Template.API_INVOKE_ISINPUTON.replace(
+                    "ARG", text
+            ), label)
+                    .replace("{$COMMENT}", "Load the number of the input to check for.\n");
+            assembly.append(result);
+            skipVariables = true;
             label = "";
         }
 
