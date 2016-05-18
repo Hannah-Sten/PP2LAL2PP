@@ -121,7 +121,7 @@ public class Compiler {
 
             if (implementation.isPresent()) {
                 assembly.append(implementation.get().load());
-                assembly.append("\n");
+                assembly.append("\n\n");
             }
         }
 
@@ -261,6 +261,7 @@ public class Compiler {
     private void compileFunctionCall(FunctionCall call, String label) {
         List<Variable> vars = call.getArguments();
         boolean skipVariables = false;
+        boolean skipCall = false;
 
         // API exit()
         if (call.getCalled().equals("exit")) {
@@ -268,7 +269,7 @@ public class Compiler {
             assembly.append("\n");
             return;
         }
-        // API set7Segment(num)
+        // API set7Segment(dig, val)
         else if (call.getCalled().equals("set7Segment")) {
             Variable arg1 = vars.get(0);
             Variable arg2 = vars.get(1);
@@ -279,14 +280,24 @@ public class Compiler {
             String result = Template.API_INVOKE_SET7SEGMENT.replace(
                     "ARG1", textArg1,
                     "ARG2", textArg2)
-                    .replace("{$COMMENT1}", "Load the value to display.")
-                    .replace("{$COMMENT2}", "Load the index of the display.");
+                    .replace("{$COMMENT1}", "Load the value to display on the 7Segment display.")
+                    .replace("{$COMMENT2}", "Load the index of the display on the 7Segment " +
+                            "display.");
 
             String stuff = insertLabel(result, label);
             assembly.append(stuff).append("\n");
 
             label = "";
             skipVariables = true;
+        }
+        // API getInputStates()
+        else if (call.getCalled().equals("getInputStates")) {
+            String result = insertLabel(Template.API_INVOKE_GETINPUTSTATES.load(), label);
+            assembly.append(result);
+            assembly.append("\n");
+            skipVariables = true;
+            skipCall = true;
+            label = "";
         }
 
         for (Variable var : vars) {
@@ -320,8 +331,10 @@ public class Compiler {
                     "Push the value onto the stack.\n"));
         }
 
-        assembly.append(Template.fillStatement(label, "BRS", call.getCalled(), "",
-                "Call function " + call.getCalled() + ".\n"));
+        if (!skipCall) {
+            assembly.append(Template.fillStatement(label, "BRS", call.getCalled(), "",
+                    "Call function " + call.getCalled() + ".\n"));
+        }
 
         if (!skipVariables) {
             assembly.append(Template.fillStatement("", "ADD", Constants.REG_STACK_POINTER,

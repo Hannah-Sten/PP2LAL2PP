@@ -1,0 +1,6 @@
+;#
+;#  Gets the state of the inputs.
+;#  R4 : upon exit, contains a number that shows what inputs are pressed (binary format).
+;#
+getInputStates: LOAD    R4  [R5+INPUT]              ; Load the input states and puts it in the return register.
+                RTS                                 ; Exit getInputStates function.
