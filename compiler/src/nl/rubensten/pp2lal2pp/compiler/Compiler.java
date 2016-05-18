@@ -239,6 +239,7 @@ public class Compiler {
                 "ARG1", function.getName(),
                 "ARG2", "")
                 .replace("{$COMMENT}", "; Repeat function " + function.getName() + ".")
+                .replaceFirst(" ;", ";")
         );
     }
 
