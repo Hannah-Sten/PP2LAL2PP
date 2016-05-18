@@ -4,15 +4,15 @@ This page is continuously undergoing changes.
 
 ## Program flow
 
-#### `TODO` exit()
+#### exit()
 Immediately exits the entire program.
 
 ## Input
 
-#### `TODO` getInputStates()
+#### getInputStates()
 Returns the number representing the state of the input. The binary representation determines which inputs are on and which inputs aren't. If the digit in the binary representation equals `1` it is on, and if it is `0` it is not. For example if the method returns `01101011`, then you know inputs 0, 1, 3, 5 and 6 are on.
 
-#### `TODO` isInputOn(num)
+#### isInputOn(num)
 Checks if the input with index *num* is on. It will be evaluated as a boolean expression. It will return *true* if the input is on and *false* if the input is not on. Inputs are zero-indexed.
 
 ## Output
@@ -23,5 +23,5 @@ Sets the states of all 8 outputs. The value is a binary number where every digit
 #### `TODO` setSingleOutput(num, val)
 Changes the state of the output with index num (zero-indexed from right to left) to on if *val* equals `1`, or to off if *val* equals 0. This method ignores the states of all other outputs.
 
-#### `TODO` set7Segment(dig, val)
+#### set7Segment(dig, val)
 Shows the given value *val* at the place of digit *dig*, again zero-indexed. *val* must be a value between 0 and 15 inclusive.
