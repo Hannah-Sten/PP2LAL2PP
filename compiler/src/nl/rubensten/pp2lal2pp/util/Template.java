@@ -86,6 +86,32 @@ public enum Template {
     }
 
     /**
+     * Calls {@link Template#replace(String...)} on {@link Template#STATEMENT} and automatically
+     * determines the keys.
+     *
+     * @param label
+     *         The label to put in front of the statement.
+     * @param instruction
+     *         The instruction.
+     * @param arg1
+     *         The first argument of the instruction.
+     * @param arg2
+     *         The second argument of the instruction.
+     * @param cmt
+     *         The comment without the ";"
+     * @return A nicely formatted line of code.
+     */
+    public static String fillStatement(String label, String instruction, String arg1, String arg2,
+                                       String cmt) {
+        return Template.STATEMENT.replace(
+                "LABEL", label,
+                "INSTRUCTION", instruction,
+                "ARG1", arg1,
+                "ARG2", arg2)
+                .replace("{$COMMENT}", "; " + cmt);
+    }
+
+    /**
      * Replaces all given keys with the given values.
      *
      * @param keyValue
@@ -98,11 +124,17 @@ public enum Template {
         }
 
         String total = load();
+        int overflow = 0;
 
         for (int i = 0; i < keyValue.length; i += 2) {
             int space = getSpace(total, keyValue[i]);
             int count = keyValue[i + 1].length();
-            int tab = Math.max(1, space - count);
+            int tab = Math.max(1, space - count - overflow);
+            overflow = 0;
+
+            if (count + 1 > space) {
+                overflow = -(space - (count + 1));
+            }
 
             total = total.replace("{$" + keyValue[i], keyValue[i + 1])
                     .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tab));

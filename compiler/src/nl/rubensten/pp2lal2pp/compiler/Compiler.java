@@ -68,43 +68,24 @@ public class Compiler {
                         ((Number)c1.getDefaultValue()).getIntValue()).compareTo(
                         ((Number)c2.getDefaultValue()).getIntValue()));
 
+        // Initialisation: IOAREA
+        assembly.append(Template.fillStatement("init:", "LOAD", Constants.REG_IOAREA, "IOAREA",
+                "Store the address of the IOAREA for later use.\n"));
+
         // Initialisation: Global Variables.
         for (GlobalVariable gv : globalVariables) {
             if (R0.getIntValue() != ((Number)gv.getDefaultValue()).getIntValue()) {
                 R0 = (Number)gv.getDefaultValue();
 
-                assembly.append(
-                        Template.STATEMENT.replace(
-                                "LABEL", label,
-                                "INSTRUCTION", "LOAD",
-                                "ARG1", Constants.REG_GENERAL,
-                                "ARG2", "" + gv.getDefaultValue())
-                                .replace("{$COMMENT}", "; Default value to load in global base."))
-                        .append("\n");
+                assembly.append(Template.fillStatement("", "LOAD", Constants.REG_GENERAL, "" + gv
+                        .getDefaultValue(), "Default value to load in global base.\n"));
             }
 
-            assembly.append(
-                    Template.STATEMENT.replace(
-                            "LABEL", "",
-                            "INSTRUCTION", "STOR",
-                            "ARG1", Constants.REG_GENERAL,
-                            "ARG2", "[" + Constants.REG_GLOBAL_BASE + "+" + gv.getName() + "]")
-                            .replace("{$COMMENT}", "; Give global variable " +
-                                    gv.getName() + " initial value " + gv.getDefaultValue() + "."))
-                    .append("\n");
-
-            label = "";
+            assembly.append(Template.fillStatement("", "STOR", Constants.REG_GENERAL,
+                    "[" + Constants.REG_GLOBAL_BASE + "+" + gv.getName() + "]",
+                    "Give global variable " +  gv.getName() + " initial value " + gv
+                            .getDefaultValue() + ".\n"));
         }
-
-        // Initialisation: IOAREA
-        assembly.append(
-                Template.STATEMENT.replace(
-                        "LABEL", "",
-                        "INSTRUCTION", "LOAD",
-                        "ARG1", Constants.REG_IOAREA,
-                        "ARG2", "IOAREA")
-                        .replace("{$COMMENT}", "; Store the address of the IOAREA for later use."))
-                .append("\n\n");
 
         // Main function
         compileFunction(input.getMainFunction());
@@ -185,14 +166,61 @@ public class Compiler {
             // Function Continue
             if (elt instanceof Continue && functionName != null && inside != Loop.class) {
                 compileFunctionContinue(label);
+                label = "";
                 continue;
             }
 
             // Function Return
             if (elt instanceof Return && functionName != null) {
                 compileFunctionReturn((Return)elt, label);
+                label = "";
+                continue;
+            }
+
+            // Function call
+            if (elt instanceof FunctionCall) {
+                compileFunctionCall((FunctionCall)elt, label);
+                label = "";
             }
         }
+    }
+
+    /**
+     * Compiles a function call.
+     *
+     * @param call
+     *         The functioncall element.
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileFunctionCall(FunctionCall call, String label) {
+        List<Variable> vars = call.getArguments();
+
+        for (Variable var : vars) {
+            // If number, do direct stuff and things.
+            if (var.isJustNumber()) {
+                assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
+                        var.getDefaultValue().stringRepresentation(),
+                        "Load the value " + var.getDefaultValue() +
+                                " in the R0 to prepare it for the stack.\n"));
+            }
+            // If variable, use pointer.
+            else {
+                assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
+                        "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]",
+                        "Load the value of variable " + var.getName() + ".\n"));
+            }
+
+            label = "";
+            assembly.append(Template.fillStatement(label, "PUSH", Constants.REG_GENERAL, "",
+                    "Push the value onto the stack.\n"));
+        }
+
+        assembly.append(Template.fillStatement(label, "BRS", call.getCalled(), "",
+                "Call function " + call.getCalled() + ".\n"));
+
+        assembly.append(Template.fillStatement("", "ADD", Constants.REG_STACK_POINTER,
+                "" + vars.size(), "Reset the stack pointer position.\n"));
     }
 
     /**
@@ -206,24 +234,13 @@ public class Compiler {
     private void compileFunctionReturn(Return ret, String label) {
         // If there is a return value.
         if (ret.getReturnValue() != null) {
-            assembly.append(Template.STATEMENT.replace(
-                    "LABEL", label,
-                    "INSTRUCTION", "LOAD",
-                    "ARG1", Constants.REG_RETURN,
-                    "ARG2", ret.getReturnValue().toString())
-                    .replace("{$COMMENT}", "; Load the return value.")
-            ).append("\n");
-
+            assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
+                    ret.getReturnValue().toString(), "Load the return value.\n"));
             label = "";
         }
 
-        assembly.append(Template.STATEMENT.replace(
-                "LABEL", label,
-                "INSTRUCTION", "RTS",
-                "ARG1", "",
-                "ARG2", "")
-                .replace("{$COMMENT}", "; Return from function " + function.getName() + ".")
-        );
+        assembly.append(Template.fillStatement(label, "RTS", "", "",
+                "Return from function " + function.getName() + "."));
     }
 
     /**
@@ -233,14 +250,8 @@ public class Compiler {
      *         The label to print before the statement.
      */
     private void compileFunctionContinue(String label) {
-        assembly.append(Template.STATEMENT.replace(
-                "LABEL", label,
-                "INSTRUCTION", "BRA",
-                "ARG1", function.getName(),
-                "ARG2", "")
-                .replace("{$COMMENT}", "; Repeat function " + function.getName() + ".")
-                .replaceFirst(" ;", ";")
-        );
+        assembly.append(Template.fillStatement(label, "BRA", function.getName(), "",
+                "Repeat function " + function.getName() + "."));
     }
 
     /**

@@ -30,6 +30,10 @@ public class Value implements Element {
             String meat = string.replace("0x", "");
             return new Number(Integer.parseInt(meat, 16));
         }
+        // Octal
+        else if (string.matches("0[0-1]+")) {
+            return new Number(Integer.parseInt(string, 8));
+        }
 
         try {
             return new Number(Integer.parseInt(string));
