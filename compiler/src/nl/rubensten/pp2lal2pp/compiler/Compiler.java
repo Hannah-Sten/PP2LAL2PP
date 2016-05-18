@@ -70,7 +70,7 @@ public class Compiler {
 
         // Initialisation: Global Variables.
         for (GlobalVariable gv : globalVariables) {
-            if (R0 != gv.getDefaultValue()) {
+            if (R0.getIntValue() != ((Number)gv.getDefaultValue()).getIntValue()) {
                 R0 = (Number)gv.getDefaultValue();
 
                 assembly.append(
