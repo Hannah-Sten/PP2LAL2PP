@@ -7,6 +7,7 @@ import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
 import nl.rubensten.pp2lal2pp.util.Template;
+import nl.rubensten.pp2lal2pp.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -106,6 +107,11 @@ public class Compiler {
         assembly.append("\n");
 
         // Used API functions
+        if (input.getApiFunctions().parallelStream().anyMatch(p -> p.contains("7Segment"))) {
+            assembly.append(Template.HEX7SEG.load());
+            assembly.append("\n\n");
+        }
+
         for (String string : input.getApiFunctions()) {
             if (string.equals("exit")) {
                 continue;
@@ -217,6 +223,19 @@ public class Compiler {
     private void compileFunctionCall(FunctionCall call, String label) {
         List<Variable> vars = call.getArguments();
 
+        // API exit()
+        if (call.getCalled().equals("exit")) {
+            String stuff = Template.API_INVOKE_EXIT.load();
+
+            if (label != null) {
+                stuff = stuff.replaceAll("^" + Util.makeString(" ", label.length()), label);
+            }
+
+            assembly.append(stuff);
+            assembly.append("\n");
+            return;
+        }
+
         for (Variable var : vars) {
             // If number, do direct stuff and things.
             if (var.isJustNumber()) {
@@ -262,7 +281,7 @@ public class Compiler {
     private void compileFunctionReturn(Return ret, String label) {
         // If there is a return value.
         if (ret.getReturnValue() != null) {
-            assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
+            assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_RETURN,
                     ret.getReturnValue().toString(), "Load the return value.\n"));
             label = "";
         }
