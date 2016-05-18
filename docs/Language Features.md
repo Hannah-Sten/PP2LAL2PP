@@ -44,7 +44,7 @@ Functions are declared as follows:
 }
 ```
 
-*functionName* this is the name of the function and must be unique and not be "main".
+*functionName* this is the name of the function and must be unique and can neither be "main", "init" or "exit".
 
 *argN (optional)* is a list of arguments seperated by a comma. You can have as many arguments as you like. If you don't want to have arguments you must leave the space between the parenthesis blank like `()`.
 
@@ -114,9 +114,13 @@ else {
 
 **Decimal numbers** can only be typed using characters in the set `{1,2,3,4,5,6,7,8,9,0}` and cannot start with a `0`. Examples: `3`, `123`, `598123`, 
 
-**Binary numbers** are written with the characters `{0,1}` after the prefix `0b`. Meaning that the number 10 would become `0b1010` or `0b00001010`for example as prefix zeros are allowed.
+**Binary numbers** are written with the characters `{0,1}` after the prefix `0b`. Meaning that the number 10 would become `0b1010` or `0b00001010` for example as prefix zeros are allowed.
+
+**Octal numbers** are written with the characters `{0,1,2,3,4,5,6,7}` after the prefix `0`. Meaning that the number 35 would become `43` in decimal.
 
 **Hexadecimal numbers** are written with the characters `{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f}` after the prefix `0x`. Meaning that the number 334 would become `0x14E` or `0x0014e` as prefix zeros are allowed.
+
+**Other bases** can be made by using `0_BASE_DIGITS` where `BASE` is the base from 2 to 16 and `DIGITS` is the actual number. So 104 would become `0_3_10212` if you want to write it in base 3.
 
 ## Definitions (`define`)
 
@@ -234,3 +238,10 @@ inject {
     ; More of your assembly shizzles.
 }
 ```
+
+## Weird exceptions on the rules
+
+* All operations must have explicit parenthesis. Meaning that 2+3+4:=6 must be written as 2 + (3 + 4) := 6.
+* There can't be any operations in function calls. E.g. main(3+2) is illegal.
+* Function calls may only appear as the second element in operations.
+* You can't start your block on the same line as the opening bracket {.
