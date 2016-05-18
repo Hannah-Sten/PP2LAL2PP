@@ -116,7 +116,7 @@ else {
 
 **Binary numbers** are written with the characters `{0,1}` after the prefix `0b`. Meaning that the number 10 would become `0b1010` or `0b00001010` for example as prefix zeros are allowed.
 
-**Octal numbers** are written with the characters `{0,1,2,3,4,5,6,7}` after the prefix `0`. Meaning that the number `043` would become `35` in decimal.
+**Octal numbers** are written with the characters `{0,1,2,3,4,5,6,7}` after the prefix `0`. Meaning that the number `043` would become 35 in decimal.
 
 **Hexadecimal numbers** are written with the characters `{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f}` after the prefix `0x`. Meaning that the number 334 would become `0x14E` or `0x0014e` as prefix zeros are allowed.
 
@@ -241,7 +241,7 @@ inject {
 
 ## Weird exceptions on the rules
 
-* All operations must have explicit parenthesis. Meaning that 2+3+4:=6 must be written as 2 + (3 + 4) := 6.
-* There can't be any operations in function calls. E.g. main(3+2) is illegal.
+* All operations must have explicit parenthesis. Meaning that `2+3+4:=6` must be written as `2 + (3 + 4) := 6`.
+* There can't be any operations in function calls. E.g. `main(3+2)` is illegal.
 * Function calls may only appear as the second element in operations.
-* You can't start your block on the same line as the opening bracket {.
+* You can't start your block on the same line as the opening bracket `{`.
