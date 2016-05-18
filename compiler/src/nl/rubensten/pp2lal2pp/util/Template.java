@@ -8,15 +8,13 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
  */
 public enum Template {
 
-    /**
-     * How the API function exit() is implemented.
-     */
     API_EXIT("api-exit.template"),
 
-    /**
-     * How the API function exit() must be invoked.
-     */
+    API_SET7SEGMENT("api-set7Segment.template"),
+
     API_INVOKE_EXIT("api-invoke-exit.template"),
+
+    API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
 
     /**
      * Denotes the start of the program.
@@ -156,8 +154,8 @@ public enum Template {
      */
     private int getSpace(String source, String name) {
         try {
-            return Integer.parseInt(source.replaceAll(".*\\{\\$" + name + "%", "")
-                    .replaceAll("\\}.*", ""));
+            return Integer.parseInt(source.replaceAll(".*\\s*.*\\{\\$" + name + "%", "")
+                    .replaceFirst("\\}.*\\s*.*", ""));
         }
         catch (NumberFormatException nfe) {
             throw new CompilerException("Template hasn't been set up correctly ({$" +
