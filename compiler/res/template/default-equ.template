@@ -3,5 +3,5 @@ INPUT           EQU     7                           ; Position of the input butt
 OUTPUT          EQU     11                          ; Relative position of the power outputs.
 DSPDIG          EQU     9                           ; Relative position of the 7-segment display's digit selector.
 DSPSEG          EQU     8                           ; Relative position of the 7-segment display's segments.
-TIMER           EQU     13                          ; Timer address relative to IO.
-ADCONV          EQU     6                           ; A/D-converter address relative to IO.
+TIMER           EQU     13                          ; Timer address relative to IOAREA.
+ADCONV          EQU     6                           ; A/D-converter address relative to IOAREA.
