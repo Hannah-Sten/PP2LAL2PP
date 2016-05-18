@@ -86,7 +86,7 @@ public class Compiler {
 
             assembly.append(Template.fillStatement("", "STOR", Constants.REG_GENERAL,
                     "[" + Constants.REG_GLOBAL_BASE + "+" + gv.getName() + "]",
-                    "Give global variable " +  gv.getName() + " initial value " + gv
+                    "Give global variable " + gv.getName() + " initial value " + gv
                             .getDefaultValue() + ".\n"));
         }
 
@@ -213,6 +213,44 @@ public class Compiler {
     }
 
     /**
+     * Inserts a label if the label does not equals <code>null</code>.
+     */
+    private String insertLabel(String stuff, String label) {
+        if (label != null) {
+            stuff = stuff.replaceAll("^" + Util.makeString(" ", label.length()), label);
+        }
+
+        return stuff;
+    }
+
+    /**
+     * Get the way the value of the variable should be gotten in a load statement.
+     * <p>
+     * E.g. for a number it would be the decimal representation. However, for global variables it
+     * would be <code>[GB+POINTER]</code>.
+     * <p>
+     * Props for the amazing docs!
+     *
+     * @param var
+     *         The variable to get the value-thingy from.
+     * @return The value-thingy.
+     */
+    private String getVariableValue(Variable var) {
+        // Just number
+        if (var.isJustNumber()) {
+            return var.getDefaultValue().toString();
+        }
+        // Arg1: Global variable
+        else if (input.getGlobalVariable(var.getName()).isPresent()) {
+            return "[" + Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]";
+        }
+        // Arg1: Local variable
+        else {
+            return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
+        }
+    }
+
+    /**
      * Compiles a function call.
      *
      * @param call
@@ -222,21 +260,40 @@ public class Compiler {
      */
     private void compileFunctionCall(FunctionCall call, String label) {
         List<Variable> vars = call.getArguments();
+        boolean skipVariables = false;
 
         // API exit()
         if (call.getCalled().equals("exit")) {
-            String stuff = Template.API_INVOKE_EXIT.load();
-
-            if (label != null) {
-                stuff = stuff.replaceAll("^" + Util.makeString(" ", label.length()), label);
-            }
-
-            assembly.append(stuff);
+            assembly.append(insertLabel(Template.API_INVOKE_EXIT.load(), label));
             assembly.append("\n");
             return;
         }
+        // API set7Segment(num)
+        else if (call.getCalled().equals("set7Segment")) {
+            Variable arg1 = vars.get(0);
+            Variable arg2 = vars.get(1);
+
+            String textArg1 = getVariableValue(arg1);
+            String textArg2 = getVariableValue(arg2);
+
+            String result = Template.API_INVOKE_SET7SEGMENT.replace(
+                    "ARG1", textArg1,
+                    "ARG2", textArg2)
+                    .replace("{$COMMENT1}", "Load the value to display.")
+                    .replace("{$COMMENT2}", "Load the index of the display.");
+
+            String stuff = insertLabel(result, label);
+            assembly.append(stuff).append("\n");
+
+            label = "";
+            skipVariables = true;
+        }
 
         for (Variable var : vars) {
+            if (skipVariables) {
+                break;
+            }
+
             // If number, do direct stuff and things.
             if (var.isJustNumber()) {
                 assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
@@ -266,8 +323,10 @@ public class Compiler {
         assembly.append(Template.fillStatement(label, "BRS", call.getCalled(), "",
                 "Call function " + call.getCalled() + ".\n"));
 
-        assembly.append(Template.fillStatement("", "ADD", Constants.REG_STACK_POINTER,
-                "" + vars.size(), "Reset the stack pointer position.\n"));
+        if (!skipVariables) {
+            assembly.append(Template.fillStatement("", "ADD", Constants.REG_STACK_POINTER,
+                    "" + vars.size(), "Reset the stack pointer position.\n"));
+        }
     }
 
     /**
