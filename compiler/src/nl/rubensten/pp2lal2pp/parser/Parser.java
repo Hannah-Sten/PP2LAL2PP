@@ -266,6 +266,7 @@ public class Parser {
             }
 
             String name = line.getToken(0);
+            program.registerAPIFunction(name);
             return new FunctionCall(name, args);
         }
         catch (IndexOutOfBoundsException exception) {

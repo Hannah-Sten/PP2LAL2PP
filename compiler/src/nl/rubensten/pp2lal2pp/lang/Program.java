@@ -21,16 +21,9 @@ public class Program {
     private List<Function> functions;
 
     /**
-     * A set of all types of API-functions that are included in the program.
-     * <p>
-     * Based on this information, certain assembly parts have to be included in the source code.
+     * A set of all names of api functions that are included in the program.
      */
-    private Set<Class> apiFunctionTypes;
-
-    /**
-     * A set of all api functions that are included in the program.
-     */
-    private Set<APIFunction> apiFunctions;
+    private Set<String> apiFunctions;
 
     /**
      * Dictionary where the names of the functions are mapped to their location in {@link
@@ -54,25 +47,27 @@ public class Program {
         functionIndices = new HashMap<>();
         globalVariables = new ArrayList<>();
         globalVariableIndices = new HashMap<>();
-        apiFunctionTypes = new HashSet<>();
+        apiFunctions = new HashSet<>();
         apiFunctions = new HashSet<>();
     }
 
     /**
      * @return An <b>unmodifyable</b> set containing all API functions that have been called.
      */
-    public Set<APIFunction> getApiFunctions() {
+    public Set<String> getApiFunctions() {
         return Collections.unmodifiableSet(apiFunctions);
     }
 
     /**
-     * Registers that the given APIFunction is being used by the program.
+     * Checks if the given function is an API function. If so, it adds it to the set of used
+     * functions.
+     *
+     * @param functionName
+     *         The name of the function.
      */
-    public void addAPIFunction(APIFunction apiFunction) {
-        boolean newElt = apiFunctionTypes.add(apiFunction.getClass());
-
-        if (newElt) {
-            apiFunctions.add(apiFunction);
+    public void registerAPIFunction(String functionName) {
+        if (APIFunction.isAPIFunction(functionName)) {
+            apiFunctions.add(functionName);
         }
     }
 
@@ -141,9 +136,13 @@ public class Program {
      *         The name of the global variable to look up.
      * @return The global variable with the given name.
      */
-    public GlobalVariable getGlobalVariable(String name) {
+    public Optional<GlobalVariable> getGlobalVariable(String name) {
+        if (globalVariableIndices.get(name) == null) {
+            return Optional.empty();
+        }
+
         int index = globalVariableIndices.get(name);
-        return globalVariables.get(index);
+        return Optional.of(globalVariables.get(index));
     }
 
     public void setHeader(List<String> header) {
@@ -158,7 +157,7 @@ public class Program {
     public String toString() {
         return "Program{" + "apiFunctions=" + apiFunctions +
                 ", functions=" + functions +
-                ", apiFunctionTypes=" + apiFunctionTypes +
+                ", apiFunctions=" + apiFunctions +
                 ", functionIndices=" + functionIndices +
                 ", globalVariables=" + globalVariables +
                 ", globalVariableIndices=" + globalVariableIndices +

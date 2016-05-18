@@ -2,6 +2,7 @@ package nl.rubensten.pp2lal2pp.compiler;
 
 import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.Constants;
+import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
@@ -10,6 +11,7 @@ import nl.rubensten.pp2lal2pp.util.Template;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Ruben Schellekens
@@ -87,6 +89,8 @@ public class Compiler {
                             .getDefaultValue() + ".\n"));
         }
 
+        assembly.append("\n");
+
         // Main function
         compileFunction(input.getMainFunction());
 
@@ -99,9 +103,26 @@ public class Compiler {
             assembly.append("\n");
             compileFunction(function);
         }
+        assembly.append("\n");
 
         // Used API functions
+        for (String string : input.getApiFunctions()) {
+            if (string.equals("exit")) {
+                continue;
+            }
 
+            Optional<Template> implementation = APIFunction.getImplementationTemplate(string);
+
+            if (implementation.isPresent()) {
+                assembly.append(implementation.get().load());
+                assembly.append("\n");
+            }
+        }
+
+        if (input.getApiFunctions().contains("exit")) {
+            assembly.append(APIFunction.getImplementationTemplate("exit").get().load());
+            assembly.append("\n");
+        }
 
         // @END
         assembly.append("\n");
@@ -204,7 +225,14 @@ public class Compiler {
                         "Load the value " + var.getDefaultValue() +
                                 " in the R0 to prepare it for the stack.\n"));
             }
-            // If variable, use pointer.
+            // Global variable
+            else if (input.getGlobalVariable(var.getName()).isPresent()) {
+                GlobalVariable gvar = input.getGlobalVariable(var.getName()).get();
+                assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
+                        "[" + Constants.REG_GLOBAL_BASE + "+" + gvar.getName() + "]",
+                        "Load the value of global variable " + gvar.getName() + ".\n"));
+            }
+            // Local variable
             else {
                 assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
                         "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]",

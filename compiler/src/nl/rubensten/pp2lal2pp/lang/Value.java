@@ -34,6 +34,12 @@ public class Value implements Element {
         else if (string.matches("0[0-1]+")) {
             return new Number(Integer.parseInt(string, 8));
         }
+        // Other base
+        else if (string.matches("0_[0-9]+_[0-9]+")) {
+            String base = string.split("_")[1];
+            int baseInt = Integer.parseInt(base);
+            return new Number(Integer.parseInt(string.split("_")[2].replaceAll("^0+", ""), baseInt));
+        }
 
         try {
             return new Number(Integer.parseInt(string));

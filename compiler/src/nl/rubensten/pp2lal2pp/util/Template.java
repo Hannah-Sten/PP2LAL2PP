@@ -8,7 +8,15 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
  */
 public enum Template {
 
+    /**
+     * How the API function exit() is implemented.
+     */
     API_EXIT("api-exit.template"),
+
+    /**
+     * How the API function exit() must be invoked.
+     */
+    API_INVOKE_EXIT("api-invoke-exit.template"),
 
     /**
      * Denotes the start of the program.
@@ -165,6 +173,10 @@ public enum Template {
     public String load() {
         StreamWorker sw = new StreamWorker(getClass().getResourceAsStream(getPath()));
         return sw.read();
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     public String getPath() {
