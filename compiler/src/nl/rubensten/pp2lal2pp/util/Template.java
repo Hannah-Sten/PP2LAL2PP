@@ -10,10 +10,12 @@ public enum Template {
 
     API_EXIT("api-exit.template"),
     API_GETINPUTSTATES("api-getInputStates.template"),
+    API_ISINPUTON("api-isInputOn.template"),
     API_SET7SEGMENT("api-set7Segment.template"),
 
     API_INVOKE_EXIT("api-invoke-exit.template"),
     API_INVOKE_GETINPUTSTATES("api-invoke-getInputStates.template"),
+    API_INVOKE_ISINPUTON("api-invoke-isInputOn.template"),
     API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
 
     /**
