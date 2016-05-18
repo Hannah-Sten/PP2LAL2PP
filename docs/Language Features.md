@@ -116,7 +116,7 @@ else {
 
 **Binary numbers** are written with the characters `{0,1}` after the prefix `0b`. Meaning that the number 10 would become `0b1010` or `0b00001010` for example as prefix zeros are allowed.
 
-**Octal numbers** are written with the characters `{0,1,2,3,4,5,6,7}` after the prefix `0`. Meaning that the number 35 would become `43` in decimal.
+**Octal numbers** are written with the characters `{0,1,2,3,4,5,6,7}` after the prefix `0`. Meaning that the number `043` would become `35` in decimal.
 
 **Hexadecimal numbers** are written with the characters `{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f}` after the prefix `0x`. Meaning that the number 334 would become `0x14E` or `0x0014e` as prefix zeros are allowed.
 
