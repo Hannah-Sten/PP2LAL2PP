@@ -1,0 +1,14 @@
+;#
+;#  Changes the state of a single output.
+;#  R0 : upon entry, contains the number of the output to chance (binary format, e.g. %100 for 3rd output).
+;#  R1 : upon entry, contains either 1 or 0 to turn it on or off respectively.
+;#
+setSingleOutput:LOAD    R2  [R5+OUTPUT]             ; Load the current output state.
+                CMP     R1  0                       ; Check if the output must be turned off.
+                BEQ     apiSsoOff                   ; Skip the turning on part.
+apiSsoOn:       OR      R2  R0                      ; OR the output that must be turned on on the output.
+                BRA     apiSsoEnd                   ; Skip the turning off part.
+apiSsoOff:      XOR     R0  %11111111               ; Negate the output that should be changed.
+                AND     R2  R0                      ; Only the targeted output will get a 0, turning off the output.
+apiSsoEnd:      STOR    R2  [R5+OUTPUT]             ; Change the output state.
+                RTS                                 ; Exit setSingleOutput function.

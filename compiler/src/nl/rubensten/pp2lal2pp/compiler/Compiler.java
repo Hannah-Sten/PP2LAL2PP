@@ -333,6 +333,31 @@ public class Compiler {
             skipVariables = true;
             label = "";
         }
+        // API setSingleOutput(num, val)
+        else if (call.getCalled().equals("setSingleOutput")) {
+            Variable arg1 = vars.get(0);
+            Variable arg2 = vars.get(1);
+
+            String textArg1 = getVariableValue(arg1);
+            String textArg2 = getVariableValue(arg2);
+
+            if (arg1.isJustNumber()) {
+                textArg1 = "%" + Integer.toBinaryString(Integer.parseInt(textArg1));
+            }
+
+            String result = Template.API_INVOKE_SET7SEGMENT.replace(
+                    "ARG1", textArg1,
+                    "ARG2", textArg2)
+                    .replace("{$COMMENT1}", "Load the index of the output to change.")
+                    .replace("{$COMMENT2}", "Command to turn the output " + (textArg2.equals("0")
+                            ? "off" : "on") + ".");
+
+            String stuff = insertLabel(result, label);
+            assembly.append(stuff).append("\n");
+
+            label = "";
+            skipVariables = true;
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
