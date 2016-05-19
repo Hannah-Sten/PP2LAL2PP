@@ -126,7 +126,7 @@ public class Program {
      */
     public void addGlobalVariable(GlobalVariable globalVariable) {
         globalVariables.add(globalVariable);
-        globalVariableIndices.put(globalVariable.getName(), globalVariables.size());
+        globalVariableIndices.put(globalVariable.getName(), globalVariables.size() - 1);
     }
 
     /**
