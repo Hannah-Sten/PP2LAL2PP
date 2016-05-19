@@ -14,6 +14,7 @@ public enum Template {
     API_ISINPUTON("api-isInputOn.template"),
     API_SET7SEGMENT("api-set7Segment.template"),
     API_SETOUTPUT("api-setOutput.template"),
+    API_SETSINGLEOUTPUT("api-setSingleOutput.template"),
 
     // API function calls
     API_INVOKE_EXIT("api-invoke-exit.template"),
@@ -21,6 +22,7 @@ public enum Template {
     API_INVOKE_ISINPUTON("api-invoke-isInputOn.template"),
     API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
     API_INVOKE_SETOUTPUT("api-invoke-setOutput.template"),
+    API_INVOKE_SETSINGLEOUTPUT("api-invoke-setSingleOutput"),
 
     /**
      * Denotes the start of the program.

@@ -1,0 +1,2 @@
+                LOAD    R0  {$ARG1%24}; {$COMMENT1}
+                LOAD    R1  {$ARG2%24}; {$COMMENT2}
