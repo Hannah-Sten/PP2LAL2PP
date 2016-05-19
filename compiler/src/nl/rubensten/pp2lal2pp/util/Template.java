@@ -8,15 +8,19 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
  */
 public enum Template {
 
+    // API implementations
     API_EXIT("api-exit.template"),
     API_GETINPUTSTATES("api-getInputStates.template"),
     API_ISINPUTON("api-isInputOn.template"),
     API_SET7SEGMENT("api-set7Segment.template"),
+    API_SETOUTPUT("api-setOutput.template"),
 
+    // API function calls
     API_INVOKE_EXIT("api-invoke-exit.template"),
     API_INVOKE_GETINPUTSTATES("api-invoke-getInputStates.template"),
     API_INVOKE_ISINPUTON("api-invoke-isInputOn.template"),
     API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
+    API_INVOKE_SETOUTPUT("api-invoke-setOutput.template"),
 
     /**
      * Denotes the start of the program.

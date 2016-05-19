@@ -1,0 +1,6 @@
+;#
+;#  Changes the state of the outputs.
+;#  R0 : upon entry, contains the value of the output state.
+;#
+setOutput:      STOR    R0  [R5+OUTPUT]             ; Store the new output state.
+                RTS                                 ; Exit setOutput function.

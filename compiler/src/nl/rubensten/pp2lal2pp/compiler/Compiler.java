@@ -317,6 +317,22 @@ public class Compiler {
             skipVariables = true;
             label = "";
         }
+        // API setOutput(val)
+        else if (call.getCalled().equals("setOutput")) {
+            Variable arg = vars.get(0);
+            String text = getVariableValue(arg);
+            if (arg.isJustNumber()) {
+                text = "%" + Integer.toBinaryString(Integer.parseInt(text));
+            }
+
+            String result = insertLabel(Template.API_INVOKE_SETOUTPUT.replace(
+                    "ARG", text
+            ), label)
+                    .replace("{$COMMENT}", "Set what value has to be loaded into output.\n");
+            assembly.append(result);
+            skipVariables = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
