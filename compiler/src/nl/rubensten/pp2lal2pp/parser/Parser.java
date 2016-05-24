@@ -409,8 +409,6 @@ public class Parser {
      * @return The parsed operation.
      */
     private Operation parseOperation(Iterator<String> it, Tokeniser line) {
-        System.out.println(line.getOriginal());
-
         Element first;
         Operator op = null;
         Element second;
