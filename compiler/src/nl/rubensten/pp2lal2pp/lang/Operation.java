@@ -110,6 +110,42 @@ public class Operation implements Element {
         }
     }
 
+    public String toHumanReadableString() {
+        String first;
+        String firstOpen = "";
+        String firstClose = "";
+        String op = (operator == null ? "" : " " + operator.getSign() + " ");
+        String second = "";
+        String secondOpen = "";
+        String secondClose = "";
+
+        if (firstElement instanceof Operation) {
+            first = ((Operation)firstElement).toHumanReadableString();
+            firstOpen = "(";
+            firstClose = ")";
+        }
+        else if (firstElement instanceof Value) {
+            first = ((Value)firstElement).stringRepresentation();
+        }
+        else {
+            first = ((Variable)firstElement).getName();
+        }
+
+        if (secondElement instanceof Operation) {
+            second = ((Operation)secondElement).toHumanReadableString();
+            secondOpen = "(";
+            secondClose = ")";
+        }
+        else if (secondElement instanceof Value) {
+            second = ((Value)secondElement).stringRepresentation();
+        }
+        else if (secondElement != null) {
+            second = ((Variable)secondElement).getName();
+        }
+
+        return firstOpen + first + firstClose + op + secondOpen + second + secondClose;
+    }
+
     @Override
     public Value getValue() {
         return null;
