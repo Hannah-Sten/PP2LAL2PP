@@ -36,15 +36,19 @@ public class Operation implements Element {
         this.operator = operator;
         this.secondElement = second;
 
-        boolean firstNum = first instanceof Number;
-        boolean secondNum = second instanceof Number;
-        boolean firstOp = first instanceof Operation;
-        boolean secondOp = second instanceof Operation;
+        if (operator == null) {
+            return;
+        }
 
         if (operator.getType() != Operator.OperatorType.ARITHMETIC &&
                 operator.getType() != Operator.OperatorType.BITWISE) {
             return;
         }
+
+        boolean firstNum = first instanceof Number;
+        boolean secondNum = second instanceof Number;
+        boolean firstOp = first instanceof Operation;
+        boolean secondOp = second instanceof Operation;
 
         // Autocalculate if there are two numbers.
         if (firstNum && secondNum) {
@@ -116,7 +120,7 @@ public class Operation implements Element {
     }
 
     public String toHumanReadableString() {
-        String first;
+        String first = "";
         String firstOpen = "";
         String firstClose = "";
         String op = (operator == null ? "" : " " + operator.getSign() + " ");
@@ -129,6 +133,10 @@ public class Operation implements Element {
             firstOpen = "(";
             firstClose = ")";
         }
+        else if (firstElement instanceof FunctionCall) {
+            FunctionCall call = (FunctionCall)firstElement;
+            second = call.getCalled() + call.getFormattedArguments();
+        }
         else if (firstElement instanceof Value) {
             first = ((Value)firstElement).stringRepresentation();
         }
@@ -140,6 +148,10 @@ public class Operation implements Element {
             second = ((Operation)secondElement).toHumanReadableString();
             secondOpen = "(";
             secondClose = ")";
+        }
+        else if (secondElement instanceof FunctionCall) {
+            FunctionCall call = (FunctionCall)secondElement;
+            second = call.getCalled() + call.getFormattedArguments();
         }
         else if (secondElement instanceof Value) {
             second = ((Value)secondElement).stringRepresentation();
