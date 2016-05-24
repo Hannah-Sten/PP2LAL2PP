@@ -107,10 +107,8 @@ public class Compiler {
                 continue;
             }
 
-            assembly.append("\n");
             compileFunction(function);
         }
-        assembly.append("\n");
 
         // Used API functions
         if (input.getApiFunctions().parallelStream().anyMatch(p -> p.contains("7Segment"))) {
@@ -179,6 +177,9 @@ public class Compiler {
         assembly.append("\n");
     }
 
+    // Hihi
+    private boolean functionReturn = false;
+
     /**
      * Writes the given block to the assembly-StringBuilder.
      *
@@ -186,7 +187,7 @@ public class Compiler {
      *         The block to compile.
      * @param functionName
      *         The name of the function if it is the function's code block, or <code>null</code> if
-     *         it is a nested block.
+     *         it is a nested block. Or the label name.
      * @param inside
      *         In what kind of element the block contains the contents of.
      */
@@ -203,7 +204,7 @@ public class Compiler {
             }
 
             // Function Return
-            if (elt instanceof Return && functionName != null) {
+            if (elt instanceof Return && (functionName != null || functionReturn)) {
                 compileFunctionReturn((Return)elt, label);
                 label = "";
                 continue;
@@ -228,6 +229,12 @@ public class Compiler {
                 label = "";
             }
 
+            // If-statement
+            if (elt instanceof IfElse) {
+                compileIfElse((IfElse)elt, label);
+                label = "";
+            }
+
             // Comment
             if (elt instanceof Comment) {
                 this.comment = (Comment)elt;
@@ -236,6 +243,79 @@ public class Compiler {
                 this.comment = null;
             }
         }
+
+        functionReturn = false;
+    }
+
+    /**
+     * Compiles an if-statement.
+     *
+     * @param ifElse
+     *         The ifElse-statement to compile.
+     * @param label
+     *         The label to put in front of the first statement.
+     */
+    private void compileIfElse(IfElse ifElse, String label) {
+        Operation operation = ifElse.getExpression();
+
+        // Validity checks
+        if (!operation.getSecondElement().isPresent()) {
+            throw new CompilerException("expression " + operation.toHumanReadableString() +
+                    " must have two values");
+        }
+
+        if (!operation.getOperator().isPresent()) {
+            throw new CompilerException("expression " + operation.toHumanReadableString() +
+                    " must have an operator");
+        }
+
+        if (operation.getOperator().get().getType() != Operator.OperatorType.RELATIONAL) {
+            throw new CompilerException("expression " + operation.toHumanReadableString() +
+                    " must have a relational operator");
+        }
+
+        Element first = operation.getFirstElement();
+        Operator operator = operation.getOperator().get();
+        Element second = operation.getSecondElement().get();
+        String instruction = operator.getInstruction().get();
+        String prefix = "if" + ifElse.getId();
+
+        // Comments
+        String comment1 = "Check if " + operation.toHumanReadableString() +
+                " (if-statement #" + ifElse.getId() + ").";
+        String comment2 = ">";
+
+        if (comment != null) {
+            comment2 = comment1;
+            comment1 = comment.getContents();
+        }
+
+        // Compare
+        assembly.append(Template.fillStatement(label, "LOAD", "R0", loadValueString(first),
+                comment1 + "\n"));
+        assembly.append(Template.fillStatement("", "CMP", "R0",
+                loadValueString(second), comment2 + "\n"));
+
+        // Branch to if-block.
+        assembly.append(Template.fillStatement("", instruction, prefix + "_true", "",
+                "Branch to if-block when " + operation.toHumanReadableString() + ".\n"));
+
+        // Block if false (else)
+        if (!ifElse.getElseBlock().getContents().isEmpty()) {
+            functionReturn = true;
+            compileBlock(ifElse.getElseBlock(), null, IfElse.class);
+        }
+
+        // Branch to skip if-block.
+        assembly.append(Template.fillStatement("", "BRA", prefix + "_end", "",
+                "Skip the if-block.\n"));
+
+        // Block if true (if)
+        compileBlock(ifElse.getIfBlock(), prefix + "_true", IfElse.class);
+
+        // The end.
+        assembly.append(Template.fillStatement(prefix + "_end:", "LOAD", "R0", "0",
+                "Dummy instruction to make the label work.\n"));
     }
 
     // Hihi
@@ -268,13 +348,13 @@ public class Compiler {
 
                                 if (input.getGlobalVariable(var.getName()).isPresent()) {
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                            Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
+                                                    Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
                                             operationComment));
                                 }
                                 else {
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                            Constants.REG_STACK_POINTER + "+" + var.getPointer() +
-                                            "]",
+                                                    Constants.REG_STACK_POINTER + "+" + var.getPointer() +
+                                                    "]",
                                             operationComment));
                                 }
                             }
@@ -598,7 +678,7 @@ public class Compiler {
         }
 
         assembly.append(Template.fillStatement(label, "RTS", "", "",
-                "Return from function " + function.getName() + "."));
+                "Return from function " + function.getName() + ".\n"));
     }
 
     /**
@@ -609,7 +689,7 @@ public class Compiler {
      */
     private void compileFunctionContinue(String label) {
         assembly.append(Template.fillStatement(label, "BRA", function.getName(), "",
-                "Repeat function " + function.getName() + "."));
+                "Repeat function " + function.getName() + ".\n"));
     }
 
     /**

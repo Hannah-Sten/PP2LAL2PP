@@ -20,7 +20,7 @@ public class IfElse implements Element, Identifyable {
      * If the expression evaluates to true (or 1), then if gets executed, otherwise the else
      * block must get executed.
      */
-    private Element expression;
+    private Operation expression;
 
     /**
      * The block to be executed when the expression holds.
@@ -32,21 +32,21 @@ public class IfElse implements Element, Identifyable {
      */
     private Block elseBlock;
 
-    public IfElse(Element expression, Block ifBlock) {
+    public IfElse(Operation expression, Block ifBlock) {
         this.id = IDManager.newId();
         this.expression = expression;
         this.ifBlock = ifBlock;
         this.elseBlock = Block.EMPTY;
     }
 
-    public IfElse(Element expression, Block ifBlock, Block elseBlock) {
+    public IfElse(Operation expression, Block ifBlock, Block elseBlock) {
         this.id = IDManager.newId();
         this.expression = expression;
         this.ifBlock = ifBlock;
         this.elseBlock = elseBlock;
     }
 
-    public Element getExpression() {
+    public Operation getExpression() {
         return expression;
     }
 

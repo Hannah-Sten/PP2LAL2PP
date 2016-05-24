@@ -41,6 +41,11 @@ public class Operation implements Element {
         boolean firstOp = first instanceof Operation;
         boolean secondOp = second instanceof Operation;
 
+        if (operator.getType() != Operator.OperatorType.ARITHMETIC &&
+                operator.getType() != Operator.OperatorType.BITWISE) {
+            return;
+        }
+
         // Autocalculate if there are two numbers.
         if (firstNum && secondNum) {
             setNumber(operator.calculateNumbers((Number)first, (Number)second));
