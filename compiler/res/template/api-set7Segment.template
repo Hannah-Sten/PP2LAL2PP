@@ -5,5 +5,5 @@
 ;#
 set7Segment:    BRS     Hex7Seg                     ; Translate (value in) R0 into a display pattern.
                 STOR    R1  [R5+DSPSEG]             ; And place this in the Display Element.
-                STOR    R3  [R5+DSPDIG]             ; Activate Display Element nr. 0
+                STOR    R3  [R5+DSPDIG]             ; Activate Display Element #0.
                 RTS                                 ; Exit set7Segment function.
