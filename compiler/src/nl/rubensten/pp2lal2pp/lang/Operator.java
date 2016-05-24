@@ -10,11 +10,11 @@ import java.util.Optional;
  */
 public enum Operator implements Identifyable {
 
-    ADD_ASSIGN("+=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    ADD_ASSIGN("+=", OperatorType.ASSIGNMENT, "ADD", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator += not supported on two numbers.");
     }),
 
-    SUBSTRACT_ASSIGN("-=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    SUBSTRACT_ASSIGN("-=", OperatorType.ASSIGNMENT, "SUB", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator -= not supported on two numbers.");
     }),
 
@@ -22,27 +22,27 @@ public enum Operator implements Identifyable {
         throw new PP2LAL2PPException("Operator **= not supported on two numbers.");
     }),
 
-    MULTIPLY_ASSIGN("*=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    MULTIPLY_ASSIGN("*=", OperatorType.ASSIGNMENT, "MULS", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator *= not supported on two numbers.");
     }),
 
-    DIVIDE_ASSIGN("/=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    DIVIDE_ASSIGN("/=", OperatorType.ASSIGNMENT, "DIV", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator /= not supported on two numbers.");
     }),
 
-    REMAINDER_ASSIGN("%=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    REMAINDER_ASSIGN("%=", OperatorType.ASSIGNMENT, "MOD", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator %= not supported on two numbers.");
     }),
 
-    BITWISE_AND_ASSIGN("&=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    BITWISE_AND_ASSIGN("&=", OperatorType.ASSIGNMENT, "AND", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator &= not supported on two numbers.");
     }),
 
-    BITWISE_OR_ASSIGN("|=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    BITWISE_OR_ASSIGN("|=", OperatorType.ASSIGNMENT, "OR", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator |= not supported on two numbers.");
     }),
 
-    BITWISE_XOR_ASSIGN("^=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    BITWISE_XOR_ASSIGN("^=", OperatorType.ASSIGNMENT, "XOR", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator ^= not supported on two numbers.");
     }),
 
@@ -260,7 +260,7 @@ public enum Operator implements Identifyable {
         return sign;
     }
 
-    enum OperatorType {
+    public enum OperatorType {
         ASSIGNMENT,
         ARITHMETIC,
         BITWISE,

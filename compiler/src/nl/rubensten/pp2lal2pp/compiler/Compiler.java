@@ -244,17 +244,19 @@ public class Compiler {
                         if (((Operation)second).getOperator().isPresent()) {
                             compileOperation((Operation)second, operationLabel);
 
-                            if (op.getFirstElement() instanceof GlobalVariable) {
-                                GlobalVariable var = (GlobalVariable)op.getFirstElement();
-                                assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                        Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
-                                        operationComment));
-                            }
-                            else if (op.getFirstElement() instanceof Variable) {
+                            if (op.getFirstElement() instanceof Variable) {
                                 Variable var = (Variable)op.getFirstElement();
-                                assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                                Constants.REG_STACK_POINTER + "+" + var.getName()
-                                        + "]", operationComment));
+
+                                if (input.getGlobalVariable(var.getName()).isPresent()) {
+                                    assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
+                                            Constants.REG_STACK_POINTER + "+" + var.getPointer()
+                                            + "]", operationComment));
+                                }
+                                else {
+                                    assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
+                                                    Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
+                                            operationComment));
+                                }
                             }
                             else {
                                 throw new CompilerException("you can only assign a value to " +
@@ -325,8 +327,13 @@ public class Compiler {
                 operationComment));
         operationLabel = "";
         if (operator.getInstruction().isPresent()) {
-            assembly.append(Template.fillStatement(operationLabel, operator.getInstruction().get(), "R0",
-                    loadValueString(second), ">\n"));
+            assembly.append(Template.fillStatement(operationLabel, operator.getInstruction().get(),
+                    "R0", loadValueString(second), ">\n"));
+        }
+
+        if (operator.getType() == Operator.OperatorType.ASSIGNMENT) {
+            assembly.append(Template.fillStatement(operationLabel, "STOR", "R0",
+                    loadValueString(first), ">\n"));
         }
 
         operationComment = ">\n";
@@ -350,13 +357,15 @@ public class Compiler {
             return ((Number)element).stringRepresentation();
         }
 
-        if (element instanceof GlobalVariable) {
-            return "[" + Constants.REG_GLOBAL_BASE + "+" + ((GlobalVariable)element).getName() +
-                    "]";
-        }
-
         if (element instanceof Variable) {
-            return "[" + Constants.REG_STACK_POINTER + "+" + ((Variable)element).getName() + "]";
+            Variable var = (Variable)element;
+
+            if (input.getGlobalVariable(var.getName()).isPresent()) {
+                return "[" + Constants.REG_GLOBAL_BASE + "+" + var.getName() +
+                        "]";
+            }
+
+            return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
         }
 
         throw new ParseException("the element must be either a Number or Variable");
