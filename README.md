@@ -16,7 +16,7 @@ Not possible (yet).
 Not possible (yet).
 
 ## Syntax and language features
-See [Language Features.md](docs/Language Specification.md).
+See [Language Specification.md](docs/Language Specification.md).
 
 ## Base API
 See [Base API.md](docs/Base API.md).
