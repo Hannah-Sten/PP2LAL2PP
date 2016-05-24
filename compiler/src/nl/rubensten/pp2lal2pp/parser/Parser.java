@@ -61,10 +61,16 @@ public class Parser {
                 continue;
             }
 
+            // Comments
             if (line.startsWith("#")) {
                 String comment = line.replaceAll("^#;?\\s*", "");
                 lastComment = new Comment(comment);
                 pp2doc.add(comment);
+                continue;
+            }
+            // Define
+            else if (line.startsWith("define")) {
+                program.addDefinition(parseDefine(new Tokeniser(line)));
                 continue;
             }
 
@@ -208,6 +214,30 @@ public class Parser {
     }
 
     /**
+     * Parses a definition.
+     *
+     * @param line
+     *         The line the definition is on.
+     * @return The Definition-object.
+     */
+    private Definition parseDefine(Tokeniser line) {
+        if (line.size() != 3) {
+            throw new ParseException("illegal definition at line '" + line.getOriginal() + "'");
+        }
+
+        String comment = lastComment.getContents();
+        String name = line.getToken(1);
+        Value value = Value.parse(line.getToken(2), program);
+
+        if (!(value instanceof Number)) {
+            throw new ParseException("wrong number format at definition '" +
+                    line.getOriginal() + "");
+        }
+
+        return new Definition(name, value, comment);
+    }
+
+    /**
      * Parses a return statement.
      *
      * @param line
@@ -219,7 +249,7 @@ public class Parser {
             return new Return();
         }
         else {
-            return new Return(Value.parse(line.getToken(1)));
+            return new Return(Value.parse(line.getToken(1), program));
         }
     }
 
@@ -256,7 +286,7 @@ public class Parser {
             List<Variable> args = new ArrayList<>();
 
             for (int i = 2; i < line.sizeNoComments(); i += 2) {
-                Value value = Value.parse(line.getToken(i));
+                Value value = Value.parse(line.getToken(i), program);
                 if (value.getObject() instanceof String) {
                     args.add(new Variable(line.getToken(i)));
                 }
@@ -469,7 +499,7 @@ public class Parser {
 
         }
         else {
-            Value val = Value.parse(token);
+            Value val = Value.parse(token, program);
             if (val.getObject() instanceof String) {
                 if (val.getObject() instanceof String) {
                     first = new Variable(token);
@@ -526,7 +556,7 @@ public class Parser {
             if (first instanceof Variable) {
                 Variable var = (Variable)first;
                 if (var.getName().equals("-")) {
-                    first = Value.parse("-" + token);
+                    first = Value.parse("-" + token, program);
                     return new Operation(first, null, null);
                 }
             }
@@ -549,10 +579,10 @@ public class Parser {
             second = parseOperation(it, line);
         }
         else if (token.equals("-")) {
-            second = Value.parse("-" + it.next());
+            second = Value.parse("-" + it.next(), program);
         }
         else {
-            Value val = Value.parse(token);
+            Value val = Value.parse(token, program);
             if (val.getObject() instanceof String) {
                 second = new Variable(token);
             }
@@ -723,7 +753,7 @@ public class Parser {
                             "step-keyword.");
                 }
 
-                Value step = Value.parse(line.getToken(8));
+                Value step = Value.parse(line.getToken(8), program);
                 if (step.getObject() instanceof String) {
                     throw new ParseException("Loop '" + line.getOriginal() + "' lacks a correct " +
                             "step-value");
@@ -757,7 +787,7 @@ public class Parser {
             }
 
             String varName = line.getToken(1);
-            Value value = Value.parse(line.join(3, line.sizeNoComments() - 3, ""));
+            Value value = Value.parse(line.join(3, line.sizeNoComments() - 3, ""), program);
             return new Declaration(new Variable(varName, value), value, Declaration.DeclarationScope
                     .LOCAL);
         }
@@ -784,7 +814,7 @@ public class Parser {
             var = new GlobalVariable(firstToken, lastComment);
         }
         else {
-            var = new GlobalVariable(firstToken, Value.parse(line.getToken(3)), lastComment);
+            var = new GlobalVariable(firstToken, Value.parse(line.getToken(3), program), lastComment);
         }
 
         program.addGlobalVariable(var);

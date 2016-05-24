@@ -42,6 +42,11 @@ public class Program {
      */
     private Map<String, Integer> globalVariableIndices;
 
+    /**
+     * List of all the definitions (using define).
+     */
+    private List<Definition> definitions;
+
     public Program() {
         functions = new ArrayList<>();
         functionIndices = new HashMap<>();
@@ -49,6 +54,7 @@ public class Program {
         globalVariableIndices = new HashMap<>();
         apiFunctions = new HashSet<>();
         apiFunctions = new HashSet<>();
+        definitions = new ArrayList<>();
     }
 
     /**
@@ -86,11 +92,25 @@ public class Program {
     }
 
     /**
+     * @return An unmodifyable list of the definitions.
+     */
+    public List<Definition> getDefinitions() {
+        return Collections.unmodifiableList(definitions);
+    }
+
+    /**
      * Adds a function to the program.
      */
     public void addFunction(Function function) {
         functionIndices.put(function.getName(), functions.size());
         functions.add(function);
+    }
+
+    /**
+     * Add a define-statement to the program.
+     */
+    public void addDefinition(Definition definition) {
+        definitions.add(definition);
     }
 
     /**

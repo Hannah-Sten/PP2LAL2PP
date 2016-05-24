@@ -22,14 +22,6 @@ public class FileParser extends Parser {
 
         readInput();
         includeFiles();
-
-        try {
-            handleDefinitions();
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-            throw new ParseException("The define statements were not correctly setup.");
-        }
     }
 
     private FileParser(String input) {
@@ -132,26 +124,6 @@ public class FileParser extends Parser {
 
     private String getMainDirectoryPath() {
         return file.getAbsolutePath().replace("\\" + file.getName(), "");
-    }
-
-    /**
-     * Replaces all definitions in the code.
-     */
-    private void handleDefinitions() {
-        Map<String, String> toReplace = new LinkedHashMap<>();
-
-        for (String line : input.split("\\n")) {
-            if (line.trim().toLowerCase().startsWith("define")) {
-                String[] parts = line.split("( )+");
-                toReplace.put(line, "");
-                toReplace.put(parts[1], parts[2]);
-            }
-        }
-
-        for (String key : toReplace.keySet()) {
-            String replacement = toReplace.get(key);
-            input = input.replaceAll(key, replacement.trim());
-        }
     }
 
 }
