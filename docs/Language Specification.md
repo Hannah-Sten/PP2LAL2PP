@@ -1,6 +1,6 @@
 # The PP2LAL2PP-language specification
 
-An example document can be found in the [examples-folder](../examples).
+Example documents can be found in the [examples-folder](../examples).
 
 ## General code layout
 Every single statement must be placed on a seperate line. Blank lines will be ignored. Multiple spaces or tabs will be interpreted as 1 space.
@@ -38,7 +38,7 @@ Functions are a block of code that can be called from another place in the progr
 Functions are declared as follows:
 
 ```
-<functionName>(<arg0>, ... <argN>) {
+function <functionName>(<arg0>, ... <argN>) {
     # Code to execute
     return <returnValue>
 }
@@ -50,7 +50,11 @@ Functions are declared as follows:
 
 *return* exits the function-loop. If return is not called, the function would start over again after the end of the block has been reached. If you add a *returnValue* beind return the function will return said value. However, if you don't want to return a value you can ommit it.
 
-Using the keyword `continue` forces the function to quit and start over.
+Using the keyword `continue` forces the function to quit and start over without losing the declared local variables.
+
+### Interrupts
+
+Interrupts are special kinds of functions that can only be called by the processor itself. Interrupts are declared just like functions, but then with an `interrupt` keyword instead of `function`. They also have no arguments. The `return` statement in the interrupt will also be replaced by the special interrupt return instruction when compiled.
 
 ## Main function (`main()`)
 
@@ -124,7 +128,7 @@ else {
 
 ## Definitions (`define`)
 
-Definitions can be used for named constants that must be declared in the outermost scope. Defined constants cannot be changed afterwards. Usage: `define <name> <value>`.
+Definitions can be used for named constants that must be declared in the outermost scope. Defined constants cannot be changed afterwards. Definitions will be compiled to equivalent `EQU` statements. Usage: `define <name> <value>`.
 
 *name* is the name of the definition. It is convention to use ALL_CAPS_AND_SPACES for the name.
 
@@ -132,10 +136,10 @@ Definitions can be used for named constants that must be declared in the outermo
 
 ## Comments
 
-Comments are extra pieces of information that are functionally ignored by the compiler. However, it is planned to make the compiler smart enough to place the comments in the generated assembly files.
+Comments are extra pieces of information that are functionally ignored by the compiler. However, they do appear in assembly-comments, meaning that almost any comment you write will be placed accordingly in the compiled assembly file. There is only one kind of comment, and that's the line comment.
 
 ### Line comments
-Line commments will make a whole line ignored by the compiler. You start a line comment with a hash sign `#`.
+Line commments will make a whole line to be functionally ignored by the compiler. You start a line comment with a hash sign `#`.
 
 ### Example
 ```
@@ -171,9 +175,9 @@ So if you want to store the product of 5 and 7 in a variable a, do this: `a = 5 
 To make it even better, if you want to do arithmetics on a variable and want to store it directly back in the same variable, you can add a `=`-sign to make it automatically assign. Example:
 
 ```
-a = 7 * 3   # a equals 21
-a -= 15     # a equals 6
-a **= 3     # a equals 216
+a = 7 * 3   # a becomes 21
+a -= 15     # a becomes 6
+a **= 3     # a becomes 216
 ```
 
 ### Bitwise operators
@@ -182,7 +186,7 @@ You can do some epic shizzles with binary numbers. These operators are supported
 * `|` Bitwise OR
 * `&` Bitwise AND
 * `^` Bitwise XOR
-* `~` Bitwise NOT
+* `~` Bitwise NOT (see unary operators)
 
 Like the arithmetic operators, you can use them in conjunction with the `=`-sign (e.g. `^=`).
 
@@ -207,28 +211,15 @@ a = 3
 5 != a      # true
 ```
 
-### Logical operators
-
-These are used to tie boolean expressions together.
-* `and` means that the expressions to the left and to the right must be true.
-* `or` means that at least one of the expressions to the left and to the right must be true.
-
-#### Examples
-
-```
-3 < 5 and 5 <= 21           # true
-4 > 5 or 7 != 10            # true
-6 > 7 and 7 > 8 and 9 > 5   # false
-```
-
 ### Unary operators
 These are placed right in front of a variable or number.
-* `-` marks a positive number or variable as negative, or a negative number positive.
-* `!` negates a boolean expression. Must be used with parentheses around it (`!(3 == 1)` is true).
+* `-` marks a positive number or variable as negative, or a negative number positive. This does work on numbers and on variables and you cannot use this in an operation other than assignment (e.g. `this = -that`, *not* `this = -that * 6`).
+* `~` will replace all `1`s by `0`s and all `0`s by `1`s in binary representation. This does not work on numbers and you cannot use this in an operation other than assignment (e.g. `this = ~that`, *not* `this = ~that + 2`).
+* `!` negates a boolean expression. Can **only** be used with the API function `isInputOn(num)`.
 
 ## Assembly injection (`inject`)
 
-*Warning: dangerous!* Assembly injection lets you inject natie assembly code in your program. The lines will be placed exactly in the 'compiled' file exactly as you type them. This makes it really powerful, but also really dangerous to use. We do not recommend using it. It is solely meant for people who want to know what it all can do. No idea if it is useful, but it was easy to implement haha. Yolo.
+*Warning: dangerous!* Assembly injection lets you inject native assembly code in your program. The lines will be placed exactly in the 'compiled' file exactly as you type them. This makes it really powerful, but also really dangerous to use. We do not recommend using it. It is solely meant for people who want to know what it all can do. No idea if it is useful, but it was easy to implement haha. Yolo.
 
 Usage:
 ```
@@ -241,7 +232,8 @@ inject {
 
 ## Weird exceptions on the rules
 
-* All operations must have explicit parenthesis. Meaning that `2+3+4:=6` must be written as `2 + (3 + 4) := 6`.
-* There can't be any operations in function calls. E.g. `main(3+2)` is illegal.
+* All operations can only consist of two operands excluding assignment. Meaning that `a = b * c` is valid, whilst `a = b * (c + 2)` is not.
+* There can't be any operations in function calls. E.g. `main(3 + 2)` is illegal.
 * Function calls may only appear as the second element in operations.
 * You can't start your block on the same line as the opening bracket `{`.
+* A pair of a unary operator and a variable/number counts as a whole operation.
