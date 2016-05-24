@@ -219,7 +219,8 @@ public class Compiler {
             // Operation
             if (elt instanceof Operation) {
                 if (comment == null) {
-                    operationComment = "Operation " + ((Operation)elt).toHumanReadableString() + "\n";
+                    operationComment = "Operation " + ((Operation)elt).toHumanReadableString() +
+                            ".\n";
                 }
                 else {
                     operationComment = comment.getContents() + " {" + ((Operation)elt)
@@ -315,7 +316,7 @@ public class Compiler {
 
         // The end.
         assembly.append(Template.fillStatement(prefix + "_end:", "LOAD", "R0", "0",
-                "Dummy instruction to make the label work.\n"));
+                "Dummy instruction to always make the label work.\n"));
     }
 
     // Hihi
