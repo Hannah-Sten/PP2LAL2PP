@@ -343,7 +343,8 @@ public class Compiler {
 
                     // When first evaluating operation, then assign.
                     if (second instanceof Operation) {
-                        if (((Operation)second).getOperator().isPresent()) {
+                        Operation secondOp = (Operation)second;
+                        if (secondOp.getOperator().isPresent()) {
                             compileOperation((Operation)second, operationLabel);
 
                             if (op.getFirstElement() instanceof Variable) {
@@ -370,6 +371,10 @@ public class Compiler {
 
                             return;
                         }
+                        else if (secondOp.getFirstElement() instanceof FunctionCall) {
+                            compileFunctionCall((FunctionCall)secondOp.getFirstElement(), operationLabel);
+                            operationLabel = "";
+                        }
                     }
 
                     if (op.getFirstElement() instanceof Number) {
@@ -389,6 +394,13 @@ public class Compiler {
                     operationComment = ">\n";
 
                     return;
+                }
+                else if (op.getFirstElement() instanceof FunctionCall) {
+
+                    if (op.getFirstElement() instanceof FunctionCall) {
+                        compileFunctionCall((FunctionCall)op.getFirstElement(), operationLabel);
+                        operationLabel = "";
+                    }
                 }
             }
         }
@@ -419,11 +431,9 @@ public class Compiler {
         Element second = op.getSecondElement().get();
 
         // If function call.
-        boolean functionCall = false;
         if (second instanceof FunctionCall) {
             compileFunctionCall((FunctionCall)second, operationLabel);
             operationLabel = "";
-            functionCall = true;
         }
 
         assembly.append(Template.fillStatement(operationLabel, "LOAD", "R0", loadValueString(first),
@@ -453,7 +463,12 @@ public class Compiler {
      */
     private String loadValueString(Element element) {
         if (element instanceof Operation) {
-            return ((Number)((Operation)element).getFirstElement()).stringRepresentation();
+            Operation operation = (Operation)element;
+            if (operation.getFirstElement() instanceof FunctionCall) {
+                return Constants.REG_RETURN;
+            }
+
+            return ((Number)operation.getFirstElement()).stringRepresentation();
         }
 
         if (element instanceof Number) {

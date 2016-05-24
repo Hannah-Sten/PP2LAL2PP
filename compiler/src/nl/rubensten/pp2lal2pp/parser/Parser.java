@@ -1,6 +1,7 @@
 package nl.rubensten.pp2lal2pp.parser;
 
 import nl.rubensten.pp2lal2pp.ParseException;
+import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 
@@ -530,7 +531,13 @@ public class Parser {
         // Function call.
         if (token.equals("(")) {
             String prevToken = line.getToken(li.previousIndex() - 1);
-            if ((program.getFunction(prevToken).isPresent() || currentFunction.equals(prevToken))) {
+            boolean apiFunction = APIFunction.isAPIFunction(prevToken);
+            if ((program.getFunction(prevToken).isPresent() || currentFunction.equals(prevToken))
+                    || apiFunction) {
+                if (apiFunction) {
+                    program.registerAPIFunction(prevToken);
+                }
+
                 List<Variable> arguments = new ArrayList<>();
 
                 String elt;
@@ -543,7 +550,13 @@ public class Parser {
                 }
 
                 first = new FunctionCall(prevToken, arguments);
-                token = it.next();
+
+                if (it.hasNext()) {
+                    token = it.next();
+                }
+                else {
+                    return new Operation(first, null, null);
+                }
             }
             else {
                 throw new ParseException("Wrong function call at line '" + or + "'.");

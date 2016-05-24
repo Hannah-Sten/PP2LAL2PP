@@ -31,6 +31,24 @@ public class FunctionCall extends Value implements Element, Identifyable {
         this.arguments = arguments;
     }
 
+    /**
+     * Get a nicely formatted list of arguments.
+     */
+    public String getFormattedArguments() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("[");
+        String sep = "";
+        for (Variable var : arguments) {
+            sb.append(sep);
+            sb.append(var.getName());
+            sep = ", ";
+        }
+        sb.append("]");
+
+        return sb.toString();
+    }
+
     public List<Variable> getArguments() {
         return arguments;
     }
@@ -53,4 +71,5 @@ public class FunctionCall extends Value implements Element, Identifyable {
     public String toString() {
         return called + arguments;
     }
+
 }
