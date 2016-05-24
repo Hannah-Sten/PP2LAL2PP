@@ -409,6 +409,8 @@ public class Parser {
      * @return The parsed operation.
      */
     private Operation parseOperation(Iterator<String> it, Tokeniser line) {
+        System.out.println(line.getOriginal());
+
         Element first;
         Operator op = null;
         Element second;
@@ -446,6 +448,15 @@ public class Parser {
         // First element
         if (token.equals("(")) {
             first = parseOperation(it, line);
+        }
+        else if (token.equals("-")) {
+            try {
+                token = it.next();
+                first = new Number(Integer.parseInt("-" + token));
+            }
+            catch (NumberFormatException nfe) {
+                return new Operation(new Variable(token), Operator.MULTIPLICATION, Number.MINUS_ONE);
+            }
         }
         else {
             Value val = Value.parse(token);
@@ -501,6 +512,14 @@ public class Parser {
         // Regular operator.
         Optional<Operator> operator = Operator.getBySign(token);
         if (!operator.isPresent()) {
+            // Negative number
+            if (first instanceof Variable) {
+                if (((Variable)first).getName().equals("-")) {
+                    first = Value.parse("-" + token);
+                    return new Operation(first, null, null);
+                }
+            }
+
             throw new ParseException("Could not find operator '" + token + "' for line '" + or +
                     "'.");
         }
@@ -517,6 +536,9 @@ public class Parser {
         // Second element
         if (token.equals("(")) {
             second = parseOperation(it, line);
+        }
+        else if (token.equals("-")) {
+            second = Value.parse("-" + it.next());
         }
         else {
             Value val = Value.parse(token);
