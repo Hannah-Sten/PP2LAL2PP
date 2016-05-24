@@ -25,7 +25,7 @@ Global variables are stored in the Global Base and can be used from any scope in
 
 ## Local variables (`var`)
 
-Local variables have their values stored on the stack and are only usable in their local scope. Meaning that as soon as the block of code ends where the local variable is declared, the variable cannot be used anymore. Local variables can only be declared in a scope other than the outermost scope and are declared as follows: `var <varName> = <value>`, analogous to global variables. Variables can't have the same name as reserved keywords.
+Local variables have their values stored on the stack and are only usable in their local scope. Meaning that as soon as the block of code ends where the local variable is declared, the variable cannot be used anymore. Local variables can only be declared in a scope other than the outermost scope and are declared as follows: `var <varName> = <value>`, analogous to global variables. Variables cannot have the same name as reserved keywords, neither can they have the same name as any global variable.
 
 ## Blocks
 
@@ -44,7 +44,7 @@ function <functionName>(<arg0>, ... <argN>) {
 }
 ```
 
-*functionName* this is the name of the function and must be unique and can neither be "main", "init" or "exit".
+*functionName* this is the name of the function and must be unique and can neither be "main", "init" or "exit". It is also forbidden to use the names of any of the API functions as described in [Base API.md](Base API.md).
 
 *argN (optional)* is a list of arguments seperated by a comma. You can have as many arguments as you like. If you don't want to have arguments you must leave the space between the parenthesis blank like `()`.
 
@@ -229,6 +229,25 @@ inject {
     ; More of your assembly shizzles.
 }
 ```
+
+## Reserved words
+
+The following names are reserved and cannot be used as a global variable name, function name, variable name or any other name I might have missed:
+* IOAREA 
+* INPUT  
+* OUTPUT 
+* DSPDIG 
+* DSPSEG 
+* TIMER  
+* ADCONV 
+* Hex7Seg
+* Hex7Seg_tbl
+* Hex7Seg_bgn
+* main
+* init
+* exit
+* Words with prefix "if#" where # is a number.
+* Any of the Base API functions.
 
 ## Weird exceptions on the rules
 
