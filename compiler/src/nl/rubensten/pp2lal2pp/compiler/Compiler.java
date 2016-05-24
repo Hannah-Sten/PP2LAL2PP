@@ -421,7 +421,7 @@ public class Compiler {
         // If function call.
         boolean functionCall = false;
         if (second instanceof FunctionCall) {
-            compileFunctionCall((FunctionCall)first, operationLabel);
+            compileFunctionCall((FunctionCall)second, operationLabel);
             operationLabel = "";
             functionCall = true;
         }
@@ -471,7 +471,12 @@ public class Compiler {
             return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
         }
 
-        throw new ParseException("the element must be either a Number or Variable");
+        if (element instanceof FunctionCall) {
+            return Constants.REG_RETURN;
+        }
+
+        throw new ParseException("the element '" + element + "' must be either a Number or " +
+                "Variable");
     }
 
     /**
@@ -658,7 +663,7 @@ public class Compiler {
                     "Call function " + call.getCalled() + ".\n"));
         }
 
-        if (!skipVariables) {
+        if (!skipVariables && vars.size() > 0) {
             assembly.append(Template.fillStatement("", "ADD", Constants.REG_STACK_POINTER,
                     "" + vars.size(), "Reset the stack pointer position.\n"));
         }
