@@ -64,6 +64,8 @@ public class Compiler {
         assembly.append("\n\n");
         assembly.append(Template.DEFAULT_EQU);
         assembly.append("\n\n");
+        compileDefinitions();
+        assembly.append("\n");
         compileGlobal();
         assembly.append("\n");
 
@@ -694,11 +696,29 @@ public class Compiler {
     }
 
     /**
+     * Writes all the definitions to the assembly-StringBuilder.
+     */
+    private void compileDefinitions() {
+        for (Definition def : input.getDefinitions()) {
+            String comment = "Define " + def.getName() + " as value " + def.getValue()
+                    .stringRepresentation();
+
+            Optional<String> docString = def.getDocString();
+            if (docString.isPresent()) {
+                comment = docString.get();
+            }
+
+            assembly.append(Template.EQU.replace("NAME", def.getName(), "VALUE",
+                    def.getValue().stringRepresentation()).replace("{$COMMENT}", comment));
+            assembly.append("\n");
+        }
+    }
+
+    /**
      * Writes all the global variables of the program to the assembly-StringBuilder.
      */
     private void compileGlobal() {
         for (GlobalVariable gv : input.getGlobalVariables()) {
-
             assembly.append(Template.EQU.replace("NAME", gv.getName(), "VALUE", gv.getPointer() +
                     "").replace("{$COMMENT}", gv.getComment().getContents()));
             assembly.append("\n");

@@ -18,8 +18,13 @@ public class Value implements Element {
 
     /**
      * Parses a value from a string representation.
+     *
+     * @param string
+     *         The string to parse.
+     * @param program
+     *         The program-instance where the parsed value will be used.
      */
-    public static Value parse(String string) {
+    public static Value parse(String string, Program program) {
         // Binary
         if (string.matches("0b[0-1]+")) {
             String meat = string.replace("0b", "");
@@ -45,7 +50,12 @@ public class Value implements Element {
             return new Number(Integer.parseInt(string));
         }
         catch (NumberFormatException nfe) {
-            return new Value(string);
+            if (program.getDefinitions().parallelStream().anyMatch(d -> d.getName().equals(string))) {
+                return new NumberConstant(string);
+            }
+            else {
+                return new Value(string);
+            }
         }
     }
 
