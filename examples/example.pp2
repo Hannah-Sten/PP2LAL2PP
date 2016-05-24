@@ -34,7 +34,7 @@ function main() {
     # Update LEDs to accomodate the new buttons states
     var buttonState = getButtonState()
     setLEDs(buttonState)
-    
+
     # Isolate the last 2 buttons
     currentState = buttonState & 0b11
 
