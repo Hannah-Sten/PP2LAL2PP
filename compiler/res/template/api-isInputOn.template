@@ -5,6 +5,6 @@
 ;#  R0 : upon entry, contains what input to check for (binary number, e.g. %00001000 for the 4th button).
 ;#
 isInputOn:      LOAD    R1  [R5+INPUT]              ; Load the input states and puts it in the return register.
-                AND     R1  R0                      ; Isolates the given button.
-                CMP     R1  0                       ; Compares the isolated button to 0. If R1>0, then the input is on.
+                AND     R1  R0                      ; Isolates the given input.
+                CMP     R1  0                       ; Compares the isolated input to 0. If R1>0, then the input is on.
                 RTS                                 ; Exit getInputStates function.
