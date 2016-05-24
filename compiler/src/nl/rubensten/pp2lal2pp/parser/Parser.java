@@ -449,6 +449,7 @@ public class Parser {
         if (token.equals("(")) {
             first = parseOperation(it, line);
         }
+        // Unary number negation.
         else if (token.equals("-")) {
             try {
                 token = it.next();
@@ -457,6 +458,17 @@ public class Parser {
             catch (NumberFormatException nfe) {
                 return new Operation(new Variable(token), Operator.MULTIPLICATION, Number.MINUS_ONE);
             }
+        }
+        // Unary NOT
+        else if (token.equals("~")) {
+            try {
+                token = it.next();
+                first = new Number(~Integer.parseInt(token));
+            }
+            catch (NumberFormatException nfe) {
+                return new Operation(new Variable(token), Operator.BITWISE_XOR, Number.ALL_1S);
+            }
+
         }
         else {
             Value val = Value.parse(token);
@@ -514,7 +526,8 @@ public class Parser {
         if (!operator.isPresent()) {
             // Negative number
             if (first instanceof Variable) {
-                if (((Variable)first).getName().equals("-")) {
+                Variable var = (Variable)first;
+                if (var.getName().equals("-")) {
                     first = Value.parse("-" + token);
                     return new Operation(first, null, null);
                 }

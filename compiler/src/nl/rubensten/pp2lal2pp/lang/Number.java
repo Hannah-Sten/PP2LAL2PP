@@ -21,6 +21,11 @@ public class Number extends Value implements Element {
     public static final Number ONE = new Number(1);
 
     /**
+     * A binary number of max size with only 1s.
+     */
+    public static final Number ALL_1S = new Number(-1);
+
+    /**
      * The numerical value of the Number.
      */
     private int intValue;
