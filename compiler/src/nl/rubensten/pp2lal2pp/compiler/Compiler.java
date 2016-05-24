@@ -40,6 +40,11 @@ public class Compiler {
      */
     private Function function;
 
+    /**
+     * The latest comment the compiler has processed.
+     */
+    private Comment comment;
+
     public Compiler(File output, Program input) {
         this.output = output;
         this.input = input;
@@ -212,9 +217,23 @@ public class Compiler {
 
             // Operation
             if (elt instanceof Operation) {
-                operationComment = "Operation " + ((Operation)elt).toHumanReadableString() + "\n";
+                if (comment == null) {
+                    operationComment = "Operation " + ((Operation)elt).toHumanReadableString() + "\n";
+                }
+                else {
+                    operationComment = comment.getContents() + " {" + ((Operation)elt)
+                            .toHumanReadableString() + "}\n";
+                }
                 compileOperation((Operation)elt, label);
                 label = "";
+            }
+
+            // Comment
+            if (elt instanceof Comment) {
+                this.comment = (Comment)elt;
+            }
+            else {
+                this.comment = null;
             }
         }
     }
