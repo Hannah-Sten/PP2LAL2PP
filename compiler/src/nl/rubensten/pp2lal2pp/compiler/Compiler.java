@@ -2,6 +2,7 @@ package nl.rubensten.pp2lal2pp.compiler;
 
 import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.Constants;
+import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
@@ -208,7 +209,157 @@ public class Compiler {
                 compileFunctionCall((FunctionCall)elt, label);
                 label = "";
             }
+
+            // Operation
+            if (elt instanceof Operation) {
+                operationComment = "Operation " + ((Operation)elt).toHumanReadableString() + "\n";
+                compileOperation((Operation)elt, label);
+                label = "";
+            }
         }
+    }
+
+    // Hihi
+    private String operationLabel;
+    private String operationComment;
+
+    /**
+     * Compiles an operation statement.
+     *
+     * @param op
+     *         The operation to compile.
+     * @param label
+     *         The label to put in front of the first statement.
+     */
+    private void compileOperation(Operation op, String label) {
+        operationLabel = label;
+
+        if (op.getOperator().isPresent()) {
+            if (op.getOperator().get() == Operator.ASSIGN) {
+                if (op.getSecondElement().isPresent()) {
+                    Element second = op.getSecondElement().get();
+
+                    // When first evaluating operation, then assign.
+                    if (second instanceof Operation) {
+                        if (((Operation)second).getOperator().isPresent()) {
+                            compileOperation((Operation)second, operationLabel);
+
+                            if (op.getFirstElement() instanceof GlobalVariable) {
+                                GlobalVariable var = (GlobalVariable)op.getFirstElement();
+                                assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
+                                        Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
+                                        operationComment));
+                            }
+                            else if (op.getFirstElement() instanceof Variable) {
+                                Variable var = (Variable)op.getFirstElement();
+                                assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
+                                                Constants.REG_STACK_POINTER + "+" + var.getName()
+                                        + "]", operationComment));
+                            }
+                            else {
+                                throw new CompilerException("you can only assign a value to " +
+                                        "variables");
+                            }
+
+                            operationComment = ">\n";
+
+                            return;
+                        }
+                    }
+
+                    if (op.getFirstElement() instanceof Number) {
+                        throw new CompilerException("can't assign a value to a Number");
+                    }
+
+                    if (!op.getOperator().isPresent()) {
+                        second = new Number(((Number)op.getFirstElement()).getIntValue());
+                    }
+
+                    // Simple a=34 assignment.
+                    assembly.append(Template.fillStatement(operationLabel, "LOAD", "R0",
+                            loadValueString(second), operationComment));
+                    operationLabel = "";
+                    assembly.append(Template.fillStatement(operationLabel, "STOR", "R0",
+                            loadValueString(op.getFirstElement()), ">\n"));
+                    operationComment = ">\n";
+
+                    return;
+                }
+            }
+        }
+
+        if (op.getFirstElement() instanceof Operation) {
+            compileOperation((Operation)op.getFirstElement(), operationLabel);
+        }
+
+        if (op.getSecondElement().isPresent()) {
+            if (op.getSecondElement().get() instanceof Operation) {
+                compileOperation((Operation)op.getSecondElement().get(), operationLabel);
+                return;
+            }
+        }
+
+        Element first = op.getFirstElement();
+
+        if (!op.getOperator().isPresent()) {
+            return;
+        }
+
+        Operator operator = op.getOperator().get();
+
+        if (!op.getSecondElement().isPresent()) {
+            return;
+        }
+
+        Element second = op.getSecondElement().get();
+
+        // If function call.
+        boolean functionCall = false;
+        if (second instanceof FunctionCall) {
+            compileFunctionCall((FunctionCall)first, operationLabel);
+            operationLabel = "";
+            functionCall = true;
+        }
+
+        assembly.append(Template.fillStatement(operationLabel, "LOAD", "R0", loadValueString(first),
+                operationComment));
+        operationLabel = "";
+        if (operator.getInstruction().isPresent()) {
+            assembly.append(Template.fillStatement(operationLabel, operator.getInstruction().get(), "R0",
+                    loadValueString(second), ">\n"));
+        }
+
+        operationComment = ">\n";
+    }
+
+    /**
+     * Get what you have to load. Bit weird sentence I know. Let me elaborate a little bit. If you
+     * want to load something to R0 for example you use <code>LOAD R0 [something]</code>. Well. This
+     * method determines what that something is!
+     *
+     * @param element
+     *         The element to get the something of.
+     * @return The something.
+     */
+    private String loadValueString(Element element) {
+        if (element instanceof Operation) {
+            return ((Number)((Operation)element).getFirstElement()).stringRepresentation();
+        }
+
+        if (element instanceof Number) {
+            return ((Number)element).stringRepresentation();
+        }
+
+        if (element instanceof GlobalVariable) {
+            return "[" + Constants.REG_GLOBAL_BASE + "+" + ((GlobalVariable)element).getName() +
+                    "]";
+        }
+
+        if (element instanceof Variable) {
+            return "[" + Constants.REG_STACK_POINTER + "+" + ((Variable)element).getName() + "]";
+        }
+
+        throw new ParseException("the element must be either a Number or Variable");
     }
 
     /**
