@@ -249,12 +249,13 @@ public class Compiler {
 
                                 if (input.getGlobalVariable(var.getName()).isPresent()) {
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                            Constants.REG_STACK_POINTER + "+" + var.getPointer()
-                                            + "]", operationComment));
+                                            Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
+                                            operationComment));
                                 }
                                 else {
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                                    Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
+                                            Constants.REG_STACK_POINTER + "+" + var.getPointer() +
+                                            "]",
                                             operationComment));
                                 }
                             }
