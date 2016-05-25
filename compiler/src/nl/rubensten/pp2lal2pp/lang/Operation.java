@@ -163,6 +163,15 @@ public class Operation implements Element {
         return firstOpen + first + firstClose + op + secondOpen + second + secondClose;
     }
 
+    /**
+     * Swaps the first and second element.
+     */
+    public void swap() {
+        Element dummy = firstElement;
+        firstElement = secondElement;
+        secondElement = dummy;
+    }
+
     @Override
     public Value getValue() {
         return null;
@@ -172,4 +181,5 @@ public class Operation implements Element {
     public String toString() {
         return "{" + firstElement + "} " + operator + " {" + secondElement + "}";
     }
+
 }
