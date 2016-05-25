@@ -693,6 +693,19 @@ public class Compiler {
             skipCall = true;
             label = "";
         }
+        // API getAnalog(num)
+        else if (call.getCalled().equals("getAnalog")) {
+            Variable arg = vars.get(0);
+            String text = getVariableValue(arg);
+
+            String result = insertLabel(Template.API_INVOKE_GETANALOG.replace(
+                    "ARG", text
+            ), label)
+                    .replace("{$COMMENT}", "Set what A/D-converter value has to be loaded.\n");
+            assembly.append(result);
+            skipVariables = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
