@@ -48,7 +48,7 @@ function <functionName>(<arg0>, ... <argN>) {
 
 *argN (optional)* is a list of arguments seperated by a comma. You can have as many arguments as you like. If you don't want to have arguments you must leave the space between the parenthesis blank like `()`.
 
-*return* exits the function-loop. If return is not called, the function would start over again after the end of the block has been reached. If you add a *returnValue* beind return the function will return said value. However, if you don't want to return a value you can ommit it.
+*return* exits the function-loop. If return is not called, the function would start over again after the end of the block has been reached. If you add a *returnValue* beind return the function will return said value. However, if you don't want to return a value you can ommit it. **Every function must return.** The return value can either be a function call, number or variable.
 
 Using the keyword `continue` forces the function to quit and start over without losing the declared local variables.
 
