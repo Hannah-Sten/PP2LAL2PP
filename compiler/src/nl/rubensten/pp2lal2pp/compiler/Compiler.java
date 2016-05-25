@@ -262,6 +262,11 @@ public class Compiler {
         Operation operation = ifElse.getExpression();
         boolean functionCall = false;
 
+        // No first element.
+        if (operation == null) {
+            throw new CompilerException("there is no operation (null)");
+        }
+
         // Check for isInputOn call.
         if (operation.getFirstElement() instanceof FunctionCall) {
             compileFunctionCall((FunctionCall)operation.getFirstElement(), label);
