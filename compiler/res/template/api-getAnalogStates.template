@@ -1,0 +1,7 @@
+;#
+;#  Gets the state of the analog inputs.
+;#  R4 : upon exit, contains a number in binary format where the least significant 8 bits contain the value of the
+;#       first A/D-converter and the other 8-bits contain the value of the second A/D-converter.
+;#
+getAnalogStates:LOAD    R4  [R5+ADCONV]             ; Load the ADconv states and put it in the return register.
+                RTS                                 ; Exit getAnalogStates function.
