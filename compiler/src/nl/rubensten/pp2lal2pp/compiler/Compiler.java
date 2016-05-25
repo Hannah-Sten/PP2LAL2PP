@@ -684,6 +684,15 @@ public class Compiler {
             label = "";
             skipVariables = true;
         }
+        // API getInputStates()
+        else if (call.getCalled().equals("getAnalogStates")) {
+            String result = insertLabel(Template.API_INVOKE_GETANALOGSTATES.load(), label);
+            assembly.append(result);
+            assembly.append("\n");
+            skipVariables = true;
+            skipCall = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
