@@ -260,26 +260,36 @@ public class Compiler {
      */
     private void compileIfElse(IfElse ifElse, String label) {
         Operation operation = ifElse.getExpression();
+        boolean functionCall = false;
+
+        // Check for isInputOn call.
+        if (operation.getFirstElement() instanceof FunctionCall) {
+            compileFunctionCall((FunctionCall)operation.getFirstElement(), label);
+            label = "";
+            functionCall = true;
+        }
 
         // Validity checks
-        if (!operation.getSecondElement().isPresent()) {
+        if (!operation.getSecondElement().isPresent() && !functionCall) {
             throw new CompilerException("expression " + operation.toHumanReadableString() +
                     " must have two values");
         }
 
-        if (!operation.getOperator().isPresent()) {
+        if (!operation.getOperator().isPresent() && !functionCall) {
             throw new CompilerException("expression " + operation.toHumanReadableString() +
                     " must have an operator");
         }
 
-        if (operation.getOperator().get().getType() != Operator.OperatorType.RELATIONAL) {
-            throw new CompilerException("expression " + operation.toHumanReadableString() +
-                    " must have a relational operator");
+        if (!functionCall) {
+            if (operation.getOperator().get().getType() != Operator.OperatorType.RELATIONAL) {
+                throw new CompilerException("expression " + operation.toHumanReadableString() +
+                        " must have a relational operator");
+            }
         }
 
         Element first = operation.getFirstElement();
-        Operator operator = operation.getOperator().get();
-        Element second = operation.getSecondElement().get();
+        Operator operator = functionCall ? Operator.GREATER_THAN : operation.getOperator().get();
+        Element second = functionCall ? null : operation.getSecondElement().get();
         String instruction = operator.getInstruction().get();
         String prefix = "if" + ifElse.getId();
 
@@ -287,21 +297,28 @@ public class Compiler {
         String comment1 = "Check if " + operation.toHumanReadableString() +
                 " (if-statement #" + ifElse.getId() + ").";
         String comment2 = ">";
+        String comment3 = "Branch to if-block when " + operation.toHumanReadableString() + ".";
 
         if (comment != null) {
             comment2 = comment1;
             comment1 = comment.getContents();
+
+            if (functionCall) {
+                comment3 = comment1 + " (if-statement #" + ifElse.getId() + ").";
+            }
         }
 
         // Compare
-        assembly.append(Template.fillStatement(label, "LOAD", "R0", loadValueString(first),
-                comment1 + "\n"));
-        assembly.append(Template.fillStatement("", "CMP", "R0",
-                loadValueString(second), comment2 + "\n"));
+        if (!functionCall) {
+            assembly.append(Template.fillStatement(label, "LOAD", "R0", loadValueString(first),
+                    comment1 + "\n"));
+            assembly.append(Template.fillStatement("", "CMP", "R0",
+                    loadValueString(second), comment2 + "\n"));
+        }
 
         // Branch to if-block.
         assembly.append(Template.fillStatement("", instruction, prefix + "_true", "",
-                "Branch to if-block when " + operation.toHumanReadableString() + ".\n"));
+                comment3 + "\n"));
 
         // Block if false (else)
         if (!ifElse.getElseBlock().getContents().isEmpty()) {
