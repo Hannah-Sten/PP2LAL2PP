@@ -3,6 +3,9 @@ package nl.rubensten.pp2lal2pp.util;
 import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 
+import java.io.File;
+import java.io.InputStream;
+
 /**
  * @author Ruben Schellekens
  */
@@ -22,7 +25,7 @@ public enum Template {
     API_INVOKE_ISINPUTON("api-invoke-isInputOn.template"),
     API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
     API_INVOKE_SETOUTPUT("api-invoke-setOutput.template"),
-    API_INVOKE_SETSINGLEOUTPUT("api-invoke-setSingleOutput"),
+    API_INVOKE_SETSINGLEOUTPUT("api-invoke-setSingleOutput.template"),
 
     /**
      * Denotes the start of the program.
@@ -126,6 +129,38 @@ public enum Template {
     }
 
     /**
+     * Unpacks all the templates to the executing directory.
+     *
+     * @return The amount of succesfully unpacked templates.
+     */
+    public static int unpack() {
+        new File("template").mkdir();
+        int count = 0;
+
+        for (Template template : values()) {
+            String text = template.load();
+            String path = template.getPath().replaceAll("^/", "");
+            File duFile = new File(path);
+
+            if (duFile.exists()) {
+                continue;
+            }
+
+            FileWorker fw = new FileWorker(duFile);
+
+            try {
+                fw.write(text, false);
+                count++;
+            }
+            catch (PP2LAL2PPException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return count;
+    }
+
+    /**
      * Replaces all given keys with the given values.
      *
      * @param keyValue
@@ -177,7 +212,13 @@ public enum Template {
      * @return The contents of the template.
      */
     public String load() {
-        StreamWorker sw = new StreamWorker(getClass().getResourceAsStream(getPath()));
+        File file = new File(getPath().replaceAll("^/", ""));
+        if (file.exists()) {
+            return new FileWorker(file).read();
+        }
+
+        InputStream is = getClass().getResourceAsStream(getPath());
+        StreamWorker sw = new StreamWorker(is);
         return sw.read();
     }
 

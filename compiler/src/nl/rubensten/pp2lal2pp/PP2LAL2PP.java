@@ -5,6 +5,7 @@ import nl.rubensten.pp2lal2pp.lang.GlobalVariable;
 import nl.rubensten.pp2lal2pp.lang.Program;
 import nl.rubensten.pp2lal2pp.parser.FileParser;
 import nl.rubensten.pp2lal2pp.parser.Parser;
+import nl.rubensten.pp2lal2pp.util.Template;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,6 +29,13 @@ public class PP2LAL2PP {
         }
 
         List<String> argList = new ArrayList<>(Arrays.asList(args));
+
+        // Unpack templates.
+        if (argList.contains("-u")) {
+            int amount = Template.unpack();
+            System.out.println("Unpacked " + amount + " template files.");
+            return;
+        }
 
         // Parse file name.
         File file = new File(args[args.length - 1]);
@@ -98,6 +106,7 @@ public class PP2LAL2PP {
         System.out.println("    -b #,#,#,#,...\t\tSequence of banned global base locations");
         System.out.println("    -d <destination>\tdestination file");
         System.out.println("    -r \t\t\t\t\trefactor file");
+        System.out.println("    -u \t\t\t\t\tunpack templates");
         System.out.println("");
     }
 
