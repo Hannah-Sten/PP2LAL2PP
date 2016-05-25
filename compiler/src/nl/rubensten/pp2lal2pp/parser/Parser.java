@@ -343,17 +343,24 @@ public class Parser {
             return new Block(body);
         }
 
-        while (true) {
+        boolean skipped = false;
+        if (line.last().equals("{")) {
             line = new Tokeniser(lines.next());
+            skipped = true;
+        }
 
-            if (line.isFirst("}")) {
+        while (true) {
+            if (!lines.hasNext()) {
                 break;
             }
 
-            if (line.sizeNoComments() > 0) {
-                if (line.last().equals("{")) {
-                    continue;
-                }
+            if (!skipped) {
+                line = new Tokeniser(lines.next());
+            }
+            skipped = false;
+
+            if (line.isFirst("}")) {
+                break;
             }
 
             StringBuilder comment = new StringBuilder();
