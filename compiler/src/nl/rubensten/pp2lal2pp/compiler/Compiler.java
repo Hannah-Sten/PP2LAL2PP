@@ -736,6 +736,23 @@ public class Compiler {
      *         The label to print before the statement.
      */
     private void compileFunctionReturn(Return ret, String label) {
+        // Return statements without values.
+        if (ret instanceof ElementReturn) {
+            ElementReturn eltReturn = (ElementReturn)ret;
+            Element element = eltReturn.getElement();
+
+            // Function call
+            if (element instanceof FunctionCall) {
+                FunctionCall call = (FunctionCall)element;
+                compileFunctionCall(call, label);
+
+                assembly.append(Template.fillStatement("", "RTS", "", "",
+                        "Return from function " + function.getName() + ".\n"));
+
+                return;
+            }
+        }
+
         // If there is a return value.
         if (ret.getReturnValue() != null) {
             assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_RETURN,

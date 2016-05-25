@@ -249,9 +249,26 @@ public class Parser {
         if (line.size() == 1) {
             return new Return();
         }
-        else {
-            return new Return(Value.parse(line.getToken(1), program));
+
+        if (line.size() >= 3) {
+            if (line.equals(2, "(")) {
+                // Function call.
+                String name = line.getToken(1);
+                List<Variable> variables = new ArrayList<>();
+
+                if (!line.equals(3, ")")) {
+                    for (int i = 3; i < line.sizeNoComments(); i += 2) {
+                        variables.add(new Variable("num", Value.parse(line.getToken(i), program))
+                                .setJustNumber(true));
+                    }
+                }
+
+                FunctionCall call = new FunctionCall(name, variables);
+                return new ElementReturn(call);
+            }
         }
+
+        return new Return(Value.parse(line.getToken(1), program));
     }
 
     /**
