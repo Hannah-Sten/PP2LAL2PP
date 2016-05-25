@@ -13,6 +13,7 @@ public enum Template {
 
     // API implementations
     API_EXIT("api-exit.template"),
+    API_GETANALOG("api-getAnalog.template"),
     API_GETANALOGSTATES("api-getAnalogStates.template"),
     API_GETINPUTSTATES("api-getInputStates.template"),
     API_ISINPUTON("api-isInputOn.template"),
@@ -22,6 +23,7 @@ public enum Template {
 
     // API function calls
     API_INVOKE_EXIT("api-invoke-exit.template"),
+    API_INVOKE_GETANALOG("api-invoke-getAnalog.template"),
     API_INVOKE_GETANALOGSTATES("api-invoke-getAnalogStates.template"),
     API_INVOKE_GETINPUTSTATES("api-invoke-getInputStates.template"),
     API_INVOKE_ISINPUTON("api-invoke-isInputOn.template"),
