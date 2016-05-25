@@ -22,6 +22,7 @@ public class APIFunction {
         add("setSingleOutput");
         add("set7Segment");
         add("getAnalogStates");
+        add("getAnalog");
     }};
 
     /**
