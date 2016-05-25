@@ -3,7 +3,7 @@
 ;#  R0 : upon entry, indicates from which A/D-converter to retrieve the value from. Can be either 0 or 1.
 ;#  R4 : upon exit, contains the value of the first or second A/D-converter in binary format in the range [0-255].
 ;#
-getAnalog:      LOAD    R4  [R5+ADCONV]             ; Load the ADconv states and put it in the return register.
+getAnalog:      LOAD    R4  [R5+ADCONV]             ; Load the ADconv state and put it in the return register.
                 CMP     R0  0                       ; Check if we need the first ADconv.
                 BEQ     getAnalog_first             ; We need the first one.
                 AND     R4  %01111111100000000      ; Isolate the upper 8 bits for the second ADconv.
