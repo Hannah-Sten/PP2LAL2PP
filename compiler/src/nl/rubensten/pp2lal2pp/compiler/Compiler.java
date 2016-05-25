@@ -200,7 +200,7 @@ public class Compiler {
 
         for (Element elt : elts) {
             // Function Continue
-            if (elt instanceof Continue && functionName != null && inside != Loop.class) {
+            if (elt instanceof Continue && inside != Loop.class) {
                 compileFunctionContinue(label);
                 label = "";
                 continue;
@@ -295,6 +295,13 @@ public class Compiler {
 
         Element first = operation.getFirstElement();
         Operator operator = functionCall ? Operator.GREATER_THAN : operation.getOperator().get();
+
+        if (functionCall && operation.getOperator().isPresent()) {
+            if (operation.getOperator().get() == Operator.BOOLEAN_NEGATION) {
+                operator = Operator.LESSER_THAN_EQUAL;
+            }
+        }
+
         Element second = functionCall ? null : operation.getSecondElement().get();
         String instruction = operator.getInstruction().get();
         String prefix = "if" + ifElse.getId();
@@ -337,7 +344,13 @@ public class Compiler {
                 "Skip the if-block.\n"));
 
         // Block if true (if)
-        compileBlock(ifElse.getIfBlock(), prefix + "_true", IfElse.class);
+        if (ifElse.getIfBlock().getContents().size() > 0) {
+            compileBlock(ifElse.getIfBlock(), prefix + "_true", IfElse.class);
+        }
+        else {
+            assembly.append(Template.fillStatement(prefix + "_true:", "LOAD", "R0", "0",
+                    "Dummy instruction to always make the label work.\n"));
+        }
 
         // The end.
         assembly.append(Template.fillStatement(prefix + "_end:", "LOAD", "R0", "0",
@@ -365,8 +378,6 @@ public class Compiler {
 
                 if (op.getOperator().get() == Operator.ASSIGN_ALT_RIGHT) {
                     op.swap();
-
-                    System.out.println(">>> " + op + " /// swap");
                 }
 
                 if (op.getSecondElement().isPresent()) {

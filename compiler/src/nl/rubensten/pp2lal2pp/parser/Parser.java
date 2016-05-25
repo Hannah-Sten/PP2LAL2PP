@@ -452,6 +452,17 @@ public class Parser {
         Element second;
         ListIterator<String> li = (ListIterator<String>)it;
 
+        // isInputOn API function shizz.
+        if (line.isFirst("!") && line.equals(1, "isInputOn")) {
+            String name = "isInputOn";
+            Value value = Value.parse(line.getToken(3), program);
+            FunctionCall call = new FunctionCall(name, new ArrayList<Variable>() {{
+                add(new Variable("num", value).setJustNumber(true));
+            }});
+
+            return new Operation(call, Operator.BOOLEAN_NEGATION, null);
+        }
+
         // Check for assignments
         String or = line.getOriginal();
         Tokeniser orTokens = new Tokeniser(or);
