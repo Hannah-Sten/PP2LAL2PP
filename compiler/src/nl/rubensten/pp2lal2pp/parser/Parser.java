@@ -268,7 +268,13 @@ public class Parser {
             }
         }
 
-        return new Return(Value.parse(line.getToken(1), program));
+        Value value = Value.parse(line.getToken(1), program);
+
+        if (value instanceof Number) {
+            return new Return(value);
+        }
+
+        return new ElementReturn(new Variable(value.stringRepresentation(), value));
     }
 
     /**

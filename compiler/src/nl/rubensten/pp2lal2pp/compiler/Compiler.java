@@ -757,7 +757,16 @@ public class Compiler {
 
                 assembly.append(Template.fillStatement("", "RTS", "", "",
                         "Return from function " + function.getName() + ".\n"));
-
+                return;
+            }
+            // Variable
+            if (element instanceof Variable) {
+                Variable var = (Variable)element;
+                assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_RETURN,
+                        loadValueString(var),
+                        "Load the value of variable " + var.getName() + " as return value.\n"));
+                assembly.append(Template.fillStatement("", "RTS", "", "",
+                        "Return from function " + function.getName() + ".\n"));
                 return;
             }
         }
