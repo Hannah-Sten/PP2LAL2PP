@@ -12,6 +12,7 @@ import nl.rubensten.pp2lal2pp.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -359,8 +360,17 @@ public class Compiler {
         operationLabel = label;
 
         if (op.getOperator().isPresent()) {
-            if (op.getOperator().get() == Operator.ASSIGN) {
+            if (EnumSet.of(Operator.ASSIGN, Operator.ASSIGN_ALT_LEFT, Operator.ASSIGN_ALT_RIGHT)
+                    .contains(op.getOperator().get())) {
+
+                if (op.getOperator().get() == Operator.ASSIGN_ALT_RIGHT) {
+                    op.swap();
+
+                    System.out.println(">>> " + op + " /// swap");
+                }
+
                 if (op.getSecondElement().isPresent()) {
+                    Element first = op.getFirstElement();
                     Element second = op.getSecondElement().get();
 
                     // When first evaluating operation, then assign.
@@ -369,8 +379,8 @@ public class Compiler {
                         if (secondOp.getOperator().isPresent()) {
                             compileOperation((Operation)second, operationLabel);
 
-                            if (op.getFirstElement() instanceof Variable) {
-                                Variable var = (Variable)op.getFirstElement();
+                            if (first instanceof Variable) {
+                                Variable var = (Variable)first;
 
                                 if (input.getGlobalVariable(var.getName()).isPresent()) {
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
