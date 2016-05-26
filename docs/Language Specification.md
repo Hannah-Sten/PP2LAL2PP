@@ -27,15 +27,9 @@ Global variables are stored in the Global Base and can be used from any scope in
 
 Local variables have their values stored on the stack and are only usable in their local scope. Meaning that as soon as the function of code ends where the local variable is declared, the variable cannot be used anymore. Local variables can only be declared in functions and are declared as follows: `var <varName> = <value>`, analogous to global variables. Variables cannot have the same name as reserved keywords, neither can they have the same name as any global variable.
 
-## Blocks
-
-A block of code is code that is within squiggly brackets `{` and `}`. Local variables declared in the block will be no more when the block finishes.
-
 ## Functions
 
-Functions are a block of code that can be called from another place in the program. Unlike 'normal' programming languages, functions declared in the PP2LAL2PP-language will run continuously until the method is manually exited. Meaning that when the method reaches the end of its block, the method will run again.
-
-Functions are declared as follows:
+Functions are a block of code that can be called from another place in the program. Functions are declared as follows:
 
 ```
 function <functionName>(<arg0>, ... <argN>) {
@@ -44,13 +38,13 @@ function <functionName>(<arg0>, ... <argN>) {
 }
 ```
 
-*functionName* this is the name of the function and must be unique and can neither be "main", "init" or "exit". It is also forbidden to use the names of any of the API functions as described in [Base API.md](Base API.md).
+*functionName* this is the name of the function and must be unique and can neither be "main", "init" or "exit". It is also forbidden to use the names of any of the API functions as described in [Base API.md](Base API.md). Neither can you use one of the reserved keywords (see section down below).
 
 *argN (optional)* is a list of arguments seperated by a comma. You can have as many arguments as you like. If you don't want to have arguments you must leave the space between the parenthesis blank like `()`.
 
-*return* exits the function-loop. If return is not called, the function would start over again after the end of the block has been reached. If you add a *returnValue* beind return the function will return said value. However, if you don't want to return a value you can ommit it. **Every function must return.** The return value can either be a function call, number or variable.
+*return* exits the function-loop. If you add a *returnValue* beind return the function will return said value. However, if you don't want to return a value you can ommit it. **Every function must return.** The return value can either be a function call, number or variable.
 
-Using the keyword `continue` forces the function to quit and start over without losing the declared local variables.
+Using the keyword `continue` forces the function to quit and start over.
 
 ### Interrupts
 
@@ -74,7 +68,7 @@ loop (<variable> from <beginning> to <endInclusive> [step <stepSize>]) {
 
 *beginning* is the starting value of the variable.
 
-*endInclusive* is the value where the loop should end. That means that if the variable has a value that surpasses the end value, the loop will terminate. If the loop variable has the same value as endInclusive, it will enter its last iteration. If the value is greater/smaller (depends on if the loop counts up or down) the loop will not have a terminal iteration.
+*endInclusive* is the value where the loop should end. That means that if the variable has a value that surpasses the end value, the loop will terminate. If the loop variable has the same value as *endInclusive*, it will enter its last iteration. If the value is greater/smaller (depends on if the loop counts up or down) the loop will not have a terminal iteration.
 
 *stepSize (optional)* by default the loop will have a step size of either 1 or -1. However, adding `step <stepSize>` will change the amount by which the variable changes.
 
@@ -108,21 +102,21 @@ else if (<expression2>) {
     # Execute code when expression 1 doesn't hold, but expression 2 does.
 }
 else {
-    # Execute code when neither expression 1 or expression 2 hold.
+    # Execute code when neither expression 1 or expression 2 holds.
 }
 ```
 
-*expression* this is a boolean expression using the relational operators mentioned down below. You can chain multiple boolean expressions using logical operators (e.g. `expression1 and expression2` if exp1 and exp2 must hold).
+*expression* this is a boolean expression using the relational operators mentioned down below.
 
 ## Numbers
 
 **Decimal numbers** can only be typed using characters in the set `{1,2,3,4,5,6,7,8,9,0}` and cannot start with a `0`. Examples: `3`, `123`, `598123`, 
 
-**Binary numbers** are written with the characters `{0,1}` after the prefix `0b`. Meaning that the number 10 would become `0b1010` or `0b00001010` for example as prefix zeros are allowed.
+**Binary numbers** are written with the characters `{0,1}` after the prefix `0b`. Meaning that the number 10 would become `0b1010` or `0b00001010` for example as leading zeros are allowed.
 
 **Octal numbers** are written with the characters `{0,1,2,3,4,5,6,7}` after the prefix `0`. Meaning that the number `043` would become 35 in decimal.
 
-**Hexadecimal numbers** are written with the characters `{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f}` after the prefix `0x`. Meaning that the number 334 would become `0x14E` or `0x0014e` as prefix zeros are allowed.
+**Hexadecimal numbers** are written with the characters `{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f}` after the prefix `0x`. Meaning that the number 334 would become `0x14E` or `0x0014e` as leading zeros are allowed.
 
 **Other bases** can be made by using `0_BASE_DIGITS` where `BASE` is the base from 2 to 16 and `DIGITS` is the actual number. So 104 would become `0_3_10212` if you want to write it in base 3.
 
@@ -138,14 +132,16 @@ Definitions can be used for named constants that must be declared in the outermo
 
 Comments are extra pieces of information that are functionally ignored by the compiler. However, they do appear in assembly-comments, meaning that almost any comment you write will be placed accordingly in the compiled assembly file. There is only one kind of comment, and that's the line comment.
 
+All comments at the beginning of the file starting with `#;` will be placed as header comment in the `.asm` file. All comments placed above a function will be placed above the beginning of that subroutine and other comments will be placed behind the corresponding assembly line after the `;`.
+
 ### Line comments
 Line commments will make a whole line to be functionally ignored by the compiler. You start a line comment with a hash sign `#`.
 
 ### Example
 ```
-someFunction();
+someFunction()
 # Ignored comment
-howeverThisFunctionDoesnt()
+andSomeOtherFunctionCallYeeHaa()
 ```
 
 ## Operators
@@ -168,7 +164,7 @@ The following arithmatic operators are supported:
 * `*` Multiplication
 * `/` Integer division
 * `%` Remainder
-* `**` Power (`2**3` equals 8)
+* **`TODO`** `**` Power (`2**3` equals 8)
 
 So if you want to store the product of 5 and 7 in a variable a, do this: `a = 5 * 7`.
 
@@ -188,7 +184,7 @@ You can do some epic shizzles with binary numbers. These operators are supported
 * `^` Bitwise XOR
 * `~` Bitwise NOT (see unary operators)
 
-Like the arithmetic operators, you can use them in conjunction with the `=`-sign (e.g. `^=`).
+Like the arithmetic operators, you can use them in conjunction with the `=`-sign (except `~` - e.g. `^=`).
 
 ### Relational operators
 
@@ -219,7 +215,7 @@ These are placed right in front of a variable or number.
 
 ## Assembly injection (`inject`)
 
-*Warning: dangerous!* Assembly injection lets you inject native assembly code in your program. The lines will be placed exactly in the 'compiled' file exactly as you type them. This makes it really powerful, but also really dangerous to use. We do not recommend using it. It is solely meant for people who want to know what it all can do. No idea if it is useful, but it was easy to implement haha. Yolo.
+*Warning: dangerous!* Assembly injection lets you inject native assembly code in your program. The lines will be placed in the 'compiled' file exactly as you type them. This makes it really powerful, but also really dangerous to use. We do not recommend using it. It is solely meant for people who know what they are doing and want to have some more control. Hashtag Yolo.
 
 Usage:
 ```
@@ -247,7 +243,7 @@ The following names are reserved and cannot be used as a global variable name, f
 * init
 * exit
 * Words with prefix "if#" where # is a number.
-* Any of the Base API functions.
+* Any of the names of the Base API functions.
 * Any of the PP2 instructions.
 * R0, R1, R2, R3, R4, R5, R6, R7, SP, GB.
 * Any bracket.
