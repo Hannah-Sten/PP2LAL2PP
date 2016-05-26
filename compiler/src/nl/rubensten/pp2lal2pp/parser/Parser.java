@@ -483,6 +483,7 @@ public class Parser {
             FunctionCall call = new FunctionCall(name, new ArrayList<Variable>() {{
                 add(new Variable("num", value).setJustNumber(true));
             }});
+            program.registerAPIFunction(name);
 
             return new Operation(call, Operator.BOOLEAN_NEGATION, null);
         }
@@ -599,6 +600,7 @@ public class Parser {
                 }
 
                 first = new FunctionCall(prevToken, arguments);
+                program.registerAPIFunction(prevToken);
 
                 if (it.hasNext()) {
                     token = it.next();
@@ -673,6 +675,7 @@ public class Parser {
                 }
 
                 second = new FunctionCall(prevToken, arguments);
+                program.registerAPIFunction(prevToken);
             }
             else {
                 throw new ParseException("Wrong function call at line '" + or + "'.");
@@ -864,6 +867,7 @@ public class Parser {
                 }
 
                 value = new FunctionCall(funcName, variables);
+                program.registerAPIFunction(funcName);
             }
             // Variable declaration
             else {
