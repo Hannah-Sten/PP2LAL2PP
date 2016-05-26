@@ -294,9 +294,9 @@ public class Compiler {
                     comment));
         }
 
-        int pointer = variable.getPointer();
+        int pointer = function.getVariableByVariable(variable).getPointer();
         assembly.append(Template.fillStatement("", "STOR", call ? Constants.REG_RETURN : "R0",
-                "[SP+" + pointer + "]",
+                "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]",
                 call ? comment : "Save the initial value of " + variable.getName() + ".\n"));
     }
 
@@ -448,8 +448,9 @@ public class Compiler {
                                             operationComment));
                                 }
                                 else {
+                                    int pointer = function.getVariableByVariable(var).getPointer();
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                                    Constants.REG_STACK_POINTER + "+" + var.getPointer() +
+                                                    Constants.REG_STACK_POINTER + "+" + pointer +
                                                     "]",
                                             operationComment));
                                 }
@@ -575,7 +576,8 @@ public class Compiler {
                         "]";
             }
 
-            return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
+            int pointer = function.getVariableByVariable(var).getPointer();
+            return "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]";
         }
 
         if (element instanceof FunctionCall) {
@@ -620,7 +622,8 @@ public class Compiler {
         }
         // Arg1: Local variable
         else {
-            return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
+            int pointer = function.getVariableByVariable(var).getPointer();
+            return "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]";
         }
     }
 
@@ -777,8 +780,9 @@ public class Compiler {
             }
             // Local variable
             else {
+                int pointer = function.getVariableByVariable(var).getPointer();
                 assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
-                        "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]",
+                        "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]",
                         "Load the value of variable " + var.getName() + ".\n"));
             }
 
