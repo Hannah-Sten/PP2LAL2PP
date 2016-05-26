@@ -25,7 +25,7 @@ Global variables are stored in the Global Base and can be used from any scope in
 
 ## Local variables (`var`)
 
-Local variables have their values stored on the stack and are only usable in their local scope. Meaning that as soon as the block of code ends where the local variable is declared, the variable cannot be used anymore. Local variables can only be declared in a scope other than the outermost scope and are declared as follows: `var <varName> = <value>`, analogous to global variables. Variables cannot have the same name as reserved keywords, neither can they have the same name as any global variable.
+Local variables have their values stored on the stack and are only usable in their local scope. Meaning that as soon as the function of code ends where the local variable is declared, the variable cannot be used anymore. Local variables can only be declared in functions and are declared as follows: `var <varName> = <value>`, analogous to global variables. Variables cannot have the same name as reserved keywords, neither can they have the same name as any global variable.
 
 ## Blocks
 
@@ -248,6 +248,10 @@ The following names are reserved and cannot be used as a global variable name, f
 * exit
 * Words with prefix "if#" where # is a number.
 * Any of the Base API functions.
+* Any of the PP2 instructions.
+* R0, R1, R2, R3, R4, R5, R6, R7, SP, GB.
+* Any bracket.
+* And probably more assembly-related stuff.
 
 ## Weird exceptions on the rules
 

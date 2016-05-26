@@ -1,2 +1,2 @@
-                LOAD    R0  {$ARG1%24}; {$COMMENT1}
-                LOAD    R3  {$ARG2%24}; {$COMMENT2}
+                LOAD    R3  {$ARG1%24}; {$COMMENT2}
+                LOAD    R0  {$ARG2%24}; {$COMMENT1}
