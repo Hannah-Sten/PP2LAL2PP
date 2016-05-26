@@ -219,6 +219,12 @@ public class Compiler {
                 label = "";
             }
 
+            // Variable Declaration
+            if (elt instanceof Declaration) {
+                compileDeclaration((Declaration)elt, label);
+                label = "";
+            }
+
             // Operation
             if (elt instanceof Operation) {
                 if (comment == null) {
@@ -249,6 +255,49 @@ public class Compiler {
         }
 
         functionReturn = false;
+    }
+
+    /**
+     * Compiles a declaration.
+     *
+     * @param declaration
+     *         The declaration-object to compile.
+     * @param label
+     *         The label to punt in front of the first statement.
+     */
+    private void compileDeclaration(Declaration declaration, String label) {
+        if (declaration.getScope() != Declaration.DeclarationScope.LOCAL) {
+            return;
+        }
+
+        boolean call = false;
+        if (declaration.getDeclaration() instanceof FunctionCall) {
+            compileFunctionCall((FunctionCall)declaration.getDeclaration(), label);
+            label = "";
+            call = true;
+        }
+
+        Variable variable = declaration.getVariable();
+        Value value = declaration.getDeclaration();
+        String valArg = loadValueString(value);
+
+        // Register variable.
+        function.declareLocal(variable);
+
+        String comment = this.comment == null ?
+                "Load the initial value of " + variable.getName() + ". {declare " +
+                        variable.getName() + "}\n" :
+                this.comment.getContents() + " {declare " + variable.getName() + "}\n";
+
+        if (!call) {
+            assembly.append(Template.fillStatement(label, "LOAD", "R0", valArg,
+                    comment));
+        }
+
+        int pointer = variable.getPointer();
+        assembly.append(Template.fillStatement("", "STOR", call ? Constants.REG_RETURN : "R0",
+                "[SP+" + pointer + "]",
+                call ? comment : "Save the initial value of " + variable.getName() + ".\n"));
     }
 
     /**
