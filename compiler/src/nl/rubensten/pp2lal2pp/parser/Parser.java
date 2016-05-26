@@ -309,14 +309,16 @@ public class Parser {
         try {
             List<Variable> args = new ArrayList<>();
 
-            for (int i = 2; i < line.sizeNoComments(); i += 2) {
-                Value value = Value.parse(line.getToken(i), program);
+            if (!line.equals(2, ")")) {
+                for (int i = 2; i < line.sizeNoComments(); i += 2) {
+                    Value value = Value.parse(line.getToken(i), program);
 
-                if (value instanceof Number) {
-                    args.add(new Variable("number" + i, value).setJustNumber(true));
-                }
-                else {
-                    args.add(new Variable(line.getToken(i)));
+                    if (value instanceof Number) {
+                        args.add(new Variable("number" + i, value).setJustNumber(true));
+                    }
+                    else {
+                        args.add(new Variable(line.getToken(i)));
+                    }
                 }
             }
 
