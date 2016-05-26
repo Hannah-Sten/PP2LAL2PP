@@ -170,6 +170,11 @@ public class Parser {
             else if (line.equals(0, "#")) {
                 parsed = true;
             }
+            // Inject raw assembly.
+            else if (line.isFirst("inject")) {
+                body.add(parseInject(lines, line));
+                parsed = true;
+            }
 
             // Anything else.
             if (!parsed && !line.isFirstIgnore("else", "}")) {
@@ -311,6 +316,7 @@ public class Parser {
 
             for (int i = 2; i < line.sizeNoComments(); i += 2) {
                 Value value = Value.parse(line.getToken(i), program);
+
                 if (value.getObject() instanceof String) {
                     args.add(new Variable(line.getToken(i)));
                 }
@@ -873,6 +879,37 @@ public class Parser {
 
         program.addGlobalVariable(var);
         return true;
+    }
+
+    /**
+     * Parses inject statements.
+     *
+     * @param line
+     *         The line with the footprint of the loop.
+     * @param lines
+     *         The iterator of the LineTokeniser.
+     * @return The parsed inject-object.
+     */
+    private Inject parseInject(Iterator<String> lines, Tokeniser line) {
+        Inject inject = null;
+
+        try {
+            if (!line.equals(1, "{")) {
+                throw new ParseException("Incorrect syntax for inject statement: missing opening brace in " + line.getOriginal());
+            }
+
+            while (true) {
+                if (!lines.hasNext()) {
+                    break;
+                }
+            }
+        }
+        catch (IndexOutOfBoundsException exception) {
+            throw new ParseException("Inject is not correctly defined: '" + line.getOriginal() + "'" +
+                                             ".");
+        }
+
+        return inject;
     }
 
 }
