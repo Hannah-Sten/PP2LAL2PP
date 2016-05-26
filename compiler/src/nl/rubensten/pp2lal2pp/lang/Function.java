@@ -111,7 +111,7 @@ public class Function implements Identifyable, Element {
     }
 
     /**
-     * Finds the variable object with the name of the given variable.
+     * Finds the variable or argument object with the name of the given variable.
      *
      * @param other
      *         The variable from which the name will be used to get the variable with the same
@@ -125,7 +125,7 @@ public class Function implements Identifyable, Element {
     }
 
     /**
-     * Finds the variable object with the given name.
+     * Finds the variable or argument object with the given name.
      *
      * @param name
      *         The name of the variable to look up.
@@ -137,6 +137,12 @@ public class Function implements Identifyable, Element {
         for (Variable var : variables) {
             if (var.getName().equals(name)) {
                 return var;
+            }
+        }
+
+        for (Variable arg : arguments) {
+            if (arg.getName().equals(name)) {
+                return arg;
             }
         }
 
