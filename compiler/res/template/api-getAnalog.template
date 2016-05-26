@@ -7,7 +7,7 @@ getAnalog:      LOAD    R4  [R5+ADCONV]             ; Load the ADconv state and 
                 CMP     R0  0                       ; Check if we need the first ADconv.
                 BEQ     getAnalog_first             ; We need the first one.
                 AND     R4  %01111111100000000      ; Isolate the upper 8 bits for the second ADconv.
-                DIV     R4  258                     ; Right shift 8 places to get the right value.
+                DIV     R4  256                     ; Right shift 8 places to get the right value.
                 BRA     getAnalog_end               ; Skip the if body.
 getAnalog_first:AND     R4  %011111111              ; Isolate the lower 8 bits.
 getAnalog_end:  RTS                                 ; Exit getAnalog function.
