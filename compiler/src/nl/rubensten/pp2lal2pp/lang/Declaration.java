@@ -81,7 +81,7 @@ public class Declaration implements Element {
 
     @Override
     public String toString() {
-        return "(" + variable + ":=" + getValue().stringRepresentation() + ")";
+        return "(" + variable + ":=" + getDeclaration().stringRepresentation() + ")";
     }
 
     public enum DeclarationScope {
