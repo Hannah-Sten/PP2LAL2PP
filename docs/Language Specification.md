@@ -248,6 +248,10 @@ The following names are reserved and cannot be used as a global variable name, f
 * exit
 * Words with prefix "if#" where # is a number.
 * Any of the Base API functions.
+* Any of the PP2 instructions.
+* R0, R1, R2, R3, R4, R5, R6, R7, SP, GB.
+* Any bracket.
+* And probably more assembly-related stuff.
 
 ## Weird exceptions on the rules
 
