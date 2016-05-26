@@ -44,7 +44,7 @@ public class Variable implements Identifyable, Element {
         this.defaultValue = defaultValue;
     }
 
-    protected void setPointer(int pointer) {
+    public void setPointer(int pointer) {
         this.pointer = pointer;
     }
 
