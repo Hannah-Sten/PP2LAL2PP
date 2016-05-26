@@ -294,9 +294,7 @@ public class Compiler {
                     comment));
         }
 
-        int pointer = function.getVariableByVariable(variable).getPointer();
-        assembly.append(Template.fillStatement("", "STOR", call ? Constants.REG_RETURN : "R0",
-                "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]",
+        assembly.append(Template.fillStatement("", "PUSH", call ? Constants.REG_RETURN : "R0", "",
                 call ? comment : "Save the initial value of " + variable.getName() + ".\n"));
     }
 
@@ -830,6 +828,14 @@ public class Compiler {
             label = "";
         }
 
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
+            label = "";
+        }
+
         assembly.append(Template.fillStatement(label, "RTS", "", "",
                 "Return from function " + function.getName() + ".\n"));
     }
@@ -841,6 +847,14 @@ public class Compiler {
      *         The label to print before the statement.
      */
     private void compileFunctionContinue(String label) {
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
+            label = "";
+        }
+
         assembly.append(Template.fillStatement(label, "BRA", function.getName(), "",
                 "Repeat function " + function.getName() + ".\n"));
     }
