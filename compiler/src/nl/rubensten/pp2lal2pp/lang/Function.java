@@ -62,7 +62,7 @@ public class Function implements Identifyable, Element {
 
         for (int i = 0; i < arguments.length; i++) {
             Variable var = arguments[i];
-            var.setPointer(i - arguments.length);
+            var.setPointer(i + 1);
         }
     }
 
@@ -78,8 +78,15 @@ public class Function implements Identifyable, Element {
 
         for (int i = 0; i < arguments.size(); i++) {
             Variable var = arguments.get(i);
-            var.setPointer(i - arguments.size());
+            var.setPointer(i + 1);
         }
+    }
+
+    /**
+     * Returns the amount of local variables.
+     */
+    public int variableCount() {
+        return variables.size();
     }
 
     /**
@@ -103,11 +110,15 @@ public class Function implements Identifyable, Element {
      * Looks what the last pointer used was and creates a new pointer value based on that.
      */
     private int newPointer() {
-        if (variables.size() == 0) {
-            return 1;
+        for (Variable var : variables) {
+            var.setPointer(var.getPointer() + 1);
         }
 
-        return variables.get(variables.size() - 1).getPointer() + 1;
+        for (Variable var : arguments) {
+            var.setPointer(var.getPointer() + 1);
+        }
+
+        return 0;
     }
 
     /**
