@@ -654,10 +654,6 @@ public class Compiler {
             String textArg1 = getVariableValue(arg1);
             String textArg2 = getVariableValue(arg2);
 
-            if (arg2.isJustNumber()) {
-                textArg2 = "%" + Integer.toBinaryString(Integer.parseInt(textArg2));
-            }
-
             String result = Template.API_INVOKE_SET7SEGMENT.replace(
                     "ARG1", textArg1,
                     "ARG2", textArg2)
@@ -683,9 +679,6 @@ public class Compiler {
         // API isInputOn(num)
         else if (call.getCalled().equals("isInputOn")) {
             String text = getVariableValue(vars.get(0));
-            if (vars.get(0).isJustNumber()) {
-                text = "%" + Integer.toBinaryString(Integer.parseInt(text));
-            }
 
             String result = insertLabel(Template.API_INVOKE_ISINPUTON.replace(
                     "ARG", text
@@ -699,9 +692,6 @@ public class Compiler {
         else if (call.getCalled().equals("setOutput")) {
             Variable arg = vars.get(0);
             String text = getVariableValue(arg);
-            if (arg.isJustNumber()) {
-                text = "%" + Integer.toBinaryString(Integer.parseInt(text));
-            }
 
             String result = insertLabel(Template.API_INVOKE_SETOUTPUT.replace(
                     "ARG", text
@@ -718,10 +708,6 @@ public class Compiler {
 
             String textArg1 = getVariableValue(arg1);
             String textArg2 = getVariableValue(arg2);
-
-            if (arg1.isJustNumber()) {
-                textArg1 = "%" + Integer.toBinaryString(Integer.parseInt(textArg1));
-            }
 
             String result = Template.API_INVOKE_SET7SEGMENT.replace(
                     "ARG1", textArg1,
