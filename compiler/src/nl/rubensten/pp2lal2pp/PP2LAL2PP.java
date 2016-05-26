@@ -23,6 +23,8 @@ import java.util.List;
  */
 public class PP2LAL2PP {
 
+    public static String VERSION = "0.1";
+
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 
@@ -134,6 +136,7 @@ public class PP2LAL2PP {
                 ("-=-----------------------------------------------------------------------------=-");
         System.out.println("       Practicum Processor 2 Learn Assembly Language 2 Preserve " +
                 "Prosperity");
+        System.out.println(fillTo("", 39) + VERSION);
         System.out.println("              PP2LAL2PP: 'java -jar JARNAME.jar [-args] <fileName>'");
         System.out.println
                 ("-=-----------------------------------------------------------------------------=-");
