@@ -15,6 +15,12 @@ Returns the number representing the state of the input. The binary representatio
 #### isInputOn(num)
 Checks if the input *num* is on. It will be evaluated as a boolean expression. It will (quasi) return *true* if the input is on and *false* if the input is not on. The index *num* is determined by using the binary representation of the numbers. E.g. `0b000100000` checks for input #5.
 
+#### getAnalogStates()
+Returns the concatenated values of the two A/D-converters in binary format. The 8 least significant bits represent the value of the first A/D-converter and the remaining 8 bits represent the value of the second A/D-converter. Hence the values are in the range 0-255 inclusive.
+
+#### getAnalog(num)
+Returns the value of the A/D-converter specified by `num`. `num` can either be `0` or `1`, where `0` is the first and `1` is the second A/D-converter. An unsigned 8-bit number is returned in binary format, hence in the range 0-255 inclusive.
+
 ## Output
 
 #### setOutput(val)

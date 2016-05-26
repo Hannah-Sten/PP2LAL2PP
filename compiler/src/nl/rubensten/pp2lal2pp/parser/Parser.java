@@ -311,11 +311,12 @@ public class Parser {
 
             for (int i = 2; i < line.sizeNoComments(); i += 2) {
                 Value value = Value.parse(line.getToken(i), program);
-                if (value.getObject() instanceof String) {
-                    args.add(new Variable(line.getToken(i)));
+
+                if (value instanceof Number) {
+                    args.add(new Variable("number" + i, value).setJustNumber(true));
                 }
                 else {
-                    args.add(new Variable("number" + i, value).setJustNumber(true));
+                    args.add(new Variable(line.getToken(i)));
                 }
             }
 
@@ -587,7 +588,14 @@ public class Parser {
                         continue;
                     }
 
-                    arguments.add(new Variable(elt));
+                    Value value = Value.parse(elt, program);
+
+                    if (value instanceof Number) {
+                        arguments.add(new Variable(elt, value).setJustNumber(true));
+                    }
+                    else {
+                        arguments.add(new Variable(elt));
+                    }
                 }
 
                 first = new FunctionCall(prevToken, arguments);
