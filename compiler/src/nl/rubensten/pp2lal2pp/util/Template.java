@@ -129,7 +129,7 @@ public enum Template {
                 "INSTRUCTION", instruction,
                 "ARG1", arg1,
                 "ARG2", arg2)
-                .replace("{$COMMENT}", "; " + cmt);
+                .replace("{$COMMENT}", (cmt != null ? "; " + cmt : ""));
     }
 
     /**
