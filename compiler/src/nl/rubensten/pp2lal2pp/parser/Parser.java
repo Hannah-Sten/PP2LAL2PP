@@ -314,14 +314,16 @@ public class Parser {
         try {
             List<Variable> args = new ArrayList<>();
 
-            for (int i = 2; i < line.sizeNoComments(); i += 2) {
-                Value value = Value.parse(line.getToken(i), program);
+            if (!line.equals(2, ")")) {
+                for (int i = 2; i < line.sizeNoComments(); i += 2) {
+                    Value value = Value.parse(line.getToken(i), program);
 
-                if (value instanceof Number) {
-                    args.add(new Variable("number" + i, value).setJustNumber(true));
-                }
-                else {
-                    args.add(new Variable(line.getToken(i)));
+                    if (value instanceof Number) {
+                        args.add(new Variable("number" + i, value).setJustNumber(true));
+                    }
+                    else {
+                        args.add(new Variable(line.getToken(i)));
+                    }
                 }
             }
 
@@ -488,6 +490,7 @@ public class Parser {
             FunctionCall call = new FunctionCall(name, new ArrayList<Variable>() {{
                 add(new Variable("num", value).setJustNumber(true));
             }});
+            program.registerAPIFunction(name);
 
             return new Operation(call, Operator.BOOLEAN_NEGATION, null);
         }
@@ -604,6 +607,7 @@ public class Parser {
                 }
 
                 first = new FunctionCall(prevToken, arguments);
+                program.registerAPIFunction(prevToken);
 
                 if (it.hasNext()) {
                     token = it.next();
@@ -678,6 +682,7 @@ public class Parser {
                 }
 
                 second = new FunctionCall(prevToken, arguments);
+                program.registerAPIFunction(prevToken);
             }
             else {
                 throw new ParseException("Wrong function call at line '" + or + "'.");
@@ -854,9 +859,30 @@ public class Parser {
             }
 
             String varName = line.getToken(1);
-            Value value = Value.parse(line.join(3, line.sizeNoComments() - 3, ""), program);
-            return new Declaration(new Variable(varName, value), value, Declaration.DeclarationScope
-                    .LOCAL);
+            Value value = null;
+
+            // Function call
+            if (line.equals(4, "(")) {
+                String funcName = line.getToken(3);
+                List<Variable> variables = new ArrayList<>();
+
+                if (!line.equals(5, ")")) {
+                    for (int i = 3; i < line.sizeNoComments(); i += 2) {
+                        variables.add(new Variable("num", Value.parse(line.getToken(i), program))
+                                .setJustNumber(true));
+                    }
+                }
+
+                value = new FunctionCall(funcName, variables);
+                program.registerAPIFunction(funcName);
+            }
+            // Variable declaration
+            else {
+                value = Value.parse(line.getToken(3), program);
+            }
+
+            return new Declaration(new Variable(varName, value), value,
+                    Declaration.DeclarationScope.LOCAL);
         }
         else {
             throw new ParseException("Wrong declaration for variable '" + line.getOriginal() + "'.");

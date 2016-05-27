@@ -1,5 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
+import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.Constants;
 import nl.rubensten.pp2lal2pp.IDManager;
 
@@ -31,13 +32,20 @@ public class Function implements Identifyable, Element {
     private List<Variable> arguments;
 
     /**
+     * A list of all local variables with pointers relative to the stack pointer.
+     * <p>
+     * List is empty if there are no variables.
+     */
+    private List<Variable> variables;
+
+    /**
      * The statements that have to be executed in the block.
      */
     private Block contents;
 
     /**
      * The pp2doc documentation comment.
-     *
+     * <p>
      * Every line is a new element int he list.
      */
     private List<String> pp2doc;
@@ -50,6 +58,7 @@ public class Function implements Identifyable, Element {
         this.name = name;
         this.pp2doc = pp2doc;
         this.arguments = new ArrayList<>();
+        this.variables = new ArrayList<>();
 
         for (int i = 0; i < arguments.length; i++) {
             Variable var = arguments[i];
@@ -65,11 +74,90 @@ public class Function implements Identifyable, Element {
         this.name = name;
         this.pp2doc = pp2doc;
         this.arguments = new ArrayList<>(arguments);
+        this.variables = new ArrayList<>();
 
         for (int i = 0; i < arguments.size(); i++) {
             Variable var = arguments.get(i);
             var.setPointer(i + 1);
         }
+    }
+
+    /**
+     * Returns the amount of local variables.
+     */
+    public int variableCount() {
+        return variables.size();
+    }
+
+    /**
+     * Declares a new local variable.
+     *
+     * @param variable
+     *         The variable to declare.
+     * @throws CompilerException
+     *         if there already is a variable declared with the same name.
+     */
+    public void declareLocal(Variable variable) throws CompilerException {
+        if (variables.parallelStream().anyMatch(v -> v.getName().equals(variable.getName()))) {
+            throw new CompilerException("you can't declare " + variable.getName() + " twice");
+        }
+
+        variable.setPointer(newPointer());
+        variables.add(variable);
+    }
+
+    /**
+     * Looks what the last pointer used was and creates a new pointer value based on that.
+     */
+    private int newPointer() {
+        for (Variable var : variables) {
+            var.setPointer(var.getPointer() + 1);
+        }
+
+        for (Variable var : arguments) {
+            var.setPointer(var.getPointer() + 1);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Finds the variable or argument object with the name of the given variable.
+     *
+     * @param other
+     *         The variable from which the name will be used to get the variable with the same
+     *         name.
+     * @return The stored function-variable with the name of variable <code>other</code>.
+     * @throws CompilerException
+     *         if there is no variable declared with the name of the given variable.
+     */
+    public Variable getVariableByVariable(Variable other) throws CompilerException {
+        return getVariableByName(other.getName());
+    }
+
+    /**
+     * Finds the variable or argument object with the given name.
+     *
+     * @param name
+     *         The name of the variable to look up.
+     * @return The variable that carries the given name.
+     * @throws CompilerException
+     *         if there is no variable declared with the given name.
+     */
+    public Variable getVariableByName(String name) throws CompilerException {
+        for (Variable var : variables) {
+            if (var.getName().equals(name)) {
+                return var;
+            }
+        }
+
+        for (Variable arg : arguments) {
+            if (arg.getName().equals(name)) {
+                return arg;
+            }
+        }
+
+        throw new CompilerException("variable " + name + " hasn't been declared");
     }
 
     /**
@@ -121,6 +209,8 @@ public class Function implements Identifyable, Element {
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", contents=" + contents +
+                ", variables=" + variables +
+                ", arguments=" + arguments +
                 ", pp2doc=" + pp2doc +
                 '}';
     }
