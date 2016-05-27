@@ -170,6 +170,11 @@ public class Parser {
             else if (line.equals(0, "#")) {
                 parsed = true;
             }
+            // Inject raw assembly.
+            else if (line.isFirst("inject")) {
+                body.add(parseInject(lines, line));
+                parsed = true;
+            }
 
             // Anything else.
             if (!parsed && !line.isFirstIgnore("else", "}")) {
@@ -881,6 +886,56 @@ public class Parser {
 
         program.addGlobalVariable(var);
         return true;
+    }
+
+    /**
+     * Parses inject statements.
+     *
+     * @param line
+     *         The line with the footprint of the loop.
+     * @param lines
+     *         The iterator of the LineTokeniser.
+     * @return The parsed inject-object.
+     */
+    private Inject parseInject(Iterator<String> lines, Tokeniser line) {
+        Inject inject;
+
+        System.out.println("I got called!");
+
+        try {
+            if (!line.equals(1, "{")) {
+                throw new ParseException("Incorrect syntax for inject statement: missing opening brace in " + line.getOriginal());
+            }
+
+            StringBuilder contents = new StringBuilder();
+
+            while (lines.hasNext()) {
+                line = new Tokeniser(lines.next());
+
+                if (line.isFirst("}")) {
+                    break;
+                }
+
+                if (line.getOriginal().contains("}")) {
+                    int untilIndex = line.getOriginal().indexOf("}");
+                    contents.append(line.getOriginal().subSequence(0, untilIndex).toString().trim());
+                    break;
+                }
+                else {
+                    contents.append(line.getOriginal().trim());
+                    contents.append("\n");
+                }
+            }
+
+            System.out.println(contents.toString());
+            inject = new Inject(contents.toString());
+        }
+        catch (IndexOutOfBoundsException exception) {
+            throw new ParseException("Inject is not correctly defined: '" + line.getOriginal() + "'" +
+                                             ".");
+        }
+
+        return inject;
     }
 
 }
