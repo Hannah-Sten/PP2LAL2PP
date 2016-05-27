@@ -219,6 +219,12 @@ public class Compiler {
                 label = "";
             }
 
+            // Variable Declaration
+            if (elt instanceof Declaration) {
+                compileDeclaration((Declaration)elt, label);
+                label = "";
+            }
+
             // Operation
             if (elt instanceof Operation) {
                 if (comment == null) {
@@ -255,6 +261,47 @@ public class Compiler {
         }
 
         functionReturn = false;
+    }
+
+    /**
+     * Compiles a declaration.
+     *
+     * @param declaration
+     *         The declaration-object to compile.
+     * @param label
+     *         The label to punt in front of the first statement.
+     */
+    private void compileDeclaration(Declaration declaration, String label) {
+        if (declaration.getScope() != Declaration.DeclarationScope.LOCAL) {
+            return;
+        }
+
+        boolean call = false;
+        if (declaration.getDeclaration() instanceof FunctionCall) {
+            compileFunctionCall((FunctionCall)declaration.getDeclaration(), label);
+            label = "";
+            call = true;
+        }
+
+        Variable variable = declaration.getVariable();
+        Value value = declaration.getDeclaration();
+        String valArg = loadValueString(value);
+
+        // Register variable.
+        function.declareLocal(variable);
+
+        String comment = this.comment == null ?
+                "Load the initial value of " + variable.getName() + ". {declare " +
+                        variable.getName() + "}\n" :
+                this.comment.getContents() + " {declare " + variable.getName() + "}\n";
+
+        if (!call) {
+            assembly.append(Template.fillStatement(label, "LOAD", "R0", valArg,
+                    comment));
+        }
+
+        assembly.append(Template.fillStatement("", "PUSH", call ? Constants.REG_RETURN : "R0", "",
+                call ? comment : "Save the initial value of " + variable.getName() + ".\n"));
     }
 
     /**
@@ -405,8 +452,9 @@ public class Compiler {
                                             operationComment));
                                 }
                                 else {
+                                    int pointer = function.getVariableByVariable(var).getPointer();
                                     assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                                    Constants.REG_STACK_POINTER + "+" + var.getPointer() +
+                                                    Constants.REG_STACK_POINTER + "+" + pointer +
                                                     "]",
                                             operationComment));
                                 }
@@ -532,7 +580,8 @@ public class Compiler {
                         "]";
             }
 
-            return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
+            int pointer = function.getVariableByVariable(var).getPointer();
+            return "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]";
         }
 
         if (element instanceof FunctionCall) {
@@ -577,7 +626,8 @@ public class Compiler {
         }
         // Arg1: Local variable
         else {
-            return "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]";
+            int pointer = function.getVariableByVariable(var).getPointer();
+            return "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]";
         }
     }
 
@@ -608,10 +658,6 @@ public class Compiler {
             String textArg1 = getVariableValue(arg1);
             String textArg2 = getVariableValue(arg2);
 
-            if (arg2.isJustNumber()) {
-                textArg2 = "%" + Integer.toBinaryString(Integer.parseInt(textArg2));
-            }
-
             String result = Template.API_INVOKE_SET7SEGMENT.replace(
                     "ARG1", textArg1,
                     "ARG2", textArg2)
@@ -637,9 +683,6 @@ public class Compiler {
         // API isInputOn(num)
         else if (call.getCalled().equals("isInputOn")) {
             String text = getVariableValue(vars.get(0));
-            if (vars.get(0).isJustNumber()) {
-                text = "%" + Integer.toBinaryString(Integer.parseInt(text));
-            }
 
             String result = insertLabel(Template.API_INVOKE_ISINPUTON.replace(
                     "ARG", text
@@ -653,9 +696,6 @@ public class Compiler {
         else if (call.getCalled().equals("setOutput")) {
             Variable arg = vars.get(0);
             String text = getVariableValue(arg);
-            if (arg.isJustNumber()) {
-                text = "%" + Integer.toBinaryString(Integer.parseInt(text));
-            }
 
             String result = insertLabel(Template.API_INVOKE_SETOUTPUT.replace(
                     "ARG", text
@@ -672,10 +712,6 @@ public class Compiler {
 
             String textArg1 = getVariableValue(arg1);
             String textArg2 = getVariableValue(arg2);
-
-            if (arg1.isJustNumber()) {
-                textArg1 = "%" + Integer.toBinaryString(Integer.parseInt(textArg1));
-            }
 
             String result = Template.API_INVOKE_SET7SEGMENT.replace(
                     "ARG1", textArg1,
@@ -734,8 +770,9 @@ public class Compiler {
             }
             // Local variable
             else {
+                int pointer = function.getVariableByVariable(var).getPointer();
                 assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_GENERAL,
-                        "[" + Constants.REG_STACK_POINTER + "+" + var.getPointer() + "]",
+                        "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]",
                         "Load the value of variable " + var.getName() + ".\n"));
             }
 
@@ -797,6 +834,14 @@ public class Compiler {
             label = "";
         }
 
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
+            label = "";
+        }
+
         assembly.append(Template.fillStatement(label, "RTS", "", "",
                 "Return from function " + function.getName() + ".\n"));
     }
@@ -808,6 +853,14 @@ public class Compiler {
      *         The label to print before the statement.
      */
     private void compileFunctionContinue(String label) {
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
+            label = "";
+        }
+
         assembly.append(Template.fillStatement(label, "BRA", function.getName(), "",
                 "Repeat function " + function.getName() + ".\n"));
     }

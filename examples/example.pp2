@@ -44,13 +44,6 @@ function main() {
         button = previousState ^ currentState
     }
     
-    # Do nothing, just showoff stuff.
-    loop (i from 2 to 3) {
-    }
-    
-    loop (i from 2 to 100 step 2) {
-    }
-    
     # Makes sure the counters don't exceed the display maximum.
     countOne %= DISPLAY_MAX
     countTwo %= DISPLAY_MAX
@@ -58,9 +51,11 @@ function main() {
     # Display the right counters
     if (button == 0b01) {
         set7Segment(0b01, countOne)
+        countOne += 1
     }
     else if (button == 0b10) {
         set7Segment(0b10, countTwo)
+        countTwo += 1
     }
     
     continue
