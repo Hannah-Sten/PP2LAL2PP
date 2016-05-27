@@ -239,6 +239,12 @@ public class Compiler {
                 label = "";
             }
 
+            // Inject
+            if (elt instanceof Inject) {
+                compileInject((Inject)elt, label);
+                label = "";
+            }
+
             // Comment
             if (elt instanceof Comment) {
                 this.comment = (Comment)elt;
@@ -833,6 +839,29 @@ public class Compiler {
             assembly.append(Template.EQU.replace("NAME", gv.getName(), "VALUE", gv.getPointer() +
                     "").replace("{$COMMENT}", gv.getComment().getContents()));
             assembly.append("\n");
+        }
+    }
+
+    /**
+     * Compiles an inject statement. Tries to format the raw assembly.
+     *
+     * @param inject
+     *         The Inject element.
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileInject(Inject inject, String label) {
+        String inj_comment = null;
+
+        if (comment != null) {
+            inj_comment = comment.getContents();
+        }
+
+        for (String line : inject.getContents().split("\n")) {
+            assembly.append(Template.fillStatement(label, line, "", "", inj_comment));
+            assembly.append("\n");
+            label = "";
+            inj_comment = null;
         }
     }
 
