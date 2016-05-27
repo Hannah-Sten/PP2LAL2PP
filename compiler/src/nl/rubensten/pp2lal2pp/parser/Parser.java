@@ -431,6 +431,11 @@ public class Parser {
             else if (line.equals(0, "#")) {
                 parsed = true;
             }
+            // Inject raw assembly.
+            else if (line.isFirst("inject")) {
+                body.add(parseInject(lines, line));
+                parsed = true;
+            }
 
             // Anything else.
             if (!parsed && !line.isFirstIgnore("else", "}")) {
@@ -926,8 +931,6 @@ public class Parser {
     private Inject parseInject(Iterator<String> lines, Tokeniser line) {
         Inject inject;
 
-        System.out.println("I got called!");
-
         try {
             if (!line.equals(1, "{")) {
                 throw new ParseException("Incorrect syntax for inject statement: missing opening brace in " + line.getOriginal());
@@ -953,7 +956,6 @@ public class Parser {
                 }
             }
 
-            System.out.println(contents.toString());
             inject = new Inject(contents.toString());
         }
         catch (IndexOutOfBoundsException exception) {
