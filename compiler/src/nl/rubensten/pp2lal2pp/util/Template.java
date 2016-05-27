@@ -5,6 +5,7 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 /**
  * @author Ruben Schellekens
@@ -102,6 +103,11 @@ public enum Template {
      */
     private String filePath;
 
+    /**
+     * The contents of the template.
+     */
+    private String contents;
+
     Template(String filePath) {
         this.filePath = filePath;
     }
@@ -124,12 +130,12 @@ public enum Template {
      */
     public static String fillStatement(String label, String instruction, String arg1, String arg2,
                                        String cmt) {
-        return Template.STATEMENT.replace(
+        return Regex.replace("{$COMMENT}", Template.STATEMENT.replace(
                 "LABEL", label,
                 "INSTRUCTION", instruction,
                 "ARG1", arg1,
-                "ARG2", arg2)
-                .replace("{$COMMENT}", (cmt != null ? "; " + cmt : ""));
+                "ARG2", arg2),
+                (cmt != null ? "; " + cmt : ""));
     }
 
     /**
@@ -189,8 +195,8 @@ public enum Template {
                 overflow = -(space - (count + 1));
             }
 
-            total = total.replace("{$" + keyValue[i], keyValue[i + 1])
-                    .replaceFirst("%[0-9]+\\}", Util.makeString(" ", tab));
+            total = Regex.replace("{$" + keyValue[i], total, keyValue[i + 1]);
+            total = Regex.replaceFirst("%[0-9]+\\}", total, Util.makeString(" ", tab));
         }
 
         return total;
@@ -201,8 +207,10 @@ public enum Template {
      */
     private int getSpace(String source, String name) {
         try {
-            return Integer.parseInt(source.replaceAll(".*\\s*.*\\{\\$" + name + "%", "")
-                    .replaceFirst("\\}.*\\s*.*", ""));
+            Pattern regex1 = Regex.compile("\\{\\$" + name + "%");
+            Pattern regex2 = Regex.compile("\\}");
+            String result = regex2.split(regex1.split(source)[1])[0];
+            return Integer.parseInt(result);
         }
         catch (NumberFormatException nfe) {
             throw new CompilerException("Template hasn't been set up correctly ({$" +
@@ -216,14 +224,20 @@ public enum Template {
      * @return The contents of the template.
      */
     public String load() {
-        File file = new File(getPath().replaceAll("^/", ""));
+        if (contents != null) {
+            return contents;
+        }
+
+        File file = new File(Regex.replaceAll("^/", getPath(), ""));
         if (file.exists()) {
-            return new FileWorker(file).read();
+            String contents = new FileWorker(file).read();
+            return this.contents = contents;
         }
 
         InputStream is = getClass().getResourceAsStream(getPath());
         StreamWorker sw = new StreamWorker(is);
-        return sw.read();
+        String total = sw.read();
+        return this.contents = total;
     }
 
     public String getFilePath() {
