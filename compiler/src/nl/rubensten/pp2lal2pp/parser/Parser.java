@@ -891,18 +891,37 @@ public class Parser {
      * @return The parsed inject-object.
      */
     private Inject parseInject(Iterator<String> lines, Tokeniser line) {
-        Inject inject = null;
+        Inject inject;
+
+        System.out.println("I got called!");
 
         try {
             if (!line.equals(1, "{")) {
                 throw new ParseException("Incorrect syntax for inject statement: missing opening brace in " + line.getOriginal());
             }
 
-            while (true) {
-                if (!lines.hasNext()) {
+            StringBuilder contents = new StringBuilder();
+
+            while (lines.hasNext()) {
+                line = new Tokeniser(lines.next());
+
+                if (line.isFirst("}")) {
                     break;
                 }
+
+                if (line.getOriginal().contains("}")) {
+                    int untilIndex = line.getOriginal().indexOf("}");
+                    contents.append(line.getOriginal().subSequence(0, untilIndex).toString().trim());
+                    break;
+                }
+                else {
+                    contents.append(line.getOriginal().trim());
+                    contents.append("\n");
+                }
             }
+
+            System.out.println(contents.toString());
+            inject = new Inject(contents.toString());
         }
         catch (IndexOutOfBoundsException exception) {
             throw new ParseException("Inject is not correctly defined: '" + line.getOriginal() + "'" +
