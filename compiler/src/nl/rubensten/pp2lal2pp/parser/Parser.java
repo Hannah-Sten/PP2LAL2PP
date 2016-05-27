@@ -4,6 +4,7 @@ import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
+import nl.rubensten.pp2lal2pp.util.Regex;
 
 import java.util.*;
 
@@ -64,7 +65,7 @@ public class Parser {
 
             // Comments
             if (line.startsWith("#")) {
-                String comment = line.replaceAll("^#;?\\s*", "");
+                String comment = Regex.replaceAll("^#;?\\s*", line, "");
                 lastComment = new Comment(comment);
                 pp2doc.add(comment);
                 continue;
@@ -297,7 +298,7 @@ public class Parser {
                 return header;
             }
 
-            header.add(line.replaceAll("^#\\s*;\\s*", ""));
+            header.add(Regex.replaceAll("^#\\s*;\\s*", line, ""));
         }
 
         return header;

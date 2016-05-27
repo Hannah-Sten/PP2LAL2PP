@@ -4,6 +4,7 @@ import nl.rubensten.pp2lal2pp.Constants;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.lang.Operator;
+import nl.rubensten.pp2lal2pp.util.Regex;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,22 +29,22 @@ public class Tokeniser implements Iterable<String> {
     public Tokeniser(String code) {
         this.original = code;
 
-        String code2 = code.replace("{", " { ")
-                .replace("}", " } ")
-                .replaceAll("-(?!=)", " - ")
-                .replace("(", " ( ")
-                .replace(")", " ) ")
-                .replace(",", " , ");
+        String code2 = Regex.replace("{", code, " { ");
+        code2 = Regex.replace("}", code2, " } ");
+        code2 = Regex.replaceAll("-(?!=)", code2, " - ");
+        code2 = Regex.replace("(", code2, " ( ");
+        code2 = Regex.replace(")", code2, " ) ");
+        code2 = Regex.replace(",", code2, " , ");
 
         for (Operator op : Operator.values()) {
-            code2 = code2.replace(op.getSign(), "櫓\uF214(" + op.name() + ")");
+            code2 = Regex.replace(op.getSign(), code2, "櫓\uF214(" + op.name() + ")");
         }
 
         for (Operator op : Operator.values()) {
-            code2 = code2.replace("櫓\uF214(" + op.name() + ")", " " + op.getSign() + " ");
+            code2 = Regex.replace("櫓\uF214(" + op.name() + ")", code2, " " + op.getSign() + " ");
         }
 
-        String[] strings = code2.split("\\s+");
+        String[] strings = Regex.split("\\s+", code2);
 
         tokens = new ArrayList<>();
         for (String string : strings) {

@@ -1,6 +1,7 @@
 package nl.rubensten.pp2lal2pp.parser;
 
 import com.sun.javafx.UnmodifiableArrayList;
+import nl.rubensten.pp2lal2pp.util.Regex;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +17,7 @@ public class LineTokeniser implements Iterable<String> {
     private List<String> lines;
 
     public LineTokeniser(String code) {
-        String[] strings = code.split("(\\s)*\\n(\\s)*");
+        String[] strings = Regex.split("(\\s)*\\n(\\s)*", code);
         lines = new UnmodifiableArrayList<>(strings, strings.length);
     }
 
