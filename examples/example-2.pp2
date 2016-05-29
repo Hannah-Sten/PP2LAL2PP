@@ -42,7 +42,7 @@ function main() {
     }
 
     inject {
-        LOAD  R0 0                      ; Inject raw assembly
+        LOAD    R0  0                       ; Inject raw assembly
     }
 
     # Makes sure the counters don't exceed the display maximum.
