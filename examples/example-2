@@ -1,0 +1,61 @@
+#;
+#; Example file of how a PP2LAL2PP language file looks like.
+#; This is a descriptive doc comment
+#;
+
+# Include contents of const.pp2 or const.pp2lal2pp
+include const
+
+# Other constants
+define DISPLAY_MAX 16
+
+# Global variables. Variables will initialise to 0 when nothing is declared.
+global countOne
+global countTwo
+global previousState
+global currentState
+
+
+#;
+#; Main loop that continuously executes until exit() is called or the machine gets
+#; shut down.
+#;
+function main() {
+    # Mark the current state as old
+    previousState = currentState
+
+    # Update LEDs to accomodate the new buttons states
+    var buttonState = getButtonState()
+    setLEDs(buttonState)
+
+    # Isolate the last 2 buttons
+    currentState = buttonState & 0b11
+
+    # Determine what button has been pressed.
+    var button
+    if (previousState != 0b11) {
+        button = previousState ^ currentState
+    }
+
+    # Do nothing, just showoff stuff.
+    loop (i from 2 to 100 step 2) {
+    }
+
+    inject {
+        LOAD  R0 0                      ; Inject raw assembly
+    }
+
+    # Makes sure the counters don't exceed the display maximum.
+    countOne %= DISPLAY_MAX
+    countTwo %= DISPLAY_MAX
+
+    # Display the right counters
+    if (button == 0b01) {
+        set7Segment(0b01, countOne)
+    }
+    else if (button == 0b10) {
+        set7Segment(0b10, countTwo)
+    }
+
+    continue
+}
