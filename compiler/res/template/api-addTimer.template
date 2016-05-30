@@ -1,0 +1,8 @@
+;#
+;#  Adds a certain amount to the value of the timer.
+;#  Because of PP2-weirdness, values stored in the timer using STOR will be added to
+;#  the original total instead of replacing it.
+;#  R0 : upon entry, contains the value to add to the timer.
+;#
+addTimer:       STOR    R0  [R5+TIMER]              ; Add the given value to the timer.
+                RTS                                 ; Exit addTimer function.
