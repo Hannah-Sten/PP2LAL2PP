@@ -21,6 +21,7 @@ public class APIFunction {
         add("setOutput");
         add("setSingleOutput");
         add("set7Segment");
+        add("getNumPattern");
         add("getAnalogStates");
         add("getAnalog");
         add("getTimer");

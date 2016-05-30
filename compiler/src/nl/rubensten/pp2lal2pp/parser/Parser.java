@@ -874,7 +874,7 @@ public class Parser {
                 List<Variable> variables = new ArrayList<>();
 
                 if (!line.equals(5, ")")) {
-                    for (int i = 3; i < line.sizeNoComments(); i += 2) {
+                    for (int i = 5; i < line.sizeNoComments(); i += 2) {
                         variables.add(new Variable("num", Value.parse(line.getToken(i), program))
                                 .setJustNumber(true));
                     }

@@ -671,6 +671,19 @@ public class Compiler {
             label = "";
             skipVariables = true;
         }
+        // API getNumPattern(val)
+        else if (call.getCalled().equals("getNumPattern")) {
+            Variable arg = vars.get(0);
+            String text = getVariableValue(arg);
+
+            String result = insertLabel(Template.API_INVOKE_GETNUMPATTERN.replace(
+                    "ARG", text
+            ), label)
+                    .replace("{$COMMENT}", "Get the 7Segment pattern for " + text + ".\n");
+            assembly.append(result);
+            skipVariables = true;
+            label = "";
+        }
         // API getInputStates()
         else if (call.getCalled().equals("getInputStates")) {
             String result = insertLabel(Template.API_INVOKE_GETINPUTSTATES.load(), label);
