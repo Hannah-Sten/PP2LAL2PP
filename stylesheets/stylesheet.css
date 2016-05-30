@@ -548,8 +548,9 @@ header a.button:hover {
 }
 aside a.button {
   display: block;
-  width: 138px;
-  padding-left: 64px;
+  width: 148px;
+  padding-left: 32px;
+  padding-right: 16px;
   margin-bottom: 20px;
   font-size: 21px;
   background-color: #2F5D8A;
