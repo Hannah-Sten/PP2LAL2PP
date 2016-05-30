@@ -270,6 +270,7 @@ public class Parser {
                 }
 
                 FunctionCall call = new FunctionCall(name, variables);
+                program.registerAPIFunction(name);
                 return new ElementReturn(call);
             }
         }
