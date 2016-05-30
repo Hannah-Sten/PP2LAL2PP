@@ -454,8 +454,8 @@ header {
   padding-bottom: 40px;
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
   font-weight: 300;
-  background: #2e7bcf url(../images/header-bg.jpg) 0 0 repeat-x;
-  border-bottom: solid 1px #275da1;
+  border-bottom: solid 1px #4E738A;
+  background-color: #231948;
 }
 
 header h1 {
@@ -476,7 +476,7 @@ header h2 {
   font-size: 26px;
   font-weight: normal;
   line-height: 1.3;
-  color: #9ddcff;
+  color: #4E738A;
   letter-spacing: 0;
 }
 
@@ -546,7 +546,10 @@ aside a.button {
   padding-left: 64px;
   margin-bottom: 20px;
   font-size: 21px;
-  background: transparent url(../images/download-button.png) 0 0 no-repeat;
+  background-color: #2F5D8A;
+}
+aside a.button:hover {
+  background-color: #3F71A2;
 }
 
 code, pre {
