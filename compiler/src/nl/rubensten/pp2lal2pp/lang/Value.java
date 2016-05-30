@@ -1,5 +1,8 @@
 package nl.rubensten.pp2lal2pp.lang;
 
+import nl.rubensten.pp2lal2pp.ParseException;
+import nl.rubensten.pp2lal2pp.util.Regex;
+
 /**
  * @author Ruben Schellekens
  */
@@ -25,25 +28,40 @@ public class Value implements Element {
      *         The program-instance where the parsed value will be used.
      */
     public static Value parse(String string, Program program) {
+        // Character
+        if (string.equals("'''")) {
+            return new Number((int)'\'');
+        }
+        if (Regex.matches("'.+'", string)) {
+            String meat = string.replace("'", "");
+            char[] chars = meat.toCharArray();
+
+            if (chars.length > 1 || chars.length == 0) {
+                throw new ParseException("Invalid character " + string + ".");
+            }
+
+            return new Number((int)chars[0]);
+        }
         // Binary
-        if (string.matches("0b[0-1]+")) {
+        if (Regex.matches("0b[0-1]+", string)) {
             String meat = string.replace("0b", "");
             return new Number(Integer.parseInt(meat, 2));
         }
         // Hexadecimal
-        else if (string.matches("0x[0-9a-fA-F]+")) {
+        else if (Regex.matches("0x[0-9a-fA-F]+", string)) {
             String meat = string.replace("0x", "");
             return new Number(Integer.parseInt(meat, 16));
         }
         // Octal
-        else if (string.matches("0[0-1]+")) {
+        else if (Regex.matches("0[0-1]+", string)) {
             return new Number(Integer.parseInt(string, 8));
         }
         // Other base
-        else if (string.matches("0_[0-9]+_[0-9]+")) {
-            String base = string.split("_")[1];
+        else if (Regex.matches("0_[0-9]+_[0-9]+", string)) {
+            String[] split = Regex.split("_", string);
+            String base = split[1];
             int baseInt = Integer.parseInt(base);
-            return new Number(Integer.parseInt(string.split("_")[2].replaceAll("^0+", ""), baseInt));
+            return new Number(Integer.parseInt(Regex.replaceAll("^0+", split[2], ""), baseInt));
         }
 
         try {

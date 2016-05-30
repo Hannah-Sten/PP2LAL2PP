@@ -52,6 +52,13 @@ public enum Regex {
     }
 
     /**
+     * Checks if the given source string maches the regular expression.
+     */
+    public static boolean matches(String regex, String source) {
+        return compile(regex).matcher(source).matches();
+    }
+
+    /**
      * Splits the given source with the given regex
      */
     public static String[] split(String regex, String source) {
