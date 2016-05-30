@@ -1,7 +1,7 @@
 ;#
 ;#  Display a certain pattern on the 7 Segment-display. The pattern must be a binary number
 ;#  where the indices from left to right correspond to:
-;#  center, top left, bottom left, bottom center, bottom right, top right, top center.
+;#  center, top left, bottom left, bottom center, bottom right, top right, top center, dot.
 ;#  R0 : upon entry, contains the pattern to display.
 ;#  R3 : upon entry, contains the index of the display.
 ;#
