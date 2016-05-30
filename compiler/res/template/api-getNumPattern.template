@@ -1,5 +1,5 @@
 ;#
-;#  Routine Hex7Seg maps a number in the range [0..15] to its hexadecimal
+;#  Routine getNumPattern maps a number in the range [0..15] to its hexadecimal
 ;#  representation pattern for the 7-segment display.
 ;#  R0 : upon entry, contains the number
 ;#  R4 : upon exit, contains the resulting pattern

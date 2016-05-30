@@ -113,12 +113,6 @@ public class Compiler {
             compileFunction(function);
         }
 
-        // Used API functions
-//        if (input.getApiFunctions().parallelStream().anyMatch(p -> p.contains("7Segment"))) {
-//            //assembly.append(Template.HEX7SEG.load());
-//            //assembly.append("\n\n");
-//        }
-
         for (String string : input.getApiFunctions()) {
             if (string.equals("exit")) {
                 continue;
@@ -677,6 +671,19 @@ public class Compiler {
             String text = getVariableValue(arg);
 
             String result = insertLabel(Template.API_INVOKE_GETNUMPATTERN.replace(
+                    "ARG", text
+            ), label)
+                    .replace("{$COMMENT}", "Get the 7Segment pattern for " + text + ".\n");
+            assembly.append(result);
+            skipVariables = true;
+            label = "";
+        }
+        // API getPattern(val)
+        else if (call.getCalled().equals("getPattern")) {
+            Variable arg = vars.get(0);
+            String text = getVariableValue(arg);
+
+            String result = insertLabel(Template.API_INVOKE_GETPATTERN.replace(
                     "ARG", text
             ), label)
                     .replace("{$COMMENT}", "Get the 7Segment pattern for " + text + ".\n");

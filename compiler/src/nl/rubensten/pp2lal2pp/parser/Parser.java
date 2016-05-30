@@ -232,7 +232,7 @@ public class Parser {
             throw new ParseException("illegal definition at line '" + line.getOriginal() + "'");
         }
 
-        String comment = lastComment.getContents();
+        String comment = (lastComment == null ? "" : lastComment.getContents());
         String name = line.getToken(1);
         Value value = Value.parse(line.getToken(2), program);
 
