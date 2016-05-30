@@ -56,6 +56,8 @@ The main function is a special function, as this is where the program will start
 
 ## Loops (`loop`)
 
+**Not yet implemented and bound to change in the near future.**
+
 Loops are blocks of code that can be executed a said amount of times. The loop can count up and down. This is determined from context. The syntax is as follows:
 
 ```
@@ -109,6 +111,8 @@ else {
 *expression* this is a boolean expression using the relational operators mentioned down below.
 
 ## Numbers
+
+**Characters** can be used to express ASCII characters. A character is placed between single quotes and will be converted behind the scenes to the corresponding ASCII value. Example: `'7'` becomes *55*.
 
 **Decimal numbers** can only be typed using characters in the set `{1,2,3,4,5,6,7,8,9,0}` and cannot start with a `0`. Examples: `3`, `123`, `598123`, 
 
