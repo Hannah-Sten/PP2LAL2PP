@@ -114,10 +114,10 @@ public class Compiler {
         }
 
         // Used API functions
-        if (input.getApiFunctions().parallelStream().anyMatch(p -> p.contains("7Segment"))) {
-            assembly.append(Template.HEX7SEG.load());
-            assembly.append("\n\n");
-        }
+//        if (input.getApiFunctions().parallelStream().anyMatch(p -> p.contains("7Segment"))) {
+//            //assembly.append(Template.HEX7SEG.load());
+//            //assembly.append("\n\n");
+//        }
 
         for (String string : input.getApiFunctions()) {
             if (string.equals("exit")) {
