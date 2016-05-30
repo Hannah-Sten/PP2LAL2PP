@@ -542,6 +542,8 @@ header a.button {
   right: 0;
   background-color: #212542;
   border-bottom: 2px #171B3A solid;
+  padding-left: 28px;
+  padding-right: 24px;
 }
 header a.button:hover {
   background-color: #272B48;
