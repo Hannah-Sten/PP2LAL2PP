@@ -31,3 +31,16 @@ Changes the state of the output with index *num* as binary representation (see a
 
 #### set7Segment(dig, val)
 Shows the given value *val* at the place of digit *dig*, again as binary representation (see also isInputOn(num)). *val* must be a value between 0 and 15 inclusive (it will modualised (lol) by 16 actually as a matter of fact in case you didn't know).
+
+## Timer
+
+Hook onto the PP2's timer system. The built in timer will always tick down and will tick *once every 0,1ms* (0,0001s).
+
+#### setTimer(val)
+Sets the new value of the timer to *val*.
+
+#### addTimer(val)
+Sets the value of the timer to the current value of the timer plus *val*.
+
+#### getTimer()
+Fetches the current value of the timer.
