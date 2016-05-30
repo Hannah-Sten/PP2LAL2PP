@@ -1,9 +1,10 @@
 ;#
-;#  Set the value of a digit on the 7 Segment-display.
-;#  R0 : upon entry, contains the number to display.
+;#  Display a certain pattern on the 7 Segment-display. The pattern must be a binary number
+;#  where the indices from left to right correspond to:
+;#  center, top left, bottom left, bottom center, bottom right, top right, top center.
+;#  R0 : upon entry, contains the pattern to display.
 ;#  R3 : upon entry, contains the index of the display.
 ;#
-set7Segment:    BRS     Hex7Seg                     ; Translate (value in) R0 into a display pattern.
-                STOR    R1  [R5+DSPSEG]             ; And place this in the Display Element.
+set7Segment:    STOR    R0  [R5+DSPSEG]             ; Place the pattern in the Display Element.
                 STOR    R3  [R5+DSPDIG]             ; Activate Display Element #0.
                 RTS                                 ; Exit set7Segment function.
