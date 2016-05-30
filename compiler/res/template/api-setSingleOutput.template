@@ -1,6 +1,6 @@
 ;#
 ;#  Changes the state of a single output.
-;#  R0 : upon entry, contains the number of the output to chance (binary format, e.g. %100 for 3rd output).
+;#  R0 : upon entry, contains the number of the output to chance (binary format, e.g. %0100 for 3rd output).
 ;#  R1 : upon entry, contains either 1 or 0 to turn it on or off respectively.
 ;#
 setSingleOutput:LOAD    R2  [R5+OUTPUT]             ; Load the current output state.
