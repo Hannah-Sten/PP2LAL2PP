@@ -1,5 +1,7 @@
 /*! normalize.css v3.0.2 | MIT License | git.io/normalize */
 
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
 /**
  * 1. Set default font family to sans-serif.
  * 2. Prevent iOS text size adjust after orientation change, without disabling
@@ -428,7 +430,7 @@ th {
 
 /* LAYOUT STYLES */
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', Helvetica, Arial, serif;
   font-size: 15px;
   font-weight: 400;
   line-height: 1.5;
@@ -450,7 +452,8 @@ a:hover {
 header {
   padding-top: 40px;
   padding-bottom: 40px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-weight: 300;
   background: #2e7bcf url(../images/header-bg.jpg) 0 0 repeat-x;
   border-bottom: solid 1px #275da1;
 }
@@ -521,7 +524,8 @@ a.button {
   height: 58px;
   padding-top: 22px;
   padding-left: 68px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-weight: 300;
   font-size: 23px;
   line-height: 1.2;
   color: #fff;
@@ -547,7 +551,7 @@ aside a.button {
 
 code, pre {
   margin-bottom: 30px;
-  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-family: "Consolas", "Monaco", "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
   font-size: 13px;
   color: #222;
 }
@@ -614,9 +618,9 @@ form {
 #main-content h1 {
   margin-top: 0;
   margin-bottom: 0;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-weight: 300;
   font-size: 2.8em;
-  font-weight: normal;
   color: #474747;
   text-indent: 6px;
   letter-spacing: -1px;
@@ -631,9 +635,9 @@ form {
 
 #main-content h2 {
   margin-bottom: 8px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-weight: 300;
   font-size: 22px;
-  font-weight: bold;
   color: #474747;
   text-indent: 4px;
 }
@@ -647,9 +651,9 @@ form {
 #main-content h3 {
   margin-top: 24px;
   margin-bottom: 8px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 300;
   color: #474747;
   text-indent: 3px;
 }
@@ -663,9 +667,9 @@ form {
 
 #main-content h4 {
   margin-bottom: 8px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 15px;
-  font-weight: bold;
+  font-weight: 300;
   color: #474747;
   text-indent: 3px;
 }
@@ -679,10 +683,11 @@ h4:before {
 
 #main-content h5 {
   margin-bottom: 8px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 14px;
   color: #474747;
   text-indent: 3px;
+  font-weight:; 300;
 }
 h5:before {
   padding-right: 0.3em;
@@ -693,7 +698,8 @@ h5:before {
 
 #main-content h6 {
   margin-bottom: 8px;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-weight: 300;
   font-size: .8em;
   color: #474747;
   text-indent: 3px;
