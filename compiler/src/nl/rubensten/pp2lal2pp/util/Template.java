@@ -24,6 +24,7 @@ public enum Template {
     API_SET7SEGMENT("api-set7Segment.template"),
     API_SETOUTPUT("api-setOutput.template"),
     API_SETSINGLEOUTPUT("api-setSingleOutput.template"),
+    API_SETTIMER("api-setTimer.template"),
 
     // API function calls
     API_INVOKE_ADDTIMER("api-invoke-addTimer.template"),
@@ -36,6 +37,7 @@ public enum Template {
     API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
     API_INVOKE_SETOUTPUT("api-invoke-setOutput.template"),
     API_INVOKE_SETSINGLEOUTPUT("api-invoke-setSingleOutput.template"),
+    API_INVOKE_SETTIMER("api-invoke-setTimer.template"),
 
     /**
      * Denotes the start of the program.

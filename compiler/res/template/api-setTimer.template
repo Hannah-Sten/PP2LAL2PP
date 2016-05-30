@@ -1,0 +1,8 @@
+;#
+;#  Sets the value of the timer. Because of PP2-weirdness, you have to substract
+;#  the current amount of
+;#  R0 : upon entry, contains the new value of the timer.
+;#
+setTimer:       SUB     R0  [R5+TIMER]              ; Set the timer value to 0, and add the value to set.
+                STOR    R0  [R5+TIMER]              ; > (STOR value is ADDED to the timer, weird PP2-thing.)
+                RTS                                 ; Exit setTimer funciton.
