@@ -29,8 +29,10 @@ Sets the states of all 8 outputs. The value is a binary number where every digit
 #### setSingleOutput(num, val)
 Changes the state of the output with index *num* as binary representation (see also isInputOn(num)) to on if *val* equals `1`, or to off if *val* equals 0. This method ignores the states of all other outputs.
 
-#### set7Segment(dig, val)
-Shows the given value *val* at the place of digit *dig*, again as binary representation (see also isInputOn(num)). *val* must be a value between 0 and 15 inclusive (it will modualised (lol) by 16 actually as a matter of fact in case you didn't know).
+## 7 Segment Display
+
+#### set7Segment(dig, pattern)
+Shows the given pattern *pattern* at the place of digit *dig*, both as binary representation (see also isInputOn(num)). The indices of the *pattern* from left to right represent: center, top left, bottom left, bottom center, bottom right, top right, top center, dot. A value of `1` means the segment is turned on, a value of `0` means the segment is turned off.
 
 ## Timer
 
