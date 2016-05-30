@@ -1,0 +1,93 @@
+;#
+;#  Routine getPattern maps an ASCII code to a representation pattern for the 7-segment display.
+;#  All characters in range 44-122 are included where upper and lower case have the same representation.
+;#  Some numbers have a pattern that doesn't really match the character, but that's just because of the severe
+;#  limitation of only having 7 segments.
+;#  R0 : upon entry, contains the ASCII code for the number.
+;#  R4 : upon exit, contains the resulting pattern
+;#
+getPattern:     BRS     getPattern_bgn              ; Push address(tbl) onto stack and proceed at "bgn".
+getPattern_tbl: CONS    %000010000                  ; 7-segment pattern for ','.
+                CONS    %000000001                  ; 7-segment pattern for '-'.
+                CONS    %010000000                  ; 7-segment pattern for '.'.
+                CONS    %000100101                  ; 7-segment pattern for '/'.
+                CONS    %001111110                  ; 7-segment pattern for '0'.
+                CONS    %000110000                  ; 7-segment pattern for '1'.
+                CONS    %001101101                  ; 7-segment pattern for '2'.
+                CONS    %001111001                  ; 7-segment pattern for '3'.
+                CONS    %000110011                  ; 7-segment pattern for '4'.
+                CONS    %001011011                  ; 7-segment pattern for '5'.
+                CONS    %001011111                  ; 7-segment pattern for '6'.
+                CONS    %001110000                  ; 7-segment pattern for '7'.
+                CONS    %001111111                  ; 7-segment pattern for '8'.
+                CONS    %001111011                  ; 7-segment pattern for '9'.
+                CONS    %001001000                  ; 7-segment pattern for ':'.
+                CONS    %001011000                  ; 7-segment pattern for ';'.
+                CONS    %000110001                  ; 7-segment pattern for '<'.
+                CONS    %000001001                  ; 7-segment pattern for '='.
+                CONS    %000000111                  ; 7-segment pattern for '>'.
+                CONS    %011100010                  ; 7-segment pattern for '?'.
+                CONS    %001111111                  ; 7-segment pattern for '@'.
+                CONS    %001110111                  ; 7-segment pattern for 'A'.
+                CONS    %000011111                  ; 7-segment pattern for 'B'.
+                CONS    %001001110                  ; 7-segment pattern for 'C'.
+                CONS    %000111101                  ; 7-segment pattern for 'D'.
+                CONS    %001001111                  ; 7-segment pattern for 'E'.
+                CONS    %001000111                  ; 7-segment pattern for 'F'.
+                CONS    %001011110                  ; 7-segment pattern for 'G'.
+                CONS    %000110111                  ; 7-segment pattern for 'H'.
+                CONS    %000000110                  ; 7-segment pattern for 'I'.
+                CONS    %000111000                  ; 7-segment pattern for 'J'.
+                CONS    %000110111                  ; 7-segment pattern for 'K'.
+                CONS    %000001110                  ; 7-segment pattern for 'L'.
+                CONS    %001110110                  ; 7-segment pattern for 'M'.
+                CONS    %001110110                  ; 7-segment pattern for 'N'.
+                CONS    %000011101                  ; 7-segment pattern for 'O'.
+                CONS    %001100111                  ; 7-segment pattern for 'P'.
+                CONS    %001110011                  ; 7-segment pattern for 'Q'.
+                CONS    %001000110                  ; 7-segment pattern for 'R'.
+                CONS    %001011011                  ; 7-segment pattern for 'S'.
+                CONS    %000001111                  ; 7-segment pattern for 'T'.
+                CONS    %000111110                  ; 7-segment pattern for 'U'.
+                CONS    %000111110                  ; 7-segment pattern for 'V'.
+                CONS    %000111110                  ; 7-segment pattern for 'W'.
+                CONS    %000110111                  ; 7-segment pattern for 'X'.
+                CONS    %000111011                  ; 7-segment pattern for 'Y'.
+                CONS    %001101101                  ; 7-segment pattern for 'Z'.
+                CONS    %001001110                  ; 7-segment pattern for '['.
+                CONS    %000010011                  ; 7-segment pattern for '\'.
+                CONS    %001111000                  ; 7-segment pattern for ']'.
+                CONS    %001100010                  ; 7-segment pattern for '^'.
+                CONS    %000001000                  ; 7-segment pattern for '_'.
+                CONS    %000000010                  ; 7-segment pattern for '`'.
+                CONS    %001110111                  ; 7-segment pattern for 'A'.
+                CONS    %000011111                  ; 7-segment pattern for 'B'.
+                CONS    %001001110                  ; 7-segment pattern for 'C'.
+                CONS    %000111101                  ; 7-segment pattern for 'D'.
+                CONS    %001001111                  ; 7-segment pattern for 'E'.
+                CONS    %001000111                  ; 7-segment pattern for 'F'.
+                CONS    %001011110                  ; 7-segment pattern for 'G'.
+                CONS    %000110111                  ; 7-segment pattern for 'H'.
+                CONS    %000000110                  ; 7-segment pattern for 'I'.
+                CONS    %000111000                  ; 7-segment pattern for 'J'.
+                CONS    %000110111                  ; 7-segment pattern for 'K'.
+                CONS    %000001110                  ; 7-segment pattern for 'L'.
+                CONS    %001110110                  ; 7-segment pattern for 'M'.
+                CONS    %001110110                  ; 7-segment pattern for 'N'.
+                CONS    %000011101                  ; 7-segment pattern for 'O'.
+                CONS    %001100111                  ; 7-segment pattern for 'P'.
+                CONS    %001110011                  ; 7-segment pattern for 'Q'.
+                CONS    %001000110                  ; 7-segment pattern for 'R'.
+                CONS    %001011011                  ; 7-segment pattern for 'S'.
+                CONS    %000001111                  ; 7-segment pattern for 'T'.
+                CONS    %000111110                  ; 7-segment pattern for 'U'.
+                CONS    %000111110                  ; 7-segment pattern for 'V'.
+                CONS    %000111110                  ; 7-segment pattern for 'W'.
+                CONS    %000110111                  ; 7-segment pattern for 'X'.
+                CONS    %000111011                  ; 7-segment pattern for 'Y'.
+                CONS    %001101101                  ; 7-segment pattern for 'Z'.
+getPattern_bgn: SUB     R0  44                      ; Shift index from 44 to 0.
+                MOD     R0  79                      ; R0 := R0 MOD 79 , just to be safe...
+                LOAD    R1  [SP++]                  ; R1 = address(tbl) (retrieve from stack)
+                LOAD    R4  [R1+R0]                 ; R1 = tbl[R0]
+                RTS
