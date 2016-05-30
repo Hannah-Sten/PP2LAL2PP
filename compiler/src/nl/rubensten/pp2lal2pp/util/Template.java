@@ -5,6 +5,7 @@ import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -207,9 +208,16 @@ public enum Template {
      */
     private int getSpace(String source, String name) {
         try {
-            Pattern regex1 = Regex.compile("\\{\\$" + name + "%");
-            Pattern regex2 = Regex.compile("\\}");
-            String result = regex2.split(regex1.split(source)[1])[0];
+            Pattern regex = Regex.compile("\\{\\$" + name + "\\%(\\d+)?\\}");
+            Matcher matcher = regex.matcher(source);
+
+            if (!matcher.find()) {
+                throw new CompilerException("Template hasn't been set up correctly ({$" +
+                        name + "%#}).");
+            }
+
+            String result = matcher.group(1);
+
             return Integer.parseInt(result);
         }
         catch (NumberFormatException nfe) {
