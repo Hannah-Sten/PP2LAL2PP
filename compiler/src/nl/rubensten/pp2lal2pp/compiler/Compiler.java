@@ -896,7 +896,7 @@ public class Compiler {
         }
 
         assembly.append(Template.fillStatement(label, "RTE", "", "",
-                                               "Return from function " + function.getName() + ".\n"));
+                                               "Return from interrupt " + function.getName() + ".\n"));
     }
 
     /**
