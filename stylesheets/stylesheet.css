@@ -548,7 +548,7 @@ header a.button:hover {
 }
 aside a.button {
   display: block;
-  width: 148px;
+  width: 100%;
   padding-left: 32px;
   padding-right: 24px;
   margin-bottom: 20px;
