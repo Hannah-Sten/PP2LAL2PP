@@ -36,6 +36,12 @@ Changes the state of the output with index *num* as binary representation (see a
 #### set7Segment(dig, pattern)
 Shows the given pattern *pattern* at the place of digit *dig*, both as binary representation (see also isInputOn(num)). The indices of the *pattern* from right to left represent: center, top left, bottom left, bottom center, bottom right, top right, top center, dot. A value of `1` means the segment is turned on, a value of `0` means the segment is turned off.
 
+#### getNumPattern(int)
+Gets the 7Segment pattern for the given number. The pattern will be the number from *0*-*F* where *F* equals *15*. *int* will be modulo *16* before it gets transformed into a pattern.
+
+#### getPattern(char)
+Gets the 7Segment pattern for the given character. The *char* must be a character literal or an ASCII code for the character you want to display. Only characters in range 44-122 inclusive are supported and some of the characters (like `m`) do not have a fully correct corresponding pattern. In that case, an as similar looking pattern is used. All values will be substracted by *44* and will be modulus *79*. That means that `z` wraps to `,`.
+
 ## Timer
 
 Hook onto the PP2's timer system. The built in timer will always tick down and will tick *once every 0,1ms* (0,0001s).
