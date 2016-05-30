@@ -2,6 +2,7 @@ package nl.rubensten.pp2lal2pp.compiler;
 
 import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.Constants;
+import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
@@ -110,7 +111,12 @@ public class Compiler {
                 continue;
             }
 
-            compileFunction(function);
+            if (function instanceof Interrupt) {
+                compileInterrupt((Interrupt)function);
+            } else {
+                compileFunction(function);
+            }
+
         }
 
         // Used API functions
@@ -180,6 +186,23 @@ public class Compiler {
         assembly.append("\n");
     }
 
+    /**
+     * Writes the given interrupt function to the assembly-StringBuilder.
+     *
+     * @param interrupt
+     *         The interrupt to compile.
+     */
+    private void compileInterrupt(Interrupt interrupt) {
+        this.function = interrupt;
+
+        for (String string : function.getPp2doc()) {
+            assembly.append(";#  ").append(string).append("\n");
+        }
+
+        compileBlock(function.getContents(), function.getName(), Interrupt.class);
+        assembly.append("\n");
+    }
+
     // Hihi
     private boolean functionReturn = false;
 
@@ -208,7 +231,11 @@ public class Compiler {
 
             // Function Return
             if (elt instanceof Return && (functionName != null || functionReturn)) {
-                compileFunctionReturn((Return)elt, label);
+                if (inside == Interrupt.class) {
+                    compileInterruptReturn((Return)elt, label);
+                } else {
+                    compileFunctionReturn((Return)elt, label);
+                }
                 label = "";
                 continue;
             }
@@ -844,6 +871,32 @@ public class Compiler {
 
         assembly.append(Template.fillStatement(label, "RTS", "", "",
                 "Return from function " + function.getName() + ".\n"));
+    }
+
+    /**
+     * Compiles a function return.
+     *
+     * @param ret
+     *         The Return element.
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileInterruptReturn(Return ret, String label) {
+        // Return statements without values.
+        if (ret.getReturnValue() != null) {
+            throw new PP2LAL2PPException("Interrupt cannot return a value");
+        }
+
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                                                   function.variableCount() + "",
+                                                   "Reset stack pointer.\n"));
+            label = "";
+        }
+
+        assembly.append(Template.fillStatement(label, "RTE", "", "",
+                                               "Return from function " + function.getName() + ".\n"));
     }
 
     /**
