@@ -19,11 +19,11 @@ import java.util.List;
  * Practicum Processor To Learn Assembly Language To Preserve Prosperity-Language compiler.
  *
  * @author Ruben Schellekens, Sten Wessel
- * @version 0.1
+ * @version Beta 0.1
  */
 public class PP2LAL2PP {
 
-    public static String VERSION = "0.1";
+    public static String VERSION = "Beta 0.1";
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
@@ -125,9 +125,9 @@ public class PP2LAL2PP {
         // Finish
         long delta = System.currentTimeMillis() - start;
         float time = (float)delta / 1000f;
+        System.out.println("PP2LAL2PP Compiler " + VERSION + " by Ruben-Sten");
         System.out.println("Done (" + time + "s). " +
-                "Compiled '" + file.getName() + "' to '" + dest.getName() + "'" + autoAssemble +
-                ".");
+                "Compiled '" + file.getName() + "' to '" + dest.getName() + "'" + autoAssemble + ".");
     }
 
     private static void printHelp() {
