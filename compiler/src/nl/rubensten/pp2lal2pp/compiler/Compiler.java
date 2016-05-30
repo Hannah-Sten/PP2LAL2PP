@@ -650,7 +650,7 @@ public class Compiler {
             assembly.append("\n");
             return;
         }
-        // API set7Segment(dig, val)
+        // API set7Segment(dig, pattern)
         else if (call.getCalled().equals("set7Segment")) {
             Variable arg1 = vars.get(0);
             Variable arg2 = vars.get(1);
