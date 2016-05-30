@@ -770,6 +770,19 @@ public class Compiler {
             skipVariables = true;
             label = "";
         }
+        // API setTimer(val)
+        else if (call.getCalled().equals("setTimer")) {
+            Variable arg = vars.get(0);
+            String text = getVariableValue(arg);
+
+            String result = insertLabel(Template.API_INVOKE_SETTIMER.replace(
+                    "ARG", text
+            ), label)
+                    .replace("{$COMMENT}", "Set to what value the timer has to be set.\n");
+            assembly.append(result);
+            skipVariables = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
