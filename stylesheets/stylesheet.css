@@ -454,7 +454,7 @@ header {
   padding-bottom: 40px;
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, serif;
   font-weight: 300;
-  border-bottom: solid 1px #4E738A;
+  border-bottom: solid 1px #676A7D;
   background-color: #0A0F31;
 }
 
@@ -851,11 +851,14 @@ footer a:hover {
     line-height: 1;
     color: #2879d0;
     text-align: center;
-    background-color: #9ddcff;
+    background-color: #212542;
     background-image: none;
-    border-radius: 5px;
+    border-bottom: 2px #171C3E solid;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
+  }
+  header a.button:hover {
+    background-color: #272B48;
   }
   header a.button small {
     display: inline;
