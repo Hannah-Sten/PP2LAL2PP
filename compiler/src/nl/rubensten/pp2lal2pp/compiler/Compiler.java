@@ -748,6 +748,15 @@ public class Compiler {
             skipVariables = true;
             label = "";
         }
+        // API getTimer()
+        else if (call.getCalled().equals("getTimer")) {
+            String result = insertLabel(Template.API_INVOKE_GETTIMER.load(), label);
+            assembly.append(result);
+            assembly.append("\n");
+            skipVariables = true;
+            skipCall = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {

@@ -1,0 +1,6 @@
+;#
+;#  Gets the value of the timer.
+;#  R4 : upon exit, contains the value of the timer.
+;#
+getTimer:       LOAD    R4  [R5+TIMER]              ; Load the timer value and puts it in the return register.
+                RTS                                 ; Exit getTimer function.

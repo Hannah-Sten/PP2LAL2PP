@@ -23,6 +23,7 @@ public class APIFunction {
         add("set7Segment");
         add("getAnalogStates");
         add("getAnalog");
+        add("getTimer");
     }};
 
     /**
