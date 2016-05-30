@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 public enum Template {
 
     // API implementations
+    API_ADDTIMER("api-addTimer.template"),
     API_EXIT("api-exit.template"),
     API_GETANALOG("api-getAnalog.template"),
     API_GETANALOGSTATES("api-getAnalogStates.template"),
@@ -25,6 +26,7 @@ public enum Template {
     API_SETSINGLEOUTPUT("api-setSingleOutput.template"),
 
     // API function calls
+    API_INVOKE_ADDTIMER("api-invoke-addTimer.template"),
     API_INVOKE_EXIT("api-invoke-exit.template"),
     API_INVOKE_GETANALOG("api-invoke-getAnalog.template"),
     API_INVOKE_GETANALOGSTATES("api-invoke-getAnalogStates.template"),

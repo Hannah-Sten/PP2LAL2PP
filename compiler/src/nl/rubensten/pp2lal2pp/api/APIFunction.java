@@ -24,6 +24,7 @@ public class APIFunction {
         add("getAnalogStates");
         add("getAnalog");
         add("getTimer");
+        add("addTimer");
     }};
 
     /**
