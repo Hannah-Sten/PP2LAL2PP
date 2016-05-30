@@ -19,6 +19,7 @@ public enum Template {
     API_GETANALOG("api-getAnalog.template"),
     API_GETANALOGSTATES("api-getAnalogStates.template"),
     API_GETINPUTSTATES("api-getInputStates.template"),
+    API_GETNUMPATTERN("api-getNumPattern.template"),
     API_GETTIMER("api-getTimer.template"),
     API_ISINPUTON("api-isInputOn.template"),
     API_SET7SEGMENT("api-set7Segment.template"),
@@ -32,6 +33,7 @@ public enum Template {
     API_INVOKE_GETANALOG("api-invoke-getAnalog.template"),
     API_INVOKE_GETANALOGSTATES("api-invoke-getAnalogStates.template"),
     API_INVOKE_GETINPUTSTATES("api-invoke-getInputStates.template"),
+    API_INVOKE_GETNUMPATTERN("api-invoke-getNumPattern.template"),
     API_INVOKE_GETTIMER("api-invoke-getTimer.template"),
     API_INVOKE_ISINPUTON("api-invoke-isInputOn.template"),
     API_INVOKE_SET7SEGMENT("api-invoke-set7Segment.template"),
@@ -72,11 +74,6 @@ public enum Template {
      * <code>{$COMMENT}</code> The comment that must be placed after the statement.
      */
     EQU("equ.template"),
-
-    /**
-     * The Hex7Seg routine to load standard number patterns from 0-15.
-     */
-    HEX7SEG("hex7seg.template"),
 
     /**
      * An assembly statement/instruction.

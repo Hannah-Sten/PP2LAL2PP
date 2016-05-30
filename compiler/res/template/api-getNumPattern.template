@@ -2,10 +2,10 @@
 ;#  Routine Hex7Seg maps a number in the range [0..15] to its hexadecimal
 ;#  representation pattern for the 7-segment display.
 ;#  R0 : upon entry, contains the number
-;#  R1 : upon exit,  contains the resulting pattern
+;#  R4 : upon exit, contains the resulting pattern
 ;#
-Hex7Seg:        BRS     Hex7Seg_bgn                 ; Push address(tbl) onto stack and proceed at "bgn".
-Hex7Seg_tbl:    CONS    %01111110                   ; 7-segment pattern for '0'.
+getNumPattern:  BRS     numPattern_bgn              ; Push address(tbl) onto stack and proceed at "bgn".
+numPattern_tbl: CONS    %01111110                   ; 7-segment pattern for '0'.
                 CONS    %00110000                   ; 7-segment pattern for '1'.
                 CONS    %01101101                   ; 7-segment pattern for '2'.
                 CONS    %01111001                   ; 7-segment pattern for '3'.
@@ -21,7 +21,7 @@ Hex7Seg_tbl:    CONS    %01111110                   ; 7-segment pattern for '0'.
                 CONS    %00111101                   ; 7-segment pattern for 'd'.
                 CONS    %01001111                   ; 7-segment pattern for 'E'.
                 CONS    %01000111                   ; 7-segment pattern for 'F'.
-Hex7Seg_bgn:    AND     R0  %01111                  ; R0 := R0 MOD 16 , just to be safe...
+numPattern_bgn: AND     R0  %01111                  ; R0 := R0 MOD 16 , just to be safe...
                 LOAD    R1  [SP++]                  ; R1 = address(tbl) (retrieve from stack)
-                LOAD    R1  [R1+R0]                 ; R1 = tbl[R0]
+                LOAD    R4  [R1+R0]                 ; R1 = tbl[R0]
                 RTS
