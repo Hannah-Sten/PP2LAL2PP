@@ -1,5 +1,7 @@
 package nl.rubensten.pp2lal2pp.lang;
 
+import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
+
 import java.util.Optional;
 
 /**
@@ -170,6 +172,27 @@ public class Operation implements Element {
         Element dummy = firstElement;
         firstElement = secondElement;
         secondElement = dummy;
+    }
+
+    /**
+     * Some operations do actually not represent an operation. This method returns the element they
+     * actually DO represent. E.g. a number will only have a number as first element and no operator
+     * and no second element.
+     *
+     * @return The actual element, or just the same operation if it is just a regular operation.
+     */
+    public Element toRealElement() throws PP2LAL2PPException {
+        // Number
+        if ((firstElement instanceof Number) && operator == null && secondElement == null) {
+            return (Number)firstElement;
+        }
+        // Function call
+        if (firstElement instanceof FunctionCall) {
+            return (FunctionCall)firstElement;
+        }
+
+        // Regular operation
+        return this;
     }
 
     @Override

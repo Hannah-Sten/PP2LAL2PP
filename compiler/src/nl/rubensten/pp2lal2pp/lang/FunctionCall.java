@@ -1,13 +1,14 @@
 package nl.rubensten.pp2lal2pp.lang;
 
 import nl.rubensten.pp2lal2pp.IDManager;
+import nl.rubensten.pp2lal2pp.compiler.Operand;
 
 import java.util.List;
 
 /**
  * @author Ruben Schellekens
  */
-public class FunctionCall extends Value implements Element, Identifyable {
+public class FunctionCall extends Value implements Element, Identifyable, Operand {
 
     /**
      * Unique id of the function call.

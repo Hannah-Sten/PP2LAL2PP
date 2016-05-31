@@ -2,13 +2,14 @@ package nl.rubensten.pp2lal2pp.lang;
 
 import nl.rubensten.pp2lal2pp.IDManager;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
+import nl.rubensten.pp2lal2pp.compiler.Operand;
 
 import java.util.Optional;
 
 /**
  * @author Ruben Schellekens
  */
-public enum Operator implements Identifyable {
+public enum Operator implements Identifyable, Operand {
 
     ADD_ASSIGN("+=", "\\+\\=", OperatorType.ASSIGNMENT, "ADD", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator += not supported on two numbers.");

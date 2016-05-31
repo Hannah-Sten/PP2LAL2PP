@@ -3,11 +3,12 @@ package nl.rubensten.pp2lal2pp.lang;
 import nl.rubensten.pp2lal2pp.Constants;
 import nl.rubensten.pp2lal2pp.IDManager;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
+import nl.rubensten.pp2lal2pp.compiler.Operand;
 
 /**
  * @author Ruben Schellekens
  */
-public class Variable implements Identifyable, Element {
+public class Variable implements Identifyable, Element, Operand {
 
     /**
      * The unique id of the variable.

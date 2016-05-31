@@ -1,9 +1,11 @@
 package nl.rubensten.pp2lal2pp.lang;
 
+import nl.rubensten.pp2lal2pp.compiler.Operand;
+
 /**
  * @author Ruben Schellekens
  */
-public class Number extends Value implements Element {
+public class Number extends Value implements Element, Operand {
 
     /**
      * -1
