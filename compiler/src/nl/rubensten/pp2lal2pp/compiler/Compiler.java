@@ -82,13 +82,8 @@ public class Compiler {
                         ((Number)c1.getDefaultValue()).getIntValue()).compareTo(
                         ((Number)c2.getDefaultValue()).getIntValue()));
 
-        // Initialisation: CODESEG
-        assembly.append(Template.fillStatement("init:", "STOR", Constants.REG_CODESEG,
-                                               "[GB+CODESEG]",
-                                               "Store the address of the code segment for later use.\n"));
-
         // Initialisation: IOAREA
-        assembly.append(Template.fillStatement("", "LOAD", Constants.REG_IOAREA, "IOAREA",
+        assembly.append(Template.fillStatement("init:", "LOAD", Constants.REG_IOAREA, "IOAREA",
                 "Store the address of the IOAREA for later use.\n"));
 
         // Initialisation: Global Variables.
