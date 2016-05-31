@@ -1,9 +1,10 @@
 package nl.rubensten.pp2lal2pp.compiler;
 
+import nl.rubensten.pp2lal2pp.Constants;
 import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
-import nl.rubensten.pp2lal2pp.lang.Element;
-import nl.rubensten.pp2lal2pp.lang.Operation;
-import nl.rubensten.pp2lal2pp.lang.Operator;
+import nl.rubensten.pp2lal2pp.lang.*;
+import nl.rubensten.pp2lal2pp.util.Regex;
+import nl.rubensten.pp2lal2pp.util.Template;
 
 import java.util.*;
 
@@ -16,6 +17,17 @@ public class LinearOperation implements Iterable<Operand> {
      * All the operands that have to be processed in order.
      */
     private List<Operand> operands = new ArrayList<>();
+
+    /**
+     * Tracks how much the stack pointer has decreased in order to get the pointers to local
+     * variables right.
+     */
+    private int pointerOffset = 0;
+
+    /**
+     * The original operation string when made from an operation.
+     */
+    private String originalOperation = "";
 
     public LinearOperation(Operand... operands) {
         this.operands.addAll(Arrays.asList(operands));
@@ -104,7 +116,84 @@ public class LinearOperation implements Iterable<Operand> {
 
         operands.add(operator);
 
-        return new LinearOperation(operands);
+        LinearOperation linop = new LinearOperation(operands);
+        linop.originalOperation = operation.toHumanReadableString();
+        return linop;
+    }
+
+    /**
+     * Compiles the linear operation. The result of the operation is stored in R0.
+     *
+     * @param label
+     *         The label to put in front of the first line.
+     */
+    public void compile(Compiler compiler, String label) {
+        Program program = compiler.getInput();
+        StringBuilder assembly = compiler.getAssembly();
+        String comment = originalOperation;
+
+        int count = 0;
+        for (Operand op : this) {
+            // Execute operation.
+            if (op instanceof Operator) {
+                Operator operator = (Operator)op;
+
+                assembly.append(Template.fillStatement(label, "PULL", "R1", "", ">\n"));
+                assembly.append(Template.fillStatement("", "PULL", "R0", "", ">\n"));
+                String instr = operator.getInstruction().get();
+                assembly.append(Template.fillStatement("", instr, "R0", "R1", "> \n"));
+                pointerOffset -= 2;
+
+                if (!istLast(op)) {
+                    assembly.append(Template.fillStatement("", "PUSH", "R0", "", ">\n"));
+                    pointerOffset++;
+                }
+            }
+            // Push operands to the stack.
+            else {
+                String location = op.getValueLocation();
+
+                if (op instanceof FunctionCall) {
+                    compiler.compileFunctionCall((FunctionCall)op, label);
+                    label = "";
+                }
+
+                if (op instanceof Variable) {
+                    Variable var = (Variable)op;
+                    if (program.getGlobalVariable(var.getName()).isPresent()) {
+                        Regex.replace("??", location, Constants.REG_GLOBAL_BASE);
+                        Regex.replace("?", location, var.getName());
+                    }
+                    else {
+                    location = Regex.replace("{$REGISTER}", location, Constants.REG_STACK_POINTER);
+                    location = Regex.replace("{$POINTER}", location, (var.getPointer() +
+                            pointerOffset) + "");
+                    }
+                }
+
+                assembly.append(Template.fillStatement(label, "PUSH", location, "",
+                        comment + "\n"));
+                pointerOffset++;
+            }
+
+            label = "";
+            comment = ">";
+            count++;
+        }
+    }
+
+    /**
+     * Checks if the given operand is the last operand or not.
+     *
+     * @return <code>true</code> if the given operand is the last operand, <code>false</code> if
+     * either there are no operands or if it is not the last operand.
+     */
+    public boolean istLast(Operand op) {
+        if (operands.size() == 0) {
+            return false;
+        }
+
+        return operands.get(operands.size() - 1).equals(op);
     }
 
     public List<Operand> operands() {

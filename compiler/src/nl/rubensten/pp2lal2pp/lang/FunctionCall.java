@@ -1,5 +1,6 @@
 package nl.rubensten.pp2lal2pp.lang;
 
+import nl.rubensten.pp2lal2pp.Constants;
 import nl.rubensten.pp2lal2pp.IDManager;
 import nl.rubensten.pp2lal2pp.compiler.Operand;
 
@@ -71,6 +72,11 @@ public class FunctionCall extends Value implements Element, Identifyable, Operan
     @Override
     public String toString() {
         return called + arguments;
+    }
+
+    @Override
+    public String getValueLocation() {
+        return Constants.REG_RETURN;
     }
 
 }

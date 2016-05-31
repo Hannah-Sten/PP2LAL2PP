@@ -272,6 +272,11 @@ public enum Operator implements Identifyable, Operand {
         return sign;
     }
 
+    @Override
+    public String getValueLocation() {
+        throw new PP2LAL2PPException("operators don't have value locations");
+    }
+
     public enum OperatorType {
         ASSIGNMENT,
         ARITHMETIC,

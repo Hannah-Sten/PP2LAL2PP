@@ -33,4 +33,9 @@ public class NumberConstant extends Number {
         throw new PP2LAL2PPException("cannot retrieve an int value from a numberconstant");
     }
 
+    @Override
+    public String getValueLocation() {
+        return name;
+    }
+
 }

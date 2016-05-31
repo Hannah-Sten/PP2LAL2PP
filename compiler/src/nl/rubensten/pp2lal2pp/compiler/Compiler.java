@@ -668,7 +668,7 @@ public class Compiler {
      * @param label
      *         The label to print before the statement.
      */
-    private void compileFunctionCall(FunctionCall call, String label) {
+    void compileFunctionCall(FunctionCall call, String label) {
         List<Variable> vars = call.getArguments();
         boolean skipVariables = false;
         boolean skipCall = false;
@@ -1016,4 +1016,11 @@ public class Compiler {
         new FileWorker(output).write(assembly.toString(), false);
     }
 
+    public Program getInput() {
+        return input;
+    }
+
+    public StringBuilder getAssembly() {
+        return assembly;
+    }
 }

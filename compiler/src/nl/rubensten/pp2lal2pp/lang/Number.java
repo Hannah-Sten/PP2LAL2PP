@@ -76,4 +76,9 @@ public class Number extends Value implements Element, Operand {
         return this;
     }
 
+    @Override
+    public String getValueLocation() {
+        return Integer.toString(intValue);
+    }
+
 }

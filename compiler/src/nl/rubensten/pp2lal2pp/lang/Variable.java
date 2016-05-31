@@ -96,6 +96,10 @@ public class Variable implements Identifyable, Element, Operand {
         return this instanceof GlobalVariable;
     }
 
+    public GlobalVariable toGlobal() {
+        return new GlobalVariable(name, defaultValue, new Comment(""));
+    }
+
     @Override
     public int getId() {
         return id;
@@ -118,4 +122,14 @@ public class Variable implements Identifyable, Element, Operand {
             return "(var " + name + "=" + defaultValue + " #" + id + " *" + pointer + ")";
         }
     }
+
+    /**
+     * Contains <code>{$REGISTER}</code> at the place of the register type and
+     * <code>{$POINTER}</code> at the place of the pointer number.
+     */
+    @Override
+    public String getValueLocation() {
+        return "[{$REGISTER}+{$POINTER}]";
+    }
+
 }
