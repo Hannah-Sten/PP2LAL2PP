@@ -132,6 +132,7 @@ public class Function implements Identifyable, Element {
      *         if there is no variable declared with the name of the given variable.
      */
     public Variable getVariableByVariable(Variable other) throws CompilerException {
+        System.out.println(variables);
         return getVariableByName(other.getName());
     }
 
