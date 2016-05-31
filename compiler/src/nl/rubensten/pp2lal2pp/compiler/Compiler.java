@@ -7,6 +7,7 @@ import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
+import nl.rubensten.pp2lal2pp.util.Regex;
 import nl.rubensten.pp2lal2pp.util.Template;
 import nl.rubensten.pp2lal2pp.util.Util;
 
@@ -510,7 +511,6 @@ public class Compiler {
                     return;
                 }
                 else if (op.getFirstElement() instanceof FunctionCall) {
-
                     if (op.getFirstElement() instanceof FunctionCall) {
                         compileFunctionCall((FunctionCall)op.getFirstElement(), operationLabel);
                         operationLabel = "";
@@ -519,48 +519,24 @@ public class Compiler {
             }
         }
 
-        if (op.getFirstElement() instanceof Operation) {
-            compileOperation((Operation)op.getFirstElement(), operationLabel);
-        }
-
-        if (op.getSecondElement().isPresent()) {
-            if (op.getSecondElement().get() instanceof Operation) {
-                compileOperation((Operation)op.getSecondElement().get(), operationLabel);
-                return;
-            }
-        }
-
         Element first = op.getFirstElement();
-
         if (!op.getOperator().isPresent()) {
             return;
         }
 
         Operator operator = op.getOperator().get();
-
         if (!op.getSecondElement().isPresent()) {
             return;
         }
 
         Element second = op.getSecondElement().get();
 
-        // If function call.
-        if (second instanceof FunctionCall) {
-            compileFunctionCall((FunctionCall)second, operationLabel);
-            operationLabel = "";
-        }
-
-        assembly.append(Template.fillStatement(operationLabel, "LOAD", "R0", loadValueString(first),
-                operationComment));
-        operationLabel = "";
-        if (operator.getInstruction().isPresent()) {
-            assembly.append(Template.fillStatement(operationLabel, operator.getInstruction().get(),
-                    "R0", loadValueString(second), ">\n"));
-        }
+        LinearOperation linop = LinearOperation.fromOperation(op);
+        linop.compile(this, operationLabel);
 
         if (operator.getType() == Operator.OperatorType.ASSIGNMENT) {
             assembly.append(Template.fillStatement(operationLabel, "STOR", "R0",
-                    loadValueString(first), ">\n"));
+                    loadValueString(first), "Assign value of " + first + ".\n"));
         }
 
         operationComment = ">\n";
@@ -626,7 +602,7 @@ public class Compiler {
      */
     private String insertLabel(String stuff, String label) {
         if (label != null) {
-            stuff = stuff.replaceAll("^" + Util.makeString(" ", label.length()), label);
+            stuff = Regex.replaceAll("^" + Util.makeString(" ", label.length()), stuff, label);
         }
 
         return stuff;

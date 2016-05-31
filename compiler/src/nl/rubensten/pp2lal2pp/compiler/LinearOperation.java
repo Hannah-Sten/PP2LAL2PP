@@ -144,7 +144,7 @@ public class LinearOperation implements Iterable<Operand> {
                 assembly.append(Template.fillStatement("", instr, "R0", "R1", "> \n"));
                 pointerOffset -= 2;
 
-                if (!istLast(op)) {
+                if (count != operands.size() - 1) {
                     assembly.append(Template.fillStatement("", "PUSH", "R0", "", ">\n"));
                     pointerOffset++;
                 }
@@ -161,18 +161,19 @@ public class LinearOperation implements Iterable<Operand> {
                 if (op instanceof Variable) {
                     Variable var = (Variable)op;
                     if (program.getGlobalVariable(var.getName()).isPresent()) {
-                        Regex.replace("??", location, Constants.REG_GLOBAL_BASE);
-                        Regex.replace("?", location, var.getName());
+                        location = Regex.replace("{$REGISTER}", location, Constants.REG_GLOBAL_BASE);
+                        location = Regex.replace("{$POINTER}", location, var.getName());
                     }
                     else {
-                    location = Regex.replace("{$REGISTER}", location, Constants.REG_STACK_POINTER);
-                    location = Regex.replace("{$POINTER}", location, (var.getPointer() +
+                        location = Regex.replace("{$REGISTER}", location, Constants.REG_STACK_POINTER);
+                        location = Regex.replace("{$POINTER}", location, (var.getPointer() +
                             pointerOffset) + "");
                     }
                 }
 
-                assembly.append(Template.fillStatement(label, "PUSH", location, "",
-                        comment + "\n"));
+                assembly.append(Template.fillStatement(label, "LOAD", "R0", location, comment
+                        + "\n"));
+                assembly.append(Template.fillStatement(label, "PUSH", "R0", "", ">\n"));
                 pointerOffset++;
             }
 
@@ -180,20 +181,6 @@ public class LinearOperation implements Iterable<Operand> {
             comment = ">";
             count++;
         }
-    }
-
-    /**
-     * Checks if the given operand is the last operand or not.
-     *
-     * @return <code>true</code> if the given operand is the last operand, <code>false</code> if
-     * either there are no operands or if it is not the last operand.
-     */
-    public boolean istLast(Operand op) {
-        if (operands.size() == 0) {
-            return false;
-        }
-
-        return operands.get(operands.size() - 1).equals(op);
     }
 
     public List<Operand> operands() {
