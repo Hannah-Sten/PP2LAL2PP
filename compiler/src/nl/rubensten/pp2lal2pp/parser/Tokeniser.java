@@ -6,10 +6,7 @@ import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.lang.Operator;
 import nl.rubensten.pp2lal2pp.util.Regex;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Ruben Schellekens
@@ -32,7 +29,8 @@ public class Tokeniser implements Iterable<String> {
         String code2 = Regex.replaceAll("((((?<!'),))|(,(?!'))|((?<!'),(?!')))", code, " , ");
         code2 = Regex.replaceAll("((((?<!')\\)))|(\\)(?!'))|((?<!')\\)(?!')))", code2, " ) ");
         code2 = Regex.replaceAll("((((?<!')\\())|(\\((?!'))|((?<!')\\((?!')))", code2, " ( ");
-        code2 = Regex.replaceAll("((((?<!')\\-))|(\\-(?!'))|((?<!')\\-(?!')))", code2, " - ");
+        code2 = Regex.replaceAll("((((?<!')\\-(?!=)))|(\\-(?!['=]))|((?<!')\\-(?!['=])))", code2,
+                " - ");
         code2 = Regex.replaceAll("((((?<!')\\}))|(\\}(?!'))|((?<!')\\}(?!')))", code2, " } ");
         code2 = Regex.replaceAll("((((?<!')\\{))|(\\{(?!'))|((?<!')\\{(?!')))", code2, " { ");
 

@@ -954,7 +954,8 @@ public class Compiler {
     private void compileGlobal() {
         for (GlobalVariable gv : input.getGlobalVariables()) {
             assembly.append(Template.EQU.replace("NAME", gv.getName(), "VALUE", gv.getPointer() +
-                    "").replace("{$COMMENT}", gv.getComment().getContents()));
+                    "").replace("{$COMMENT}",
+                    (gv.getComment() == null ? "" : gv.getComment().getContents())));
             assembly.append("\n");
         }
     }
