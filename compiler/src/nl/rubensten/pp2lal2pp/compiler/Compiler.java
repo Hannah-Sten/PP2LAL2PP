@@ -201,6 +201,7 @@ public class Compiler {
     private void compileBlock(Block block, String functionName, Class inside) {
         List<Element> elts = block.getContents();
         String label = (functionName == null ? "" : functionName + ":");
+        List<Declaration> declarations = new ArrayList<>();
 
         for (Element elt : elts) {
             // Function Continue
@@ -226,6 +227,7 @@ public class Compiler {
             // Variable Declaration
             if (elt instanceof Declaration) {
                 compileDeclaration((Declaration)elt, label);
+                declarations.add((Declaration)elt);
                 label = "";
             }
 
@@ -261,6 +263,17 @@ public class Compiler {
             }
             else {
                 this.comment = null;
+            }
+        }
+
+        if (declarations.size() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                    declarations.size() + "",
+                    "Reset stack pointer.\n"));
+
+            for (Declaration decl : declarations) {
+                Variable var = decl.getVariable();
+                function.unregisterLocal(var);
             }
         }
 
@@ -690,10 +703,7 @@ public class Compiler {
         // API getNumPattern(val)
         else if (call.getCalled().equals("getNumPattern")) {
             Variable arg = vars.get(0);
-
             String text = getVariableValue(arg);
-
-            System.out.println(arg + " <<vs>> " + function.getVariableByVariable(arg));
 
             String result = insertLabel(Template.API_INVOKE_GETNUMPATTERN.replace(
                     "ARG", text

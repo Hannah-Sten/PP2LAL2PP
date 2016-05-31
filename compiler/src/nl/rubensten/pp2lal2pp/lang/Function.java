@@ -107,6 +107,31 @@ public class Function implements Identifyable, Element {
     }
 
     /**
+     * Unregisters a local variable. This will also reset the other pointers.
+     *
+     * @param variable
+     *         The variable to deregister.
+     * @throws CompilerException
+     *         If the variable doesn't exist.
+     */
+    public void unregisterLocal(Variable variable) throws CompilerException {
+        if (!variables.parallelStream().anyMatch(v -> v.getName().equals(variable.getName()))) {
+            throw new CompilerException("there is no declared variable called '" + variable
+                    .getName() + "'");
+        }
+
+        variables.removeIf(v -> v.getName().equals(variable.getName()));
+
+        for (Variable var : variables) {
+            var.setPointer(var.getPointer() - 1);
+        }
+
+        for (Variable arg : arguments) {
+            arg.setPointer(arg.getPointer() - 1);
+        }
+    }
+
+    /**
      * Looks what the last pointer used was and creates a new pointer value based on that.
      */
     private int newPointer() {
@@ -132,7 +157,6 @@ public class Function implements Identifyable, Element {
      *         if there is no variable declared with the name of the given variable.
      */
     public Variable getVariableByVariable(Variable other) throws CompilerException {
-        System.out.println(variables);
         return getVariableByName(other.getName());
     }
 
