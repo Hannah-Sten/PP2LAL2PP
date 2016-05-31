@@ -88,11 +88,6 @@ public enum Template {
     EQU("equ.template"),
 
     /**
-     * The Hex7Seg routine to load standard number patterns from 0-15.
-     */
-//    HEX7SEG("hex7seg.template"),
-
-    /**
      * Interrupt install 'invoke' template
      * <p>
      * <b>Variables:</b>
