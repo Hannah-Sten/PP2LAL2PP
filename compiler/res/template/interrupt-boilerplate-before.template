@@ -1,0 +1,4 @@
+;#
+;#  Install subroutine for {$ISRNAME} interrupt.
+;#
+enable_{$ISRNAME}: BRS     enable_hack_{$ISRNAME1%16}; Branch over ISR to get the address of the ISR onto the stack.
