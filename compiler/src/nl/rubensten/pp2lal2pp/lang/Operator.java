@@ -60,7 +60,7 @@ public enum Operator implements Identifyable {
         return new Number(n1.getIntValue() + n2.getIntValue());
     }),
 
-    SUBSTRACTION("-", "\\-", OperatorType.ARITHMETIC, "SUB", (n1, n2) -> {
+    SUBSTRACTION("-", "\\-(?!\\d)", OperatorType.ARITHMETIC, "SUB", (n1, n2) -> {
         return new Number(n1.getIntValue() - n2.getIntValue());
     }),
 
@@ -132,7 +132,7 @@ public enum Operator implements Identifyable {
         return (n1.getIntValue() == 1 && n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
 
-    NUMBER_NEGATION("-", "\\-", OperatorType.UNARY, null, (n1, n2) -> {
+    NUMBER_NEGATION("-", "\\-(?!\\d)", OperatorType.UNARY, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Unary operator - not supported on two numbers.");
     }) {
         @Override
