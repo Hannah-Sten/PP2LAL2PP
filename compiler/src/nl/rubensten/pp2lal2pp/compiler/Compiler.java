@@ -591,6 +591,19 @@ public class Compiler {
             return Constants.REG_RETURN;
         }
 
+        if (element instanceof Value) {
+            Value val = (Value)element;
+            if (val.getObject() instanceof String) {
+                Optional<Variable> arg = function.getArgumentByName(val.getObject().toString());
+                if (!arg.isPresent()) {
+                    throw new CompilerException("there is no variable called '" + val.getObject()
+                            .toString() + "'");
+                }
+
+                return loadValueString(arg.get());
+            }
+        }
+
         throw new ParseException("the element '" + element + "' must be either a Number or " +
                 "Variable");
     }
