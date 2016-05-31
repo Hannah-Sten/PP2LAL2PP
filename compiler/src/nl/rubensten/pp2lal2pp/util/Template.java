@@ -49,6 +49,16 @@ public enum Template {
     DEFAULT_EQU("default-equ.template"),
 
     /**
+     * Template to disable an interrupt (semi-API)
+     */
+    DISABLE_INTERRUPT("disable-interrupt.template"),
+
+    /**
+     * Template to enable an interrupt (semi-API)
+     */
+    ENABLE_INTERRUPT("enable-interrupt.template"),
+
+    /**
      * Denotes the end of the program.
      */
     END("end.template"),
