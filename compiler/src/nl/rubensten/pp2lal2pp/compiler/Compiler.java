@@ -2,11 +2,13 @@ package nl.rubensten.pp2lal2pp.compiler;
 
 import nl.rubensten.pp2lal2pp.CompilerException;
 import nl.rubensten.pp2lal2pp.Constants;
+import nl.rubensten.pp2lal2pp.PP2LAL2PPException;
 import nl.rubensten.pp2lal2pp.ParseException;
 import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
+import nl.rubensten.pp2lal2pp.util.Regex;
 import nl.rubensten.pp2lal2pp.util.Template;
 import nl.rubensten.pp2lal2pp.util.Util;
 
@@ -110,8 +112,19 @@ public class Compiler {
                 continue;
             }
 
-            compileFunction(function);
+            if (function instanceof Interrupt) {
+                compileInterrupt((Interrupt)function);
+            } else {
+                compileFunction(function);
+            }
+
         }
+
+        // Used API functions
+//        if (input.getApiFunctions().parallelStream().anyMatch(p -> p.contains("7Segment"))) {
+//            assembly.append(Template.HEX7SEG.load());
+//            assembly.append("\n\n");
+//        }
 
         for (String string : input.getApiFunctions()) {
             if (string.equals("exit")) {
@@ -184,6 +197,34 @@ public class Compiler {
         assembly.append("\n");
     }
 
+    /**
+     * Writes the given interrupt function to the assembly-StringBuilder.
+     *
+     * @param interrupt
+     *         The interrupt to compile.
+     */
+    private void compileInterrupt(Interrupt interrupt) {
+        this.function = interrupt;
+
+        assembly.append(Regex.replace(
+                "{$ISRNAME}",
+                Template.INTERRUPT_BOILERPLATE_BEFORE.replace("ISRNAME1", function.getName()),
+                function.getName()
+        )).append("\n\n");
+
+        for (String string : function.getPp2doc()) {
+            assembly.append(";#  ").append(string).append("\n");
+        }
+
+        compileBlock(function.getContents(), function.getName(), Interrupt.class);
+
+        assembly.append("\n").append(Regex.replace(
+                "{$ISRNAME}",
+                Template.INTERRUPT_BOILERPLATE_AFTER.load(),
+                function.getName()
+        )).append("\n\n");
+    }
+
     // Hihi
     private boolean functionReturn = false;
 
@@ -206,14 +247,22 @@ public class Compiler {
         for (Element elt : elts) {
             // Function Continue
             if (elt instanceof Continue && inside != Loop.class) {
-                compileFunctionContinue(label);
+                if (inside == Interrupt.class) {
+                    compileInterruptContinue(label);
+                } else {
+                    compileFunctionContinue(label);
+                }
                 label = "";
                 continue;
             }
 
             // Function Return
             if (elt instanceof Return && (functionName != null || functionReturn)) {
-                compileFunctionReturn((Return)elt, label);
+                if (inside == Interrupt.class) {
+                    compileInterruptReturn((Return)elt, label);
+                } else {
+                    compileFunctionReturn((Return)elt, label);
+                }
                 label = "";
                 continue;
             }
@@ -838,6 +887,34 @@ public class Compiler {
             skipVariables = true;
             label = "";
         }
+        // Semi-API enableTimerInterrupt(interruptName)
+        else if (call.getCalled().equals("enableTimerInterrupt")) {
+            String interruptName = vars.get(0).getName();
+            String result = insertLabel(Template.ENABLE_INTERRUPT.replace(
+                    "ISRNAME", interruptName
+            ), label).replace(
+                    "{$COMMENT}", "Enable the interrupt " + interruptName + ".\n"
+            );
+
+            assembly.append(result);
+            skipVariables = true;
+            skipCall = true;
+            label = "";
+        }
+        // Semi-API disableTimerInterrupt(interruptName)
+        else if (call.getCalled().equals("disableTimerInterrupt")) {
+            String interruptName = vars.get(0).getName();
+            String result = insertLabel(Template.DISABLE_INTERRUPT.replace(
+                    "ISRNAME", interruptName
+            ), label).replace(
+                    "{$COMMENT}", "Disable the interrupt " + interruptName + ".\n"
+            );;
+
+            assembly.append(result);
+            skipVariables = true;
+            skipCall = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
@@ -937,6 +1014,32 @@ public class Compiler {
     }
 
     /**
+     * Compiles a function return.
+     *
+     * @param ret
+     *         The Return element.
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileInterruptReturn(Return ret, String label) {
+        // Return statements without values.
+        if (ret.getReturnValue() != null) {
+            throw new PP2LAL2PPException("Interrupt cannot return a value");
+        }
+
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                                                   function.variableCount() + "",
+                                                   "Reset stack pointer.\n"));
+            label = "";
+        }
+
+        assembly.append(Template.fillStatement(label, "RTE", "", "",
+                                               "Return from interrupt " + function.getName() + ".\n"));
+    }
+
+    /**
      * Compiles a function continue.
      *
      * @param label
@@ -953,6 +1056,27 @@ public class Compiler {
 
         assembly.append(Template.fillStatement(label, "BRA", function.getName(), "",
                 "Repeat function " + function.getName() + ".\n"));
+    }
+
+    /**
+     * Compiles a interrupt continue.
+     *
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileInterruptContinue(String label) {
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                                                   function.variableCount() + "",
+                                                   "Reset stack pointer.\n"));
+            label = "";
+        }
+
+//        assembly.append(Template.fillStatement(label, "SETI", //TODO));
+
+        assembly.append(Template.fillStatement("", "RTE", function.getName(), "",
+                                               "Return from interrupt " + function.getName() + ".\n"));
     }
 
     /**

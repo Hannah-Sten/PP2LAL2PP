@@ -59,6 +59,16 @@ public enum Template {
     DEFAULT_EQU("default-equ.template"),
 
     /**
+     * Template to disable an interrupt (semi-API)
+     */
+    DISABLE_INTERRUPT("disable-interrupt.template"),
+
+    /**
+     * Template to enable an interrupt (semi-API)
+     */
+    ENABLE_INTERRUPT("enable-interrupt.template"),
+
+    /**
      * Denotes the end of the program.
      */
     END("end.template"),
@@ -76,6 +86,41 @@ public enum Template {
      * <code>{$COMMENT}</code> The comment that must be placed after the statement.
      */
     EQU("equ.template"),
+
+    /**
+     * The Hex7Seg routine to load standard number patterns from 0-15.
+     */
+//    HEX7SEG("hex7seg.template"),
+
+    /**
+     * Interrupt install 'invoke' template
+     * <p>
+     * <b>Variables:</b>
+     * <p>
+     * <code>{$ISRNAME1}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME2}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME3}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME4}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME5}</code> The name of interrupt.
+     */
+    INTERRUPT_BOILERPLATE_AFTER("interrupt-boilerplate-after.template"),
+
+    /**
+     * Interrupt install 'execute' and interrupt disable template
+     * <p>
+     * <b>Variables:</b>
+     * <p>
+     * <code>{$ISRNAME1}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME2}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME3%#}</code> The name of interrupt.
+     */
+    INTERRUPT_BOILERPLATE_BEFORE("interrupt-boilerplate-before.template"),
 
     /**
      * An assembly statement/instruction.

@@ -16,12 +16,12 @@ public class Function implements Identifyable, Element {
     /**
      * Unique id of the function.
      */
-    private int id;
+    protected int id;
 
     /**
      * The name of the function.
      */
-    private String name;
+    protected String name;
 
     /**
      * A list of arguments with a pointer relative to the stack pointer at the beginning of the
@@ -29,26 +29,26 @@ public class Function implements Identifyable, Element {
      * <p>
      * List is empty if there are no arguments.
      */
-    private List<Variable> arguments;
+    protected List<Variable> arguments;
 
     /**
      * A list of all local variables with pointers relative to the stack pointer.
      * <p>
      * List is empty if there are no variables.
      */
-    private List<Variable> variables;
+    protected List<Variable> variables;
 
     /**
      * The statements that have to be executed in the block.
      */
-    private Block contents;
+    protected Block contents;
 
     /**
      * The pp2doc documentation comment.
      * <p>
      * Every line is a new element int he list.
      */
-    private List<String> pp2doc;
+    protected List<String> pp2doc;
 
     /**
      * Automatically assigns pointers to the variables.
@@ -134,7 +134,7 @@ public class Function implements Identifyable, Element {
     /**
      * Looks what the last pointer used was and creates a new pointer value based on that.
      */
-    private int newPointer() {
+    protected int newPointer() {
         for (Variable var : variables) {
             var.setPointer(var.getPointer() + 1);
         }
@@ -235,7 +235,6 @@ public class Function implements Identifyable, Element {
                 ", name='" + name + '\'' +
                 ", contents=" + contents +
                 ", variables=" + variables +
-                ", arguments=" + arguments +
                 ", pp2doc=" + pp2doc +
                 '}';
     }
