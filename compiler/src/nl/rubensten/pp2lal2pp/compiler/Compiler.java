@@ -796,6 +796,34 @@ public class Compiler {
             skipVariables = true;
             label = "";
         }
+        // Semi-API enableTimerInterrupt(interruptName)
+        else if (call.getCalled().equals("enableTimerInterrupt")) {
+            String interruptName = vars.get(0).getName();
+            String result = insertLabel(Template.ENABLE_INTERRUPT.replace(
+                    "ISRNAME", interruptName
+            ), label).replace(
+                    "{$COMMENT}", "Enable the interrupt " + interruptName + ".\n"
+            );
+
+            assembly.append(result);
+            skipVariables = true;
+            skipCall = true;
+            label = "";
+        }
+        // Semi-API disableTimerInterrupt(interruptName)
+        else if (call.getCalled().equals("disableTimerInterrupt")) {
+            String interruptName = vars.get(0).getName();
+            String result = insertLabel(Template.DISABLE_INTERRUPT.replace(
+                    "ISRNAME", interruptName
+            ), label).replace(
+                    "{$COMMENT}", "Disable the interrupt " + interruptName + ".\n"
+            );;
+
+            assembly.append(result);
+            skipVariables = true;
+            skipCall = true;
+            label = "";
+        }
 
         for (Variable var : vars) {
             if (skipVariables) {
