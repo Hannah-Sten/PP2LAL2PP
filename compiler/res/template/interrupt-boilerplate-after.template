@@ -1,8 +1,7 @@
 ;#
 ;#  Install subroutine for {$ISRNAME} interrupt, continued with the ISR address on the stack.
 ;#
-enable_hack_{$ISRNAME}: LOAD    R0  [SP++]         ; Get the relative address of the ISR off the stack.
-                ADD     R0  [GB+CODESEG]            ; Get the absolute address of the ISR.
+enable_hack_{$ISRNAME}: LOAD    R0  [SP++]                  ; Get the address of the ISR off the stack.
                 LOAD    R1  16                      ; Load the address of the timer exception descriptor
                 STOR    R0  [R1]                    ; Install the ISR
                 SETI    8                           ; Enable the timer interrupt
