@@ -10,129 +10,129 @@ import java.util.Optional;
  */
 public enum Operator implements Identifyable {
 
-    ADD_ASSIGN("+=", OperatorType.ASSIGNMENT, "ADD", (n1, n2) -> {
+    ADD_ASSIGN("+=", "\\+\\=", OperatorType.ASSIGNMENT, "ADD", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator += not supported on two numbers.");
     }),
 
-    SUBSTRACT_ASSIGN("-=", OperatorType.ASSIGNMENT, "SUB", (n1, n2) -> {
+    SUBSTRACT_ASSIGN("-=", "\\-\\=", OperatorType.ASSIGNMENT, "SUB", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator -= not supported on two numbers.");
     }),
 
-    POWER_ASSIGN("**=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    POWER_ASSIGN("**=", "\\*\\*\\=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Operator **= not supported on two numbers.");
     }),
 
-    MULTIPLY_ASSIGN("*=", OperatorType.ASSIGNMENT, "MULS", (n1, n2) -> {
+    MULTIPLY_ASSIGN("*=", "\\*\\=", OperatorType.ASSIGNMENT, "MULS", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator *= not supported on two numbers.");
     }),
 
-    DIVIDE_ASSIGN("/=", OperatorType.ASSIGNMENT, "DIV", (n1, n2) -> {
+    DIVIDE_ASSIGN("/=", "/\\=", OperatorType.ASSIGNMENT, "DIV", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator /= not supported on two numbers.");
     }),
 
-    REMAINDER_ASSIGN("%=", OperatorType.ASSIGNMENT, "MOD", (n1, n2) -> {
+    REMAINDER_ASSIGN("%=", "%\\=", OperatorType.ASSIGNMENT, "MOD", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator %= not supported on two numbers.");
     }),
 
-    BITWISE_AND_ASSIGN("&=", OperatorType.ASSIGNMENT, "AND", (n1, n2) -> {
+    BITWISE_AND_ASSIGN("&=", "&\\=", OperatorType.ASSIGNMENT, "AND", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator &= not supported on two numbers.");
     }),
 
-    BITWISE_OR_ASSIGN("|=", OperatorType.ASSIGNMENT, "OR", (n1, n2) -> {
+    BITWISE_OR_ASSIGN("|=", "\\|\\=", OperatorType.ASSIGNMENT, "OR", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator |= not supported on two numbers.");
     }),
 
-    BITWISE_XOR_ASSIGN("^=", OperatorType.ASSIGNMENT, "XOR", (n1, n2) -> {
+    BITWISE_XOR_ASSIGN("^=", "\\^\\=", OperatorType.ASSIGNMENT, "XOR", (n1, n2) -> {
         throw new PP2LAL2PPException("Operator ^= not supported on two numbers.");
     }),
 
     ////
 
-    ASSIGN_ALT_LEFT(":=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    ASSIGN_ALT_LEFT(":=", "\\:\\=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Assignment operator := not supported on two numbers.");
     }),
 
-    ASSIGN_ALT_RIGHT("=:", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    ASSIGN_ALT_RIGHT("=:", "\\=\\:", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Assignment operator =: not supported on two numbers.");
     }),
 
-    ADDITION("+", OperatorType.ARITHMETIC, "ADD", (n1, n2) -> {
+    ADDITION("+", "\\+", OperatorType.ARITHMETIC, "ADD", (n1, n2) -> {
         return new Number(n1.getIntValue() + n2.getIntValue());
     }),
 
-    SUBSTRACTION("-", OperatorType.ARITHMETIC, "SUB", (n1, n2) -> {
+    SUBSTRACTION("-", "\\-", OperatorType.ARITHMETIC, "SUB", (n1, n2) -> {
         return new Number(n1.getIntValue() - n2.getIntValue());
     }),
 
-    POWER("**", OperatorType.ARITHMETIC, null, (n1, n2) -> {
+    POWER("**", "\\*\\*", OperatorType.ARITHMETIC, null, (n1, n2) -> {
         return new Number((int)Math.pow(n1.getIntValue(), n2.getIntValue()));
     }),
 
-    MULTIPLICATION("*", OperatorType.ARITHMETIC, "MULS", (n1, n2) -> {
+    MULTIPLICATION("*", "\\*", OperatorType.ARITHMETIC, "MULS", (n1, n2) -> {
         return new Number(n1.getIntValue() * n2.getIntValue());
     }),
 
-    INTEGER_DIVISION("/", OperatorType.ARITHMETIC, "DIV", (n1, n2) -> {
+    INTEGER_DIVISION("/", "/", OperatorType.ARITHMETIC, "DIV", (n1, n2) -> {
         return new Number(n1.getIntValue() / n2.getIntValue());
     }),
 
-    REMAINDER("%", OperatorType.ARITHMETIC, "MOD", (n1, n2) -> {
+    REMAINDER("%", "%", OperatorType.ARITHMETIC, "MOD", (n1, n2) -> {
         return new Number(n1.getIntValue() % n2.getIntValue());
     }),
 
-    BITWISE_OR("|", OperatorType.BITWISE, "OR", (n1, n2) -> {
+    BITWISE_OR("|", "\\|", OperatorType.BITWISE, "OR", (n1, n2) -> {
         return new Number(n1.getIntValue() | n2.getIntValue());
     }),
 
-    BITWISE_AND("&", OperatorType.BITWISE, "AND", (n1, n2) -> {
+    BITWISE_AND("&", "&", OperatorType.BITWISE, "AND", (n1, n2) -> {
         return new Number(n1.getIntValue() & n2.getIntValue());
     }),
 
-    BITWISE_XOR("^", OperatorType.BITWISE, "XOR", (n1, n2) -> {
+    BITWISE_XOR("^", "\\^", OperatorType.BITWISE, "XOR", (n1, n2) -> {
         return new Number(n1.getIntValue() ^ n2.getIntValue());
     }),
 
-    BITWISE_NOT("~", OperatorType.BITWISE, null, (n1, n2) -> {
+    BITWISE_NOT("~", "~", OperatorType.BITWISE, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Operator ~ not supported on two numbers.");
     }),
 
-    GREATHER_THAN_EQUAL(">=", OperatorType.RELATIONAL, "BGE", (n1, n2) -> {
+    GREATHER_THAN_EQUAL(">=", "\\>\\=", OperatorType.RELATIONAL, "BGE", (n1, n2) -> {
         return (n1.getIntValue() >= n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    LESSER_THAN_EQUAL("<=", OperatorType.RELATIONAL, "BLE", (n1, n2) -> {
+    LESSER_THAN_EQUAL("<=", "\\<\\=", OperatorType.RELATIONAL, "BLE", (n1, n2) -> {
         return (n1.getIntValue() <= n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    EQUALS("==", OperatorType.RELATIONAL, "BEQ", (n1, n2) -> {
+    EQUALS("==", "\\=\\=", OperatorType.RELATIONAL, "BEQ", (n1, n2) -> {
         return (n1.getIntValue() == n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    NOT_EQUALS("!=", OperatorType.RELATIONAL, "BNE", (n1, n2) -> {
+    NOT_EQUALS("!=", "\\!\\=", OperatorType.RELATIONAL, "BNE", (n1, n2) -> {
         return (n1.getIntValue() != n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    GREATER_THAN(">", OperatorType.RELATIONAL, "BGT", (n1, n2) -> {
+    GREATER_THAN(">", "\\>", OperatorType.RELATIONAL, "BGT", (n1, n2) -> {
         return (n1.getIntValue() > n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    LESSER_THAN("<", OperatorType.RELATIONAL, "BLT", (n1, n2) -> {
+    LESSER_THAN("<", "\\<", OperatorType.RELATIONAL, "BLT", (n1, n2) -> {
         return (n1.getIntValue() < n2.getIntValue() ? Number.ONE : Number.ZERO);
     }),
 
-    ASSIGN("=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
+    ASSIGN("=", "\\=", OperatorType.ASSIGNMENT, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Assignment operator = not supported on two numbers.");
     }),
 
-    LOGICAL_OR(" or ", OperatorType.LOGICAL, null, (n1, n2) -> {
+    LOGICAL_OR(" or ", "( or )", OperatorType.LOGICAL, null, (n1, n2) -> {
         return (n1.getIntValue() == 1 || n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
 
-    LOGICAL_AND(" and ", OperatorType.LOGICAL, null, (n1, n2) -> {
+    LOGICAL_AND(" and ", "( and )", OperatorType.LOGICAL, null, (n1, n2) -> {
         return (n1.getIntValue() == 1 && n2.getIntValue() == 1 ? Number.ONE : Number.ZERO);
     }),
 
-    NUMBER_NEGATION("-", OperatorType.UNARY, null, (n1, n2) -> {
+    NUMBER_NEGATION("-", "\\-", OperatorType.UNARY, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Unary operator - not supported on two numbers.");
     }) {
         @Override
@@ -141,7 +141,7 @@ public enum Operator implements Identifyable {
         }
     },
 
-    BOOLEAN_NEGATION("!", OperatorType.UNARY, null, (n1, n2) -> {
+    BOOLEAN_NEGATION("!", "\\!", OperatorType.UNARY, null, (n1, n2) -> {
         throw new PP2LAL2PPException("Unary operator ! not supported on two numbers.");
     }) {
         @Override
@@ -169,6 +169,11 @@ public enum Operator implements Identifyable {
     private String sign;
 
     /**
+     * The escpaed character for regex. Yay.
+     */
+    private String regexSign;
+
+    /**
      * The type of operator.
      */
     private OperatorType type;
@@ -185,10 +190,12 @@ public enum Operator implements Identifyable {
      */
     private OperationFunction<Number> numbersFunction;
 
-    Operator(String sign, OperatorType type, String instruction, OperationFunction<Number>
+    Operator(String sign, String regexSign, OperatorType type, String instruction,
+             OperationFunction<Number>
             numbersFunction) {
         this.id = IDManager.newId();
         this.sign = sign;
+        this.regexSign = regexSign;
         this.type = type;
         this.instruction = instruction;
         this.numbersFunction = numbersFunction;
@@ -230,6 +237,10 @@ public enum Operator implements Identifyable {
      */
     public String getSign() {
         return sign;
+    }
+
+    public String getRegexSign() {
+        return regexSign;
     }
 
     /**
