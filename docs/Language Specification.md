@@ -240,6 +240,7 @@ The following names are reserved and cannot be used as a global variable name, f
 * DSPSEG 
 * TIMER  
 * ADCONV 
+* CODESEG 
 * Hex7Seg
 * Hex7Seg_tbl
 * Hex7Seg_bgn
