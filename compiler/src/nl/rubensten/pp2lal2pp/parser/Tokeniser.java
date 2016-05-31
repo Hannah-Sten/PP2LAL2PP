@@ -29,15 +29,16 @@ public class Tokeniser implements Iterable<String> {
     public Tokeniser(String code) {
         this.original = code;
 
-        String code2 = Regex.replace("{", code, " { ");
-        code2 = Regex.replace("}", code2, " } ");
-        code2 = Regex.replaceAll("-(?!=)", code2, " - ");
-        code2 = Regex.replace("(", code2, " ( ");
-        code2 = Regex.replace(")", code2, " ) ");
-        code2 = Regex.replace(",", code2, " , ");
+        String code2 = Regex.replaceAll("(?<!')\\{(?!')", code, " { ");
+        code2 = Regex.replaceAll("(?<!')\\}(?!')", code2, " } ");
+        code2 = Regex.replaceAll("(?<!')-(?![='])", code2, " - ");
+        code2 = Regex.replaceAll("(?<!')\\((?!')", code2, " ( ");
+        code2 = Regex.replaceAll("(?<!')\\)(?!')", code2, " ) ");
+        code2 = Regex.replaceAll("(?<!'),(?!')", code2, " , ");
 
         for (Operator op : Operator.values()) {
-            code2 = Regex.replace(op.getSign(), code2, "櫓\uF214(" + op.name() + ")");
+            code2 = Regex.replace("(?<!')" + op.getSign() + "(?!')",
+                    code2, "櫓\uF214(" + op.name() + ")");
         }
 
         for (Operator op : Operator.values()) {

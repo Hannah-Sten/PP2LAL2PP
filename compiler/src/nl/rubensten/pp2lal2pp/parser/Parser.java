@@ -257,7 +257,7 @@ public class Parser {
         }
 
         if (line.size() >= 3) {
-            if (line.equals(2, "(")) {
+            if (line.equals(2, "(") && !line.equals(1, "'")) {
                 // Function call.
                 String name = line.getToken(1);
                 List<Variable> variables = new ArrayList<>();
@@ -272,6 +272,11 @@ public class Parser {
                 FunctionCall call = new FunctionCall(name, variables);
                 program.registerAPIFunction(name);
                 return new ElementReturn(call);
+            }
+            else if (line.equals(1, "'") && line.equals(3, "'")) {
+                String character = line.join(1, 3, "");
+                Value value = Value.parse(character, program);
+                return new Return(value);
             }
         }
 
