@@ -170,7 +170,16 @@ public class Compiler {
             assembly.append(";#  ").append(string).append("\n");
         }
 
+        boolean hasReturn = function.getContents().getContents().parallelStream()
+                .anyMatch(e -> (e instanceof Return) || (e instanceof Continue));
         compileBlock(function.getContents(), function.getName(), Function.class);
+
+        if (!hasReturn) {
+            String label = function.getContents().getContents().size() == 0 ? function.getName()
+                    + ":" : "";
+            compileFunctionReturn(new Return(), label);
+        }
+
         assembly.append("\n");
     }
 
