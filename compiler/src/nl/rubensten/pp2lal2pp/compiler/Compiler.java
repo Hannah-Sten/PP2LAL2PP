@@ -8,6 +8,7 @@ import nl.rubensten.pp2lal2pp.api.APIFunction;
 import nl.rubensten.pp2lal2pp.lang.*;
 import nl.rubensten.pp2lal2pp.lang.Number;
 import nl.rubensten.pp2lal2pp.util.FileWorker;
+import nl.rubensten.pp2lal2pp.util.Regex;
 import nl.rubensten.pp2lal2pp.util.Template;
 import nl.rubensten.pp2lal2pp.util.Util;
 
@@ -81,8 +82,13 @@ public class Compiler {
                         ((Number)c1.getDefaultValue()).getIntValue()).compareTo(
                         ((Number)c2.getDefaultValue()).getIntValue()));
 
+        // Initialisation: CODESEG
+        assembly.append(Template.fillStatement("init:", "STOR", Constants.REG_CODESEG,
+                                               "[GB+CODESEG]",
+                                               "Store the address of the code segment for later use.\n"));
+
         // Initialisation: IOAREA
-        assembly.append(Template.fillStatement("init:", "LOAD", Constants.REG_IOAREA, "IOAREA",
+        assembly.append(Template.fillStatement("", "LOAD", Constants.REG_IOAREA, "IOAREA",
                 "Store the address of the IOAREA for later use.\n"));
 
         // Initialisation: Global Variables.
@@ -195,12 +201,23 @@ public class Compiler {
     private void compileInterrupt(Interrupt interrupt) {
         this.function = interrupt;
 
+        assembly.append(Regex.replace(
+                "{$ISRNAME}",
+                Template.INTERRUPT_BOILERPLATE_BEFORE.replace("ISRNAME1", function.getName()),
+                function.getName()
+        )).append("\n\n");
+
         for (String string : function.getPp2doc()) {
             assembly.append(";#  ").append(string).append("\n");
         }
 
         compileBlock(function.getContents(), function.getName(), Interrupt.class);
-        assembly.append("\n");
+
+        assembly.append("\n").append(Regex.replace(
+                "{$ISRNAME}",
+                Template.INTERRUPT_BOILERPLATE_AFTER.load(),
+                function.getName()
+        )).append("\n\n");
     }
 
     // Hihi
@@ -224,7 +241,11 @@ public class Compiler {
         for (Element elt : elts) {
             // Function Continue
             if (elt instanceof Continue && inside != Loop.class) {
-                compileFunctionContinue(label);
+                if (inside == Interrupt.class) {
+                    compileInterruptContinue(label);
+                } else {
+                    compileFunctionContinue(label);
+                }
                 label = "";
                 continue;
             }
@@ -916,6 +937,27 @@ public class Compiler {
 
         assembly.append(Template.fillStatement(label, "BRA", function.getName(), "",
                 "Repeat function " + function.getName() + ".\n"));
+    }
+
+    /**
+     * Compiles a interrupt continue.
+     *
+     * @param label
+     *         The label to print before the statement.
+     */
+    private void compileInterruptContinue(String label) {
+        // Reset stack pointer.
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                                                   function.variableCount() + "",
+                                                   "Reset stack pointer.\n"));
+            label = "";
+        }
+
+//        assembly.append(Template.fillStatement(label, "SETI", //TODO));
+
+        assembly.append(Template.fillStatement("", "RTE", function.getName(), "",
+                                               "Return from interrupt " + function.getName() + ".\n"));
     }
 
     /**

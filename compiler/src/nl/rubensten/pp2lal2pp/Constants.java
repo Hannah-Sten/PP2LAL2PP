@@ -21,6 +21,11 @@ public class Constants {
     public static final String REG_IOAREA = "R5";
 
     /**
+     * The register that, at the beginning of the progam, contains the address of the CODESEG.
+     */
+    public static final String REG_CODESEG = "R5";
+
+    /**
      * The register that is used for return values.
      */
     public static final String REG_RETURN = "R4";

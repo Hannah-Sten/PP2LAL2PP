@@ -73,6 +73,36 @@ public enum Template {
     HEX7SEG("hex7seg.template"),
 
     /**
+     * Interrupt install 'invoke' template
+     * <p>
+     * <b>Variables:</b>
+     * <p>
+     * <code>{$ISRNAME1}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME2}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME3}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME4}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME5}</code> The name of interrupt.
+     */
+    INTERRUPT_BOILERPLATE_AFTER("interrupt-boilerplate-after.template"),
+
+    /**
+     * Interrupt install 'execute' and interrupt disable template
+     * <p>
+     * <b>Variables:</b>
+     * <p>
+     * <code>{$ISRNAME1}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME2}</code> The name of interrupt.
+     * <p>
+     * <code>{$ISRNAME3%#}</code> The name of interrupt.
+     */
+    INTERRUPT_BOILERPLATE_BEFORE("interrupt-boilerplate-before.template"),
+
+    /**
      * An assembly statement/instruction.
      * <p>
      * <b>Variables:</b>

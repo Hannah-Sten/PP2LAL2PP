@@ -5,3 +5,4 @@ DSPDIG          EQU     9                           ; Relative position of the 7
 DSPSEG          EQU     8                           ; Relative position of the 7-segment display's segments.
 TIMER           EQU     13                          ; Timer address relative to IOAREA.
 ADCONV          EQU     6                           ; A/D-converter address relative to IOAREA.
+CODESEG         EQU     14                          ; Address of code segment is stored here.
