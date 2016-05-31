@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class PP2LAL2PP {
 
-    public static String VERSION = "Beta 0.2";
+    public static String VERSION = "Beta 0.3";
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
