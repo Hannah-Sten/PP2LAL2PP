@@ -76,7 +76,9 @@ public class Parser {
                 continue;
             }
 
-            if (!line.startsWith("function")) {
+            boolean isInterrupt = line.startsWith("interrupt");
+
+            if (!line.startsWith("function") && !isInterrupt) {
                 continue;
             }
 
@@ -90,6 +92,10 @@ public class Parser {
             }
 
             for (int i = 3; i <= tokens.size(); i++) {
+                if (isInterrupt) {
+                    break;
+                }
+
                 if (tokens.equals(i, ")")) {
                     break;
                 }
@@ -107,7 +113,12 @@ public class Parser {
                 arguments.add(new Variable(name));
             }
 
-            function = new Function(currentFunction, new ArrayList<>(pp2doc), arguments);
+            if (isInterrupt) {
+                function = new Interrupt(currentFunction, new ArrayList<>(pp2doc));
+            } else {
+                function = new Function(currentFunction, new ArrayList<>(pp2doc), arguments);
+            }
+
             pp2doc.clear();
             Block block = parseFunction(it);
             function.setContents(block);
