@@ -172,6 +172,7 @@ public class Compiler {
 
         boolean hasReturn = function.getContents().getContents().parallelStream()
                 .anyMatch(e -> (e instanceof Return) || (e instanceof Continue));
+
         compileBlock(function.getContents(), function.getName(), Function.class);
 
         if (!hasReturn) {
@@ -591,6 +592,18 @@ public class Compiler {
             return Constants.REG_RETURN;
         }
 
+        if (element instanceof Value) {
+            Value val = (Value)element;
+
+            Optional<GlobalVariable> global = input.getGlobalVariable(val.stringRepresentation());
+            if (global.isPresent()) {
+                return loadValueString(global.get());
+            }
+
+            Variable var = function.getVariableByName(val.stringRepresentation());
+            return loadValueString(var);
+        }
+
         throw new ParseException("the element '" + element + "' must be either a Number or " +
                 "Variable");
     }
@@ -677,7 +690,10 @@ public class Compiler {
         // API getNumPattern(val)
         else if (call.getCalled().equals("getNumPattern")) {
             Variable arg = vars.get(0);
+
             String text = getVariableValue(arg);
+
+            System.out.println(arg + " <<vs>> " + function.getVariableByVariable(arg));
 
             String result = insertLabel(Template.API_INVOKE_GETNUMPATTERN.replace(
                     "ARG", text
