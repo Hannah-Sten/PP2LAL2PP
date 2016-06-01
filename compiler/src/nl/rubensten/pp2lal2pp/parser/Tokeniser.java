@@ -27,7 +27,7 @@ public class Tokeniser implements Iterable<String> {
         this.original = code;
 
         String code2 = Regex.replaceAll("((((?<!'),))|(,(?!'))|((?<!'),(?!')))", code, " , ");
-        code2 = Regex.replaceAll("((((?<!')#))|(#(?!'))|((?<!')#(?!')))", code2, " ) ");
+        code2 = Regex.replaceAll("((((?<!')#))|(#(?!'))|((?<!')#(?!')))", code2, " # ");
         code2 = Regex.replaceAll("((((?<!')\\)))|(\\)(?!'))|((?<!')\\)(?!')))", code2, " ) ");
         code2 = Regex.replaceAll("((((?<!')\\())|(\\((?!'))|((?<!')\\((?!')))", code2, " ( ");
         code2 = Regex.replaceAll("((((?<!')\\-(?![=\\d])))|(\\-(?!['=\\d]))|((?<!')\\-(?!['=\\d])" +
