@@ -42,7 +42,7 @@ Shows the given pattern *pattern* at the place of digit *dig*, both as binary re
 Gets the 7Segment pattern for the given number. The pattern will be the number from *0*-*F* where *F* equals *15*. *int* will be modulo *16* before it gets transformed into a pattern.
 
 #### getPattern(char)
-Gets the 7Segment pattern for the given character. The *char* must be a character literal or an ASCII code for the character you want to display. Only characters in range 44-122 inclusive are supported and some of the characters (like `m`) do not have a fully correct corresponding pattern. In that case, an as similar looking pattern is used. All values will be substracted by *33* and will be modulus *90*. That means that `z` wraps to `!`.
+Gets the 7Segment pattern for the given character. The *char* must be a character literal or an ASCII code for the character you want to display. Only characters in range 33-122 inclusive are supported and some of the characters (like `m`) do not have a fully correct corresponding pattern. In that case, an as similar looking pattern is used. All values will be substracted by *33* and will be modulus *90*. That means that `z` wraps to `!`.
 
 ## Timer
 
