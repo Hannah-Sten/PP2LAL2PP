@@ -25,6 +25,8 @@ Returns the value of the A/D-converter specified by `num`. `num` can either be `
 
 ### Output pins
 
+These methods all store the current state of the outputs in Global Base 1, because the output register is write-only for some weird reason. This means that all outputs must be set using these methods in order to be able to use the setSingleOutput functionality.
+
 #### setOutput(val)
 Sets the states of all 8 outputs. The value is a binary number where every digit (from right to left) determines if the output is on or off. Having a value of `1` means the output is on, a value of `0` means the output should be turned off.
 
