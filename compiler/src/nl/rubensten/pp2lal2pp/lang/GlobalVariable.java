@@ -11,7 +11,7 @@ public class GlobalVariable extends Variable {
     /**
      * Counter that tracks the location of the previous global variable.
      */
-    private static int pointerCounter = 1;
+    private static int pointerCounter = 2;
 
     /**
      * A list containing all the global base addresses that can't be used to store values.
