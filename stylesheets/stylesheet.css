@@ -3,6 +3,32 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css);
 
+.rightfill {
+    float: right;
+}
+
+div.inline-button a {
+    background-color: #2F5D8A;
+    border-bottom: 2px solid #2A4C6D;
+    color: white;
+    font-weight: 300;
+    padding: 10px 24px;
+    font-size: 14pt;
+}
+
+div.inline-button a:hover {
+    color: white;
+    background-color: #3F71A2;
+}
+
+div.inline-button a span.fa {
+    margin-right: 2px;
+}
+
+div.inline-button a small {
+    margin-right: 12px;
+}
+
 nav {
     background-color: #2F5D8A;
     width: 100%;

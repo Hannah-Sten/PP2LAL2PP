@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>PP2LAL2PP by Ruben-Sten</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>PP2LAL2PP</h1>
+        <h2>Practicum Processor 2 Learn Assembly Language 2 Preserve Prosperity language</h2>
+        <a href="https://github.com/Ruben-Sten/PP2LAL2PP" class="button">
+              <span class="fa fa-github fa-pull-left fa-2x"></span>
+              <span class="view-github"><small>View project on</small> GitHub</a></span>
+      </div>
+    </header>
+
+    <nav>
+        <ul class="inner">
+            <a href="index.html"><li>Home</li></a>
+            <a href="language.html"><li>Language</li></a>
+            <a href="api.html"><li>Base API</li></a>
+            <a href="lib.html"><li>Standard LIB</li></a>
+            <a href="about.html"><li>About</li></a>
+        </ul>
+    </nav>
+    
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+<h1 id="the-pp2lal2pp-language-specification">PP2LAL2PP-language specification</h1>
+<p>Example documents can be found in the <a href="https://github.com/Ruben-Sten/PP2LAL2PP/tree/master/examples">examples-folder</a> on GitHub.</p>
+
+<h2 id="general-code-layout">General code layout</h2>
+<p>Every single statement must be placed on a seperate line. Blank lines will be ignored. Multiple spaces or tabs will be interpreted as 1 space.</p>
+<p>It is recommended for PP2LAL2PP source files to either have a <code>.pp2</code> or <code>.pp2lal2pp</code> file extension.</p>
+<p>Also, use camelCase.</p>
+
+<h2 id="file-inclusion-include">File inclusion (<code>include</code>)</h2>
+<p>The entire contents of another file can be included in your code with the <code>include</code> keyword at the exact place you put the statement. Usage: <code>include &lt;fileName&gt;</code>.</p>
+<p><em>fileName</em> must be the name of the source file. If the source file has a <code>.pp2</code> or <code>.pp2lal2pp</code> file extension, you do not need to specify the extension. E.g. you can include the file “constants.pp2” by using <code>include constants</code>. When an extensionless file, a <code>.pp2</code> and a <code>.pp2lal2pp</code> file exists with the same name, the extensionless file will be chosen first, then the <code>.pp2lal2pp</code> file and finally the <code>.pp2</code> file. Files from different directories must include their directory names. The name does not have to be between qoutes. E.g. the file “peanut saussage.cheese” can be includied using <code>include peanut saussage.cheese</code>.</p>
+
+<h2 id="global-variables-global">Global variables (<code>global</code>)</h2>
+<p>Global variables are stored in the Global Base and can be used from any scope in the program. You can declare global variables only in the outermost scope using <code>global &lt;varName&gt; = &lt;value&gt;</code>.</p>
+<p><em>varName</em> is the name used for the variable and must be unique. There cannot be local or global variables with the same name. Variables can’t have the same name as reserved keywords.</p>
+<p><em>value (optional)</em> this is an equal sign followed by a number. This means that the global variable has an initial value of <em>value</em>. If no value is specified (i.e. <code>global &lt;varName&gt;</code>) the value will be initialised with 0 being an abbreviation of <code>global &lt;varName&gt; = 0</code> effectively.</p>
+
+<h2 id="local-variables-var">Local variables (<code>var</code>)</h2>
+<p>Local variables have their values stored on the stack and are only usable in their local scope. Meaning that as soon as the function of code ends where the local variable is declared, the variable cannot be used anymore. Local variables can only be declared in functions and are declared as follows: <code>var &lt;varName&gt; = &lt;value&gt;</code>, analogous to global variables. Variables cannot have the same name as reserved keywords, neither can they have the same name as any global variable.</p>
+
+<h2 id="functions">Functions</h2>
+<p>Functions are a block of code that can be called from another place in the program. Functions are declared as follows:</p>
+
+<pre class="prettyprint"><code class=" hljs r"><span class="hljs-keyword">function</span> &lt;functionName&gt;(&lt;arg0&gt;, <span class="hljs-keyword">...</span> &lt;argN&gt;) {
+    <span class="hljs-comment"># Code to execute</span>
+    <span class="hljs-keyword">return</span> &lt;returnValue&gt;
+}</code></pre>
+<p><em>functionName</em> this is the name of the function and must be unique and can neither be “main”, “init” or “exit”. It is also forbidden to use the names of any of the API functions as described in [Base API.md](Base API.md). Neither can you use one of the reserved keywords (see section down below).</p>
+<p><em>argN (optional)</em> is a list of arguments seperated by a comma. You can have as many arguments as you like. If you don’t want to have arguments you must leave the space between the parenthesis blank like <code>()</code>.</p>
+<p><em>return</em> exits the function-loop. If you add a <em>returnValue</em> beind return the function will return said value. However, if you don’t want to return a value you can ommit it. The return value can either be a function call, number or variable.</p>
+<p>Using the keyword <code>continue</code> forces the function to quit and start over.</p>
+
+<h3 id="interrupts">Interrupts</h3>
+<p>Interrupts are special kinds of functions that can only be called by the processor itself. Interrupts are declared just like functions, but then with an <code>interrupt</code> keyword instead of <code>function</code>. They also have no arguments. The <code>return</code> statement in the interrupt will also be replaced by the special interrupt return instruction when compiled. Ending with <code>continue</code> will re-enable the interrupt and then behaves the same as a <code>return</code> (it does not loop automatically!).</p>
+
+<h2 id="main-function-main">Main function (<code>main()</code>)</h2>
+<p>The main function is a special function, as this is where the program will start.</p>
+
+<h2 id="if-statements-ifelse">If-statements (<code>if</code>/<code>else</code>)</h2>
+<p>If-statements allow you to execute certain code solely when a certain condition holds. Syntax:</p>
+
+<pre class="prettyprint"><code class=" hljs fsharp"><span class="hljs-keyword">if</span> (&lt;expression1&gt;) {
+    # Execute code <span class="hljs-keyword">when</span> expression <span class="hljs-number">1</span> holds.
+}
+<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (&lt;expression2&gt;) {
+    # Execute code <span class="hljs-keyword">when</span> expression <span class="hljs-number">1</span> doesn't hold, but expression <span class="hljs-number">2</span> does.
+}
+<span class="hljs-keyword">else</span> {
+    # Execute code <span class="hljs-keyword">when</span> neither expression <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> expression <span class="hljs-number">2</span> holds.
+}</code></pre>
+<p><em>expression</em> this is a boolean expression using the relational operators mentioned down below.</p>
+
+<h2 id="numbers">Numbers</h2>
+<p><strong>Characters</strong> can be used to express ASCII characters. A character is placed between single quotes and will be converted behind the scenes to the corresponding ASCII value. Example: <code>'7'</code> becomes <em>55</em>.</p>
+<p><strong>Decimal numbers</strong> can only be typed using characters in the set <code>{1,2,3,4,5,6,7,8,9,0}</code> and cannot start with a <code>0</code>. Examples: <code>3</code>, <code>123</code>, <code>598123</code>, </p>
+<p><strong>Binary numbers</strong> are written with the characters <code>{0,1}</code> after the prefix <code>0b</code>. Meaning that the number 10 would become <code>0b1010</code> or <code>0b00001010</code> for example as leading zeros are allowed.</p>
+<p><strong>Octal numbers</strong> are written with the characters <code>{0,1,2,3,4,5,6,7}</code> after the prefix <code>0</code>. Meaning that the number <code>043</code> would become 35 in decimal.</p>
+<p><strong>Hexadecimal numbers</strong> are written with the characters <code>{0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,a,b,c,d,e,f}</code> after the prefix <code>0x</code>. Meaning that the number 334 would become <code>0x14E</code> or <code>0x0014e</code> as leading zeros are allowed.</p>
+<p><strong>Other bases</strong> can be made by using <code>0_BASE_DIGITS</code> where <code>BASE</code> is the base from 2 to 16 and <code>DIGITS</code> is the actual number. So 104 would become <code>0_3_10212</code> if you want to write it in base 3.</p>
+
+<h2 id="definitions-define">Definitions (<code>define</code>)</h2>
+<p>Definitions can be used for named constants that must be declared in the outermost scope. Defined constants cannot be changed afterwards. Definitions will be compiled to equivalent <code>EQU</code> statements. Usage: <code>define &lt;name&gt; &lt;value&gt;</code>.</p>
+<p><em>name</em> is the name of the definition. It is convention to use ALL_CAPS_AND_SPACES for the name.</p>
+<p><em>value</em> this is the numerical value of <em>name</em>.</p>
+
+<h2 id="comments">Comments</h2>
+<p>Comments are extra pieces of information that are functionally ignored by the compiler. However, they do appear in assembly-comments, meaning that almost any comment you write will be placed accordingly in the compiled assembly file. There is only one kind of comment, and that’s the line comment.</p>
+<p>All comments at the beginning of the file starting with <code>#;</code> will be placed as header comment in the <code>.asm</code> file. All comments placed above a function will be placed above the beginning of that subroutine and other comments will be placed behind the corresponding assembly line after the <code>;</code>.</p>
+
+<h3 id="line-comments">Line comments</h3>
+<p>Line commments will make a whole line to be functionally ignored by the compiler. You start a line comment with a hash sign <code>#</code>.</p>
+
+<h3 id="example">Example</h3>
+
+<pre class="prettyprint"><code class=" hljs vala">someFunction()
+<span class="hljs-preprocessor"># Ignored comment</span>
+andSomeOtherFunctionCallYeeHaa()</code></pre>
+
+<h2 id="operators">Operators</h2>
+
+<h3 id="assignment-operators">Assignment operators</h3>
+<p>Usage: <br>
+<li><code>&lt;variable&gt; = &lt;number&gt;</code> assigns the given number to the variable. <br>
+<li><code>&lt;variable&gt; = &lt;variable2&gt;</code> assigns the value of <em>variable2</em> to <em>variable</em>.</p>
+<p>Variants (thank Sten…): <br>
+<li><code>:=</code> has the exact same effect as <code>=</code>. <br>
+<li><code>=:</code> assigns the left value to the right variable. E.g. <code>&lt;variable2&gt; =: &lt;variable&gt;</code>.</p>
+
+<h3 id="arithmetic-operators">Arithmetic operators</h3>
+<p>The following arithmatic operators are supported: <br>
+<li><code>+</code> Addition <br>
+<li><code>-</code> Substraction <br>
+<li><code>*</code> Multiplication <br>
+<li><code>/</code> Integer division <br>
+<li><code>%</code> Remainder <br>
+<li><strong><code>NOT IMPLEMENTED</code></strong> <code>**</code> Power (<code>2**3</code> equals 8)</p>
+<p>So if you want to store the product of 5 and 7 in a variable a, do this: <code>a = 5 * 7</code>.</p>
+<p>To make it even better, if you want to do arithmetics on a variable and want to store it directly back in the same variable, you can add a <code>=</code>-sign to make it automatically assign. Example:</p>
+
+<pre class="prettyprint"><code class=" hljs livecodeserver"><span class="hljs-operator">a</span> = <span class="hljs-number">7</span> * <span class="hljs-number">3</span>   <span class="hljs-comment"># a becomes 21</span>
+<span class="hljs-operator">a</span> -= <span class="hljs-number">15</span>     <span class="hljs-comment"># a becomes 6</span>
+<span class="hljs-operator">a</span> **= <span class="hljs-number">3</span>     <span class="hljs-comment"># a becomes 216</span></code></pre>
+
+<h3 id="bitwise-operators">Bitwise operators</h3>
+<p>You can do some epic shizzles with binary numbers. These operators are supported on a bitwise level: <br>
+<li><code>|</code> Bitwise OR <br>
+<li><code>&amp;</code> Bitwise AND <br>
+<li><code>^</code> Bitwise XOR <br>
+<li><code>~</code> Bitwise NOT (see unary operators)</p>
+<p>Like the arithmetic operators, you can use them in conjunction with the <code>=</code>-sign (except <code>~</code> - e.g. <code>^=</code>).</p>
+
+<h3 id="relational-operators">Relational operators</h3>
+<p>Relational operators are only used in boolean expressions (in If-statements). The following exist: <br>
+<li><code>&lt;</code> Strictly lesser than <br>
+<li><code>&lt;=</code> Lesser than or equal to <br>
+<li><code>&gt;</code> Strictly greater than <br>
+<li><code>&gt;=</code> Strictly greater than or equal to <br>
+<li><code>==</code> Equals <br>
+<li><code>!=</code> Does not equal</p>
+
+<h4 id="example-expressions">Example expressions</h4>
+
+<pre class="prettyprint"><code class=" hljs livecodeserver"><span class="hljs-number">3</span> &lt; <span class="hljs-number">4</span>       <span class="hljs-comment"># true</span>
+<span class="hljs-number">5</span> &gt;= <span class="hljs-number">1</span>      <span class="hljs-comment"># true</span>
+<span class="hljs-operator">a</span> = <span class="hljs-number">3</span>
+<span class="hljs-number">5</span> == <span class="hljs-operator">a</span>      <span class="hljs-comment"># false</span>
+<span class="hljs-number">5</span> != <span class="hljs-operator">a</span>      <span class="hljs-comment"># true</span></code></pre>
+
+<h3 id="unary-operators">Unary operators</h3>
+<p>These are placed right in front of a variable or number. <br>
+<li><code>-</code> marks a positive number or variable as negative, or a negative number positive. This does work on numbers and on variables and you cannot use this in an operation other than assignment (e.g. <code>this = -that</code>, <em>not</em> <code>this = -that * 6</code>). <br>
+<li><code>~</code> will replace all <code>1</code>s by <code>0</code>s and all <code>0</code>s by <code>1</code>s in binary representation. This does not work on numbers and you cannot use this in an operation other than assignment (e.g. <code>this = ~that</code>, <em>not</em> <code>this = ~that + 2</code>). <br>
+<li><code>!</code> negates a boolean expression. Can <strong>only</strong> be used with the API function <code>isInputOn(num)</code>.</p>
+
+<h2 id="assembly-injection-inject">Assembly injection (<code>inject</code>)</h2>
+<p><em>Warning: dangerous!</em> Assembly injection lets you inject native assembly code in your program. The lines will be placed in the ‘compiled’ file exactly as you type them. This makes it really powerful, but also really dangerous to use. We do not recommend using it. It is solely meant for people who know what they are doing and want to have some more control. Hashtag Yolo.</p>
+<p>Usage:</p>
+
+<pre class="prettyprint"><code class=" hljs sql">inject {
+    <span class="hljs-operator"><span class="hljs-keyword">LOAD</span>  R2  <span class="hljs-number">0</span>
+    STOR  R2  [GB+<span class="hljs-number">123</span>]
+    ;</span> More of your assembly shizzles.
+}</code></pre>
+
+<h2 id="reserved-words">Reserved words</h2>
+<p>The following names are reserved and cannot be used as a global variable name, function name, variable name or any other name I might have missed:
+<ul>
+<li>IOAREA</li>
+<li>INPUT</li>
+<li>OUTPUT</li>
+<li>DSPDIG</li>
+<li>DSPSEG</li>
+<li>TIMER</li>
+<li>ADCONV</li>
+<li>CODESEG</li>
+<li>LAST_OUTPUT</li>
+<li>main</li>
+<li>init</li>
+<li>exit</li>
+<li>Words with prefix “if#” where # is a number.</li>
+<li>Any of the names of the Base API functions.</li>
+<li>Any of the PP2 instructions.</li>
+<li>R0, R1, R2, R3, R4, R5, R6, R7, SP, GB.</li>
+<li>Any bracket.</li>
+<li>When you have a interrupt named <code>x</code>, the names <code>enable_x</code>, <code>enable_hack_x</code> and <code>disable_x</code> cannot be used for a function or interrupt.</li>
+<li>And probably more assembly-related stuff.</li>
+</ul>
+</p>
+
+<h2 id="weird-exceptions-on-the-rules">Weird exceptions on the rules</h2>
+<ul>
+<li>All operations can only consist of two operands excluding assignment. Meaning that <code>a = b * c</code> is valid, whilst <code>a = b * (c + 2)</code> is not.</li>
+<li>There can’t be any operations in function calls. E.g. <code>main(3 + 2)</code> is illegal.</li>
+<li>Function calls may only appear as the second element in operations.</li>
+<li>You can’t start your block on the same line as the opening bracket <code>{</code>.</li>
+<li>A pair of a unary operator and a variable/number counts as a whole operation.</li>
+</ul>
+
+        
+        <footer>
+            &copy; 2016 Ruben Schellekens, Sten Wessel
+            <span class="rightfill">
+                PP2LAL2PP software published under the <a href="https://raw.githubusercontent.com/Ruben-Sten/PP2LAL2PP/master/LICENSE">MIT licence</a>.
+            </span>
+        </footer>
+        
+        </section>
+
+        <aside id="sidebar">
+          
+          <h2>Releases</h2>
+          
+          <a href="#" onClick="alert('I told you it is not available. Why do you still click the button, silly?!')" class="button">
+            <span class="fa fa-cogs fa-pull-left fa-2x"></span>
+            <small>Download Stable</small>
+            Not Available
+          </a>
+          
+          <a href="https://github.com/Ruben-Sten/PP2LAL2PP/releases/download/b1.0/PP2LAL2PP_b1.0.zip" class="button">
+            <span class="fa fa-flask fa-pull-left fa-2x"></span>
+            <small>Download Experimental</small>
+            Beta 1.0
+          </a>
+          
+          <p class="repo-owner">More releases on <a href="https://github.com/Ruben-Sten/PP2LAL2PP/releases">GitHub</a>.</p>
+          
+          <h2>Source Code</h2>
+          
+          <a href="https://github.com/Ruben-Sten/PP2LAL2PP/zipball/master" class="button">
+            <span class="fa fa-file-archive-o fa-pull-left fa-2x"></span>
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Ruben-Sten/PP2LAL2PP/tarball/master" class="button">
+            <span class="fa fa-file-archive-o fa-pull-left fa-2x"></span>
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Ruben-Sten/PP2LAL2PP">PP2LAL2PP</a> is maintained by <a href="https://github.com/Ruben-Sten">Ruben-Sten</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

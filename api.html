@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>PP2LAL2PP by Ruben-Sten</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>PP2LAL2PP</h1>
+        <h2>Practicum Processor 2 Learn Assembly Language 2 Preserve Prosperity language</h2>
+        <a href="https://github.com/Ruben-Sten/PP2LAL2PP" class="button">
+              <span class="fa fa-github fa-pull-left fa-2x"></span>
+              <span class="view-github"><small>View project on</small> GitHub</a></span>
+      </div>
+    </header>
+
+    <nav>
+        <ul class="inner">
+            <a href="index.html"><li>Home</li></a>
+            <a href="language.html"><li>Language</li></a>
+            <a href="api.html"><li>Base API</li></a>
+            <a href="lib.html"><li>Standard LIB</li></a>
+            <a href="about.html"><li>About</li></a>
+        </ul>
+    </nav>
+    
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+
+
+<h1 id="base-api">Base API</h1>
+
+<h2 id="program-flow">Program flow</h2>
+
+<h4 id="exit">exit()</h4>
+<p>Immediately exits the entire program.</p>
+
+<h2 id="input">Input</h2>
+
+<h4 id="getinputstates">getInputStates()</h4>
+<p>Returns the number representing the state of the input. The binary representation determines which inputs are on and which inputs aren’t. If the digit in the binary representation equals <code>1</code> it is on, and if it is <code>0</code> it is not. For example if the method returns <code>01101011</code>, then you know inputs 0, 1, 3, 5 and 6 are on.</p>
+
+<h4 id="isinputonnum">isInputOn(num)</h4>
+<p>Checks if the input <em>num</em> is on. It will be evaluated as a boolean expression. It will (quasi) return <em>true</em> if the input is on and <em>false</em> if the input is not on. The index <em>num</em> is determined by using the binary representation of the numbers. E.g. <code>0b000100000</code> checks for input #5.</p>
+
+<h4 id="getanalogstates">getAnalogStates()</h4>
+<p>Returns the concatenated values of the two A/D-converters in binary format. The 8 least significant bits represent the value of the first A/D-converter and the remaining 8 bits represent the value of the second A/D-converter. Hence the values are in the range 0-255 inclusive.</p>
+
+<h4 id="getanalognum">getAnalog(num)</h4>
+<p>Returns the value of the A/D-converter specified by <code>num</code>. <code>num</code> can either be <code>0</code> or <code>1</code>, where <code>0</code> is the first and <code>1</code> is the second A/D-converter. An unsigned 8-bit number is returned in binary format, hence in the range 0-255 inclusive.</p>
+
+<h2 id="output">Output</h2>
+
+<h3 id="output-pins">Output pins</h3>
+<p>These methods all store the current state of the outputs in Global Base 1, because the output register is write-only for some weird reason. This means that all outputs must be set using these methods in order to be able to use the setSingleOutput functionality.</p>
+
+<h4 id="setoutputval">setOutput(val)</h4>
+<p>Sets the states of all 8 outputs. The value is a binary number where every digit (from right to left) determines if the output is on or off. Having a value of <code>1</code> means the output is on, a value of <code>0</code> means the output should be turned off.</p>
+
+<h4 id="setsingleoutputnum-val">setSingleOutput(num, val)</h4>
+<p>Changes the state of the output with index <em>num</em> as binary representation (see also isInputOn(num)) to on if <em>val</em> equals <code>1</code>, or to off if <em>val</em> equals 0. This method ignores the states of all other outputs.</p>
+
+<h3 id="7-segment-display">7 Segment Display</h3>
+
+<h4 id="set7segmentdig-pattern">set7Segment(dig, pattern)</h4>
+<p>Shows the given pattern <em>pattern</em> at the place of digit <em>dig</em>, both as binary representation (see also isInputOn(num)). The indices of the <em>pattern</em> from right to left represent: center, top left, bottom left, bottom center, bottom right, top right, top center, dot. A value of <code>1</code> means the segment is turned on, a value of <code>0</code> means the segment is turned off.</p>
+
+<h4 id="getnumpatternint">getNumPattern(int)</h4>
+<p>Gets the 7Segment pattern for the given number. The pattern will be the number from <em>0</em>-<em>F</em> where <em>F</em> equals <em>15</em>. <em>int</em> will be modulo <em>16</em> before it gets transformed into a pattern.</p>
+
+<h4 id="getpatternchar">getPattern(char)</h4>
+<p>Gets the 7Segment pattern for the given character. The <em>char</em> must be a character literal or an ASCII code for the character you want to display. Only characters in range 33-122 inclusive are supported and some of the characters (like <code>m</code>) do not have a fully correct corresponding pattern. In that case, an as similar looking pattern is used. All values will be substracted by <em>33</em> and will be modulus <em>90</em>. That means that <code>z</code> wraps to <code>!</code>.</p>
+
+<h2 id="timer">Timer</h2>
+<p>Hook onto the PP2’s timer system. The built in timer will always tick down and will tick <em>once every 0,1ms</em> (0,0001s).</p>
+
+<h4 id="settimerval">setTimer(val)</h4>
+<p>Sets the new value of the timer to <em>val</em>.</p>
+
+<h4 id="addtimerval">addTimer(val)</h4>
+<p>Sets the value of the timer to the current value of the timer plus <em>val</em>.</p>
+
+<h4 id="gettimer">getTimer()</h4>
+<p>Fetches the current value of the timer.</p>
+
+<h2 id="interrupt">Interrupt</h2>
+<p>Enable and disable interrupts on the PP2. <em>Note</em>: only timer interrupts are implemented for now.</p>
+
+<h4 id="enabletimerinterruptinterruptname">enableTimerInterrupt(interruptName)</h4>
+<p>Installs and enables the timer interrupt, with <code>interruptName</code> as interrupt service routine (ISR).</p>
+
+<h4 id="disabletimerinterrupt">disableTimerInterrupt()</h4>
+<p>Disables the timer interrupt.</p>
+        
+        
+        <footer>
+            &copy; 2016 Ruben Schellekens, Sten Wessel
+            <span class="rightfill">
+                PP2LAL2PP software published under the <a href="https://raw.githubusercontent.com/Ruben-Sten/PP2LAL2PP/master/LICENSE">MIT licence</a>.
+            </span>
+        </footer>
+        
+        </section>
+
+        <aside id="sidebar">
+          
+          <h2>Releases</h2>
+          
+          <a href="#" onClick="alert('I told you it is not available. Why do you still click the button, silly?!')" class="button">
+            <span class="fa fa-cogs fa-pull-left fa-2x"></span>
+            <small>Download Stable</small>
+            Not Available
+          </a>
+          
+          <a href="https://github.com/Ruben-Sten/PP2LAL2PP/releases/download/b1.0/PP2LAL2PP_b1.0.zip" class="button">
+            <span class="fa fa-flask fa-pull-left fa-2x"></span>
+            <small>Download Experimental</small>
+            Beta 1.0
+          </a>
+          
+          <p class="repo-owner">More releases on <a href="https://github.com/Ruben-Sten/PP2LAL2PP/releases">GitHub</a>.</p>
+          
+          <h2>Source Code</h2>
+          
+          <a href="https://github.com/Ruben-Sten/PP2LAL2PP/zipball/master" class="button">
+            <span class="fa fa-file-archive-o fa-pull-left fa-2x"></span>
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Ruben-Sten/PP2LAL2PP/tarball/master" class="button">
+            <span class="fa fa-file-archive-o fa-pull-left fa-2x"></span>
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Ruben-Sten/PP2LAL2PP">PP2LAL2PP</a> is maintained by <a href="https://github.com/Ruben-Sten">Ruben-Sten</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
