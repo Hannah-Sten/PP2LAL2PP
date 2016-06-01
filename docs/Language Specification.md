@@ -54,44 +54,6 @@ Interrupts are special kinds of functions that can only be called by the process
 
 The main function is a special function, as this is where the program will start.
 
-## Loops (`loop`)
-
-**Not yet implemented and bound to change in the near future.**
-
-Loops are blocks of code that can be executed a said amount of times. The loop can count up and down. This is determined from context. The syntax is as follows:
-
-```
-loop (<variable> from <beginning> to <endInclusive> [step <stepSize>]) {
-    # Do epic things.
-}
-```
-
-*variable* is the name of the variable that is used for the loop condition. This value can be referenced in the loop's body. Meaning that if you have a standard loop from 1 to 10, the value of *variable* will be 1 in the first iteration, 2 in the second iteration all the way up to 10 in the 10th iteration.
-
-*beginning* is the starting value of the variable.
-
-*endInclusive* is the value where the loop should end. That means that if the variable has a value that surpasses the end value, the loop will terminate. If the loop variable has the same value as *endInclusive*, it will enter its last iteration. If the value is greater/smaller (depends on if the loop counts up or down) the loop will not have a terminal iteration.
-
-*stepSize (optional)* by default the loop will have a step size of either 1 or -1. However, adding `step <stepSize>` will change the amount by which the variable changes.
-
-The keyword `continue` will force the loop to enter its next iteration if there is any.
-
-### Examples
-
-#### Counting from 100 to 23
-```
-loop (i from 100 to 23) {
-    doSomethingWith(i)
-}
-```
-
-#### Counting all odd numbers from -23 to 123
-```
-loop (i from -23 to 123 step 2) {
-    doSomethingWith(i)
-}
-```
-
 ## If-statements (`if`/`else`)
 
 If-statements allow you to execute certain code solely when a certain condition holds. Syntax:
