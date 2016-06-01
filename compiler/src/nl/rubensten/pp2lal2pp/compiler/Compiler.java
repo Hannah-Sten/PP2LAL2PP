@@ -1067,9 +1067,9 @@ public class Compiler {
             label = "";
         }
 
-//        assembly.append(Template.fillStatement(label, "SETI", //TODO));
+        assembly.append(Template.fillStatement(label, "BRS", "enable_" + function.getName(), "", "Re-enable interrupt.\n"));
 
-        assembly.append(Template.fillStatement("", "RTE", function.getName(), "",
+        assembly.append(Template.fillStatement("", "RTE", "", "",
                                                "Return from interrupt " + function.getName() + ".\n"));
     }
 
