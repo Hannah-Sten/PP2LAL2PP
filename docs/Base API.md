@@ -59,7 +59,7 @@ Fetches the current value of the timer.
 
 ## Interrupt
 
-Enable and disable interrupts on the PP2. _Note_: only timer interrupts are implemented for now.
+Enable and disable interrupts on the PP2. _Note_: only timer interrupts are implemented for now. See Language Specification for example use.
 
 #### enableTimerInterrupt(interruptName)
 Installs and enables the timer interrupt, with `interruptName` as interrupt service routine (ISR).
