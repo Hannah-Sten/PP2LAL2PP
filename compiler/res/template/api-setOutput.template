@@ -3,4 +3,5 @@
 ;#  R0 : upon entry, contains the value of the output state.
 ;#
 setOutput:      STOR    R0  [R5+OUTPUT]             ; Store the new output state.
+                STOR    R0  [GB+LAST_OUTPUT]        ; Remember the output state.
                 RTS                                 ; Exit setOutput function.

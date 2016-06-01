@@ -66,7 +66,7 @@ public class Compiler {
         assembly.append(Template.BEGIN_CODE);
         assembly.append("\n\n");
         assembly.append(Template.DEFAULT_EQU);
-        assembly.append("\n\n");
+        assembly.append("\n");
         compileDefinitions();
         assembly.append("\n");
         compileGlobal();
@@ -87,6 +87,9 @@ public class Compiler {
                 "Store the address of the IOAREA for later use.\n"));
 
         // Initialisation: Global Variables.
+        GlobalVariable lastOutput = new GlobalVariable("LAST_OUTPUT", Number.ZERO);
+        lastOutput.setPointer(0);
+        globalVariables.add(lastOutput);
         for (GlobalVariable gv : globalVariables) {
             if (R0.getIntValue() != ((Number)gv.getDefaultValue()).getIntValue()) {
                 R0 = (Number)gv.getDefaultValue();
