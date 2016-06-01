@@ -4,7 +4,6 @@
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
@@ -22,144 +21,25 @@
         <h1>PP2LAL2PP</h1>
         <h2>Practicum Processor 2 Learn Assembly Language 2 Preserve Prosperity language</h2>
         <a href="https://github.com/Ruben-Sten/PP2LAL2PP" class="button">
-          <span class="fa fa-github fa-pull-left fa-2x"></span>
-          <small>View project on</small> GitHub</a>
+              <span class="fa fa-github fa-pull-left fa-2x"></span>
+              <span class="view-github"><small>View project on</small> GitHub</a></span>
       </div>
     </header>
+
+    <nav>
+        <ul class="inner">
+            <a href=""><li>Home</li></a>
+            <a href=""><li>Language</li></a>
+            <a href=""><li>Base API</li></a>
+        </ul>
+    </nav>
 
     <div id="content-wrapper">
       <div class="inner clearfix">
         <section id="main-content">
 
-<p><img width="143" src="http://i.imgur.com/Sno5FKo.png"></p>
-
-<p>The <strong>P</strong>racticum <strong>P</strong>rocessor <strong>2</strong> <strong>L</strong>earn <strong>A</strong>ssembly <strong>L</strong>anguage <strong>2</strong>
-<strong>P</strong>reserve <strong>P</strong>rosperity language is an awesome, but extremely basic little language for a horrible processor.
-The goal for this language and supplied (in development) compiler is to minimise the work needed to build and debug applications for the PP2-processor used solely in TU/e projects. <br>
-The compiler will be able (in the future) to generate nice <code>.asm</code>-files all complete with comments to make it understandable even in assembly-form. <br>
-Not really that much thought went into it; it is mostly a funny side project.</p>
-
-<p>All hail the perfectly annoying palindrome :)</p>
-
-<h2 id="installation-and-setup">Installation and setup</h2>
-
-
-
-<h3 id="getting-the-files">Getting the files</h3>
-
-<p>Download the <a href="https://github.com/Ruben-Sten/PP2LAL2PP/releases">release</a> of your choice and unpack the contents to a directory of your choice.</p>
-
-
-
-<h3 id="getting-java-8">Getting Java 8+</h3>
-
-<p>You need at least Java 8 in order to run PP2LAL2PP. You can get java <a href="https://java.com/download/">here</a>.</p>
-
-
-
-<h2 id="how-to-compile">How to compile</h2>
-
-
-
-<h3 id="starting-the-program">Starting the program</h3>
-
-<p>You can start the PP2LAL2PP program using the following command in the command prompt:</p>
-
-
-
-<pre class="prettyprint"><code class=" hljs avrasm">java -jar PP2LAL2PP<span class="hljs-preprocessor">.jar</span></code></pre>
-
-<p>If you run this exact command you’ll be welcomed by the help screen.</p>
-
-
-
-<h3 id="compiling-your-program">Compiling your program</h3>
-
-<p>Use the command below to compile your program.</p>
-
-
-
-<pre class="prettyprint"><code class=" hljs lasso">java <span class="hljs-attribute">-jar</span> PP2LAL2PP<span class="hljs-built_in">.</span>jar <span class="hljs-preprocessor">[</span><span class="hljs-attribute">-args</span><span class="hljs-preprocessor">]</span><span class="hljs-markup"> &lt;fileName&gt;</span></code></pre>
-
-<p><strong>fileName</strong> is the name of your PP2LAL2PP source file and is required in order to compile. <strong>-args</strong> is an optional list of flags (see section below) that modify the default behaviour of the program. Without any flags, the program will compile the PP2LAL2PP source to an assembly file with the same name. However, with a <code>.asm</code> extension.</p>
-
-
-
-<h3 id="flags">Flags</h3>
-
-<p>Flags enable you to add additional functionality to the program. Flags are placed between <code>java -jar PP2LAL2PP.jar</code> and <code>&lt;fileName&gt;</code>. You can place multiple flags behind each other.</p>
-
-
-
-<h4 id="a">-a</h4>
-
-<p>Allows you to automatically assemble the produced <code>.asm</code> file. Usage:</p>
-
-
-
-<pre class="prettyprint"><code class=" hljs xml">java -jar PP2LAL2PP.jar -a <span class="hljs-tag">&lt;<span class="hljs-title">assembler.jar</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-title">output.hex</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-title">fileName</span>&gt;</span></code></pre>
-
-<p>Where <strong>assembler.jar</strong> is the location of the PP2 assembler and <strong>output.hex</strong> is the location of the compiled hex file.</p>
-
-
-
-<h4 id="b">-b</h4>
-
-<p>Prevents the usage of certain locations in the Global Data Segment. Usage:</p>
-
-
-
-<pre class="prettyprint"><code class=" hljs xml">java -jar PP2LAL2PP.jar -b <span class="hljs-tag">&lt;<span class="hljs-title">numberList</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-title">fileName</span>&gt;</span></code></pre>
-
-<p>Where <strong>numberList</strong> is a list of all locations to ignore, seperated by a comma. E.g. <code>3,12,13,18</code>.</p>
-
-
-
-<h4 id="d">-d</h4>
-
-<p>Sets the destination of the compiled file. Usage:</p>
-
-
-
-<pre class="prettyprint"><code class=" hljs xml">java -jar PP2LAL2PP.jar -d <span class="hljs-tag">&lt;<span class="hljs-title">destination</span>&gt;</span> <span class="hljs-tag">&lt;<span class="hljs-title">fileName</span>&gt;</span></code></pre>
-
-<p>Where <strong>destination</strong> is the location of the file to save the assembly to.</p>
-
-
-
-<h4 id="r">-r</h4>
-
-<p>Refactors the given assembly file <strong><code>not yet implemented</code></strong>.</p>
-
-
-
-<h4 id="u">-u</h4>
-
-<p>Unpacks all the template files in the directory of the jar. Usage:</p>
-
-
-
-<pre class="prettyprint"><code class=" hljs lasso">java <span class="hljs-attribute">-jar</span> PP2LAL2PP <span class="hljs-attribute">-u</span></code></pre>
-
-<p>Note that this will also terminate the program, thus adding more flags will not have any meaning.</p>
-
-
-
-<h2 id="how-to-refactor">How to refactor</h2>
-
-<p>Not possible (yet).</p>
-
-
-
-<h2 id="syntax-and-language-features">Syntax and language features</h2>
-
-<p>See <a href="https://github.com/Ruben-Sten/PP2LAL2PP/blob/master/docs/Language%20Specification.md">Language Specification.md</a>.</p>
-
-
-
-<h2 id="base-api">Base API</h2>
-
-<p>See <a href="https://github.com/Ruben-Sten/PP2LAL2PP/blob/master/docs/Base%20API.md">Base API</a>.</p>
+        <iframe class="content-frame" src="home.html"></iframe>
+        
         </section>
 
         <aside id="sidebar">
