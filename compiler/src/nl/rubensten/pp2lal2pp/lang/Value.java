@@ -6,7 +6,7 @@ import nl.rubensten.pp2lal2pp.util.Regex;
 /**
  * @author Ruben Schellekens
  */
-public class Value implements Element {
+public class Value implements Element, Comparable<Value> {
 
     /**
      * No value.
@@ -98,4 +98,13 @@ public class Value implements Element {
         return this;
     }
 
+    @Override
+    public int compareTo(Value o) {
+        return stringRepresentation().compareTo(o.stringRepresentation());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return object.equals(obj);
+    }
 }

@@ -77,10 +77,7 @@ public class Compiler {
         String label = "init:";
         Number R0 = Number.MINUS_ONE;
         List<GlobalVariable> globalVariables = new ArrayList<>(input.getGlobalVariables());
-        globalVariables.sort((c1, c2) ->
-                Integer.valueOf(
-                        ((Number)c1.getDefaultValue()).getIntValue()).compareTo(
-                        ((Number)c2.getDefaultValue()).getIntValue()));
+        globalVariables.sort((c1, c2) -> c1.getDefaultValue().compareTo(c2.getDefaultValue()));
 
         // Initialisation: IOAREA
         assembly.append(Template.fillStatement("init:", "LOAD", Constants.REG_IOAREA, "IOAREA",
@@ -91,11 +88,11 @@ public class Compiler {
         lastOutput.setPointer(0);
         globalVariables.add(lastOutput);
         for (GlobalVariable gv : globalVariables) {
-            if (R0.getIntValue() != ((Number)gv.getDefaultValue()).getIntValue()) {
+            if (!R0.equals(gv.getDefaultValue())) {
                 R0 = (Number)gv.getDefaultValue();
 
                 assembly.append(Template.fillStatement("", "LOAD", Constants.REG_GENERAL, "" + gv
-                        .getDefaultValue(), "Default value to load in global base.\n"));
+                        .getDefaultValue().stringRepresentation(), "Default value to load in global base.\n"));
             }
 
             assembly.append(Template.fillStatement("", "STOR", Constants.REG_GENERAL,
