@@ -252,6 +252,7 @@ public class Compiler {
                     compileFunctionContinue(label);
                 }
                 label = "";
+                lastReturn = true;
                 continue;
             }
 
@@ -262,9 +263,9 @@ public class Compiler {
                 }
                 else {
                     compileFunctionReturn((Return)elt, label);
-                    lastReturn = true;
                 }
                 label = "";
+                lastReturn = true;
                 continue;
             }
 
