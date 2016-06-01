@@ -56,3 +56,13 @@ Sets the value of the timer to the current value of the timer plus *val*.
 
 #### getTimer()
 Fetches the current value of the timer.
+
+## Interrupt
+
+Enable and disable interrupts on the PP2. _Note_: only timer interrupts are implemented for now.
+
+#### enableTimerInterrupt(interruptName)
+Installs and enables the timer interrupt, with `interruptName` as interrupt service routine (ISR).
+
+#### disableTimerInterrupt()
+Disables the timer interrupt.
