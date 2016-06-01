@@ -1,13 +1,24 @@
 ;#
 ;#  Routine getPattern maps an ASCII code to a representation pattern for the 7-segment display.
-;#  All characters in range 44-122 are included where upper and lower case have the same representation.
+;#  All characters in range 33-122 are included where upper and lower case have the same representation.
 ;#  Some numbers have a pattern that doesn't really match the character, but that's just because of the severe
 ;#  limitation of only having 7 segments.
 ;#  R0 : upon entry, contains the ASCII code for the number.
 ;#  R4 : upon exit, contains the resulting pattern
 ;#
 getPattern:     BRS     getPattern_bgn              ; Push address(tbl) onto stack and proceed at "bgn".
-getPattern_tbl: CONS    %000010000                  ; 7-segment pattern for ','.
+getPattern_tbl: CONS    %010100000                  ; 7-segment pattern for '!'.
+                CONS    %000100010                  ; 7-segment pattern for '"'.
+                CONS    %001100011                  ; 7-segment pattern for '#'.
+                CONS    %001011011                  ; 7-segment pattern for '$'.
+                CONS    %000010010                  ; 7-segment pattern for '%'.
+                CONS    %001111111                  ; 7-segment pattern for '&'.
+                CONS    %000100000                  ; 7-segment pattern for '''.
+                CONS    %001001110                  ; 7-segment pattern for '('.
+                CONS    %001111000                  ; 7-segment pattern for ')'.
+                CONS    %000110111                  ; 7-segment pattern for '*'.
+                CONS    %000000111                  ; 7-segment pattern for '+'.
+                CONS    %000010000                  ; 7-segment pattern for ','.
                 CONS    %000000001                  ; 7-segment pattern for '-'.
                 CONS    %010000000                  ; 7-segment pattern for '.'.
                 CONS    %000100101                  ; 7-segment pattern for '/'.
@@ -27,7 +38,7 @@ getPattern_tbl: CONS    %000010000                  ; 7-segment pattern for ','.
                 CONS    %000001001                  ; 7-segment pattern for '='.
                 CONS    %000000111                  ; 7-segment pattern for '>'.
                 CONS    %011100010                  ; 7-segment pattern for '?'.
-                CONS    %001111111                  ; 7-segment pattern for '@'.
+                CONS    %001111101                  ; 7-segment pattern for '@'.
                 CONS    %001110111                  ; 7-segment pattern for 'A'.
                 CONS    %000011111                  ; 7-segment pattern for 'B'.
                 CONS    %001001110                  ; 7-segment pattern for 'C'.
@@ -86,8 +97,8 @@ getPattern_tbl: CONS    %000010000                  ; 7-segment pattern for ','.
                 CONS    %000110111                  ; 7-segment pattern for 'X'.
                 CONS    %000111011                  ; 7-segment pattern for 'Y'.
                 CONS    %001101101                  ; 7-segment pattern for 'Z'.
-getPattern_bgn: SUB     R0  44                      ; Shift index from 44 to 0.
-                MOD     R0  79                      ; R0 := R0 MOD 79 , just to be safe...
+getPattern_bgn: SUB     R0  33                      ; Shift index from 33 to 0.
+                MOD     R0  90                      ; R0 := R0 MOD 90 , just to be safe...
                 LOAD    R1  [SP++]                  ; R1 = address(tbl) (retrieve from stack)
                 LOAD    R4  [R1+R0]                 ; R1 = tbl[R0]
                 RTS
