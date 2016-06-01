@@ -819,7 +819,7 @@ public class Compiler {
             String textArg1 = getVariableValue(arg1);
             String textArg2 = getVariableValue(arg2);
 
-            String result = Template.API_INVOKE_SET7SEGMENT.replace(
+            String result = Template.API_INVOKE_SETSINGLEOUTPUT.replace(
                     "ARG1", textArg1,
                     "ARG2", textArg2)
                     .replace("{$COMMENT1}", "Load the index of the output to change.")
