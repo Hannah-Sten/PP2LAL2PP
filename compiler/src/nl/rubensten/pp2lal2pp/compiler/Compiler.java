@@ -114,7 +114,8 @@ public class Compiler {
 
             if (function instanceof Interrupt) {
                 compileInterrupt((Interrupt)function);
-            } else {
+            }
+            else {
                 compileFunction(function);
             }
 
@@ -238,12 +239,16 @@ public class Compiler {
         String label = (functionName == null ? "" : functionName + ":");
         List<Declaration> declarations = new ArrayList<>();
 
+        boolean lastReturn = false;
         for (Element elt : elts) {
+            lastReturn = false;
+
             // Function Continue
             if (elt instanceof Continue && inside != Loop.class) {
                 if (inside == Interrupt.class) {
                     compileInterruptContinue(label);
-                } else {
+                }
+                else {
                     compileFunctionContinue(label);
                 }
                 label = "";
@@ -254,8 +259,10 @@ public class Compiler {
             if (elt instanceof Return && (functionName != null || functionReturn)) {
                 if (inside == Interrupt.class) {
                     compileInterruptReturn((Return)elt, label);
-                } else {
+                }
+                else {
                     compileFunctionReturn((Return)elt, label);
+                    lastReturn = true;
                 }
                 label = "";
                 continue;
@@ -309,7 +316,7 @@ public class Compiler {
             }
         }
 
-        if (declarations.size() > 0) {
+        if (declarations.size() > 0 && !lastReturn) {
             assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
                     declarations.size() + "",
                     "Reset stack pointer.\n"));
@@ -902,7 +909,8 @@ public class Compiler {
                     "ISRNAME", interruptName
             ), label).replace(
                     "{$COMMENT}", "Disable the interrupt " + interruptName + ".\n"
-            );;
+            );
+            ;
 
             assembly.append(result);
             skipVariables = true;
@@ -972,6 +980,8 @@ public class Compiler {
                 FunctionCall call = (FunctionCall)element;
                 compileFunctionCall(call, label);
 
+                resetStackPointer("");
+
                 assembly.append(Template.fillStatement("", "RTS", "", "",
                         "Return from function " + function.getName() + ".\n"));
                 return;
@@ -982,6 +992,9 @@ public class Compiler {
                 assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_RETURN,
                         loadValueString(var),
                         "Load the value of variable " + var.getName() + " as return value.\n"));
+
+                resetStackPointer("");
+
                 assembly.append(Template.fillStatement("", "RTS", "", "",
                         "Return from function " + function.getName() + ".\n"));
                 return;
@@ -996,15 +1009,31 @@ public class Compiler {
         }
 
         // Reset stack pointer.
-        if (function.variableCount() > 0) {
-            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
-                    function.variableCount() + "",
-                    "Reset stack pointer.\n"));
+        if (resetStackPointer(label)) {
             label = "";
         }
 
         assembly.append(Template.fillStatement(label, "RTS", "", "",
                 "Return from function " + function.getName() + ".\n"));
+    }
+
+    /**
+     * Undos the stack pointer change of the declaration of local variables.
+     *
+     * @param label
+     *         The label to put in front of the statement.
+     * @return <code>true</code> if there is a change, <code>false</code> if there is no change in
+     * the stack pointer.
+     */
+    private boolean resetStackPointer(String label) {
+        if (function.variableCount() > 0) {
+            assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1024,13 +1053,13 @@ public class Compiler {
         // Reset stack pointer.
         if (function.variableCount() > 0) {
             assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
-                                                   function.variableCount() + "",
-                                                   "Reset stack pointer.\n"));
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
             label = "";
         }
 
         assembly.append(Template.fillStatement(label, "RTE", "", "",
-                                               "Return from interrupt " + function.getName() + ".\n"));
+                "Return from interrupt " + function.getName() + ".\n"));
     }
 
     /**
@@ -1062,15 +1091,15 @@ public class Compiler {
         // Reset stack pointer.
         if (function.variableCount() > 0) {
             assembly.append(Template.fillStatement(label, "ADD", Constants.REG_STACK_POINTER,
-                                                   function.variableCount() + "",
-                                                   "Reset stack pointer.\n"));
+                    function.variableCount() + "",
+                    "Reset stack pointer.\n"));
             label = "";
         }
 
         assembly.append(Template.fillStatement(label, "BRS", "enable_" + function.getName(), "", "Re-enable interrupt.\n"));
 
         assembly.append(Template.fillStatement("", "RTE", "", "",
-                                               "Return from interrupt " + function.getName() + ".\n"));
+                "Return from interrupt " + function.getName() + ".\n"));
     }
 
     /**
