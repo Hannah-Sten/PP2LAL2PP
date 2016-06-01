@@ -30,7 +30,8 @@ public class NumberConstant extends Number {
 
     @Override
     public int getIntValue() {
-        throw new PP2LAL2PPException("cannot retrieve an int value from a numberconstant");
+        throw new PP2LAL2PPException("cannot retrieve an int value from a numberconstant '" +
+                name + "'");
     }
 
 }
