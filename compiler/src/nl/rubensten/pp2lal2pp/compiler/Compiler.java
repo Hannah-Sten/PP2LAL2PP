@@ -699,16 +699,15 @@ public class Compiler {
      * @return The value-thingy.
      */
     private String getVariableValue(Variable var) {
+        Value val = var.getDefaultValue();
+
+        // Number constants.
+        if (val instanceof NumberConstant) {
+            return ((NumberConstant)val).getName();
+        }
         // Just number
         if (var.isJustNumber()) {
-            Value val = var.getDefaultValue();
-
-            if (val instanceof NumberConstant) {
-                return val.stringRepresentation();
-            }
-            else {
-                return var.getDefaultValue().toString();
-            }
+            return var.getDefaultValue().toString();
         }
         // Arg1: Global variable
         else if (input.getGlobalVariable(var.getName()).isPresent()) {
