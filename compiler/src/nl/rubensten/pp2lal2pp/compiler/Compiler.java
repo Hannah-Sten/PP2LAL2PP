@@ -919,7 +919,10 @@ public class Compiler {
             label = "";
         }
 
-        for (Variable var : vars) {
+        // Reverse loop, as the first argument must be pushed last.
+        for (int i = vars.size() - 1; i >= 0; i--) {
+            Variable var = vars.get(i);
+
             if (skipVariables) {
                 break;
             }
