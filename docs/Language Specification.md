@@ -48,7 +48,7 @@ Using the keyword `continue` forces the function to quit and start over.
 
 ### Interrupts
 
-Interrupts are special kinds of functions that can only be called by the processor itself. Interrupts are declared just like functions, but then with an `interrupt` keyword instead of `function`. They also have no arguments. The `return` statement in the interrupt will also be replaced by the special interrupt return instruction when compiled.
+Interrupts are special kinds of functions that can only be called by the processor itself. Interrupts are declared just like functions, but then with an `interrupt` keyword instead of `function`. They also have no arguments. The `return` statement in the interrupt will also be replaced by the special interrupt return instruction when compiled. Ending with `continue` will re-enable the interrupt and then behaves the same as a `return` (it does not loop automatically!).
 
 ## Main function (`main()`)
 
@@ -252,6 +252,7 @@ The following names are reserved and cannot be used as a global variable name, f
 * Any of the PP2 instructions.
 * R0, R1, R2, R3, R4, R5, R6, R7, SP, GB.
 * Any bracket.
+* When you have a interrupt named `x`, the names `enable_x`, `enable_hack_x` and `disable_x` cannot be used for a function or interrupt.
 * And probably more assembly-related stuff.
 
 ## Weird exceptions on the rules
