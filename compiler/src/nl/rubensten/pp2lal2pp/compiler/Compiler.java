@@ -701,7 +701,14 @@ public class Compiler {
     private String getVariableValue(Variable var) {
         // Just number
         if (var.isJustNumber()) {
-            return var.getDefaultValue().toString();
+            Value val = var.getDefaultValue();
+
+            if (val instanceof NumberConstant) {
+                return val.stringRepresentation();
+            }
+            else {
+                return var.getDefaultValue().toString();
+            }
         }
         // Arg1: Global variable
         else if (input.getGlobalVariable(var.getName()).isPresent()) {
