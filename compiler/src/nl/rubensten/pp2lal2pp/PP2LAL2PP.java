@@ -128,8 +128,6 @@ public class PP2LAL2PP {
         System.out.println("PP2LAL2PP Compiler " + VERSION + " by Ruben-Sten");
         System.out.println("Done (" + time + "s). " +
                 "Compiled '" + file.getName() + "' to '" + dest.getName() + "'" + autoAssemble + ".");
-
-        System.out.println(program.getFunction("main"));
     }
 
     private static void printHelp() {
