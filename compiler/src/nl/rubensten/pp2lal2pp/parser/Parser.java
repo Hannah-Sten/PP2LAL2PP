@@ -619,8 +619,13 @@ public class Parser {
 
                 List<Variable> arguments = new ArrayList<>();
 
-                String elt;
-                while (!(elt = it.next()).equals(")")) {
+                String elt = "";
+                while (it.hasNext()) {
+                    elt = it.next();
+                    if (elt.equals(")")) {
+                        break;
+                    }
+
                     if (elt.equals(",")) {
                         continue;
                     }
