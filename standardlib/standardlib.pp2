@@ -1,0 +1,70 @@
+#;
+#;  Standard LIB Version 1.0
+#;
+#;  Standard amazing utility functions for the PP2LAL2PP programming langauge.
+#;  You can include this file by using "include standardlib" on top of your
+#;  source file(s).
+#;
+#;  @author Ruben Schellekens
+#;
+
+# Standard LIB Version 1.0
+define STDLIB_VERSION_MAJOR 1
+
+# Standard LIB Version 1.0
+define STDLIB_VERSION_MINOR 0
+
+#;
+#;  Calculates `base`^`exp`.
+#;  Interface of power(base, exp, sum).
+#;
+#;  @params
+#;      `base` : The number to multiply `exp` times with itself.
+#;      `exp`  : The amount of times to multiply `base` by itself.
+#;  @returns
+#;      `base` to the power of `exp`
+#;
+function power(base, exp) {
+    return _impl_power(base, exp, 1)
+}
+
+#;
+#;  Calculates `base`^`exp`.
+#;  Implementation of power(base, exp).
+#;  The result is tracked in argument sum so the method doesn't require local variables.
+#;
+#;  @params
+#;      `base` : The number to multiply `exp` times with itself.
+#;      `exp`  : The amount of times to multiply `base` by itself.
+#;      `sum`  : Must be 1.
+#;  @returns
+#;      `base` to the power of `exp`
+#;
+function _impl_power(base, exp, sum) {
+    if (exp <= 0) {
+        return sum
+    }
+    
+    sum *= base
+    exp -= 1
+    
+    continue
+}
+
+#;
+#;  Keeps the processor busy counting down instead of doing other things.
+#;
+#;  @params
+#;      `delay` : The amount of times the function has to loop until it exists.
+#;                Note that there is no real unit for 1 delay loop. It's just one iteration.
+#;                Using a delay of 1000 is pretty optimal for 7Segment multiplexing.
+#;
+function wait(delay) {
+    if (delay <= 0) {
+        return
+    }
+    
+    delay -= 1
+    
+    continue
+}
