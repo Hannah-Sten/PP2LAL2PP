@@ -275,8 +275,14 @@ public class Parser {
 
                 if (!line.equals(3, ")")) {
                     for (int i = 3; i < line.sizeNoComments(); i += 2) {
-                        variables.add(new Variable("num", Value.parse(line.getToken(i), program))
-                                .setJustNumber(true));
+                        Value val = Value.parse(line.getToken(i), program);
+
+                        if (val instanceof Number) {
+                            variables.add(new Variable("num", val).setJustNumber(true));
+                        }
+                        else {
+                            variables.add(new Variable(val.stringRepresentation()));
+                        }
                     }
                 }
 
