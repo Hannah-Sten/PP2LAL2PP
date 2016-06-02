@@ -958,6 +958,7 @@ public class Compiler {
             label = "";
             assembly.append(Template.fillStatement(label, "PUSH", Constants.REG_GENERAL, "",
                     "Push the value onto the stack.\n"));
+            function.updatePointers(1);
         }
 
         if (!skipCall) {

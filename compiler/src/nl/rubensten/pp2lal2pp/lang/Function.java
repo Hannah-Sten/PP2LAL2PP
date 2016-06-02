@@ -121,13 +121,20 @@ public class Function implements Identifyable, Element {
         }
 
         variables.removeIf(v -> v.getName().equals(variable.getName()));
+        updatePointers(-1);
+    }
 
+    /**
+     * Updates all the pointers of all registers variables and arguments.
+     * @param change The amount to change the pointers with.
+     */
+    public void updatePointers(int change) {
         for (Variable var : variables) {
-            var.setPointer(var.getPointer() - 1);
+            var.setPointer(var.getPointer() + change);
         }
 
-        for (Variable arg : arguments) {
-            arg.setPointer(arg.getPointer() - 1);
+        for (Variable var : arguments) {
+            var.setPointer(var.getPointer() + change);
         }
     }
 
@@ -135,14 +142,7 @@ public class Function implements Identifyable, Element {
      * Looks what the last pointer used was and creates a new pointer value based on that.
      */
     protected int newPointer() {
-        for (Variable var : variables) {
-            var.setPointer(var.getPointer() + 1);
-        }
-
-        for (Variable var : arguments) {
-            var.setPointer(var.getPointer() + 1);
-        }
-
+        updatePointers(1);
         return 0;
     }
 
