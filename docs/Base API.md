@@ -1,5 +1,3 @@
-This page is continuously undergoing changes.
-
 # Base API
 
 ## Program flow
