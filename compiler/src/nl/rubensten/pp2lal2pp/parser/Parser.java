@@ -761,6 +761,11 @@ public class Parser {
             // If there is no else.
             if (!line.isFirstIgnore("else", "}")) {
                 line = new Tokeniser(lines.next());
+
+                // Ignore comments.
+                while (line.isFirst("#")) {
+                    line = new Tokeniser(lines.next());
+                }
             }
 
             if (!line.isFirstIgnore("else", "}")) {
