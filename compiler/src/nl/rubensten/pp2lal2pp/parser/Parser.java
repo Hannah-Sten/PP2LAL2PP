@@ -779,7 +779,6 @@ public class Parser {
                 return new IfElse(expression, ifBlock, elseBlock);
             }
 
-            System.out.println(line);
             if (line.isFirstIgnore("else", "}")) {
                 if (line.equals(line.sizeNoComments() - 1, "{")) {
                     elseBlock = parseBlock(lines, line);
