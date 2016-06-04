@@ -14,6 +14,8 @@ div.inline-button a {
     font-weight: 300;
     padding: 10px 24px;
     font-size: 14pt;
+    margin-bottom: 32px;
+    margin-top: 16px;
 }
 
 div.inline-button a:hover {
