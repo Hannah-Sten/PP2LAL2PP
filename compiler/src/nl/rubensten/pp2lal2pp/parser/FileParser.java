@@ -99,7 +99,7 @@ public class FileParser extends Parser {
      * Generates the filename from an include statement's value.
      */
     private Optional<File> getIncludeFile(String include) {
-        String base = getMainDirectoryPath() + "\\" + include;
+        String base = getMainDirectoryPath() + "/" + include;
 
         // First check if the include file is valid.
         File file = new File(base);
@@ -123,7 +123,7 @@ public class FileParser extends Parser {
     }
 
     private String getMainDirectoryPath() {
-        return file.getAbsolutePath().replace("\\" + file.getName(), "");
+        return file.getAbsolutePath().replace("/" + file.getName(), "");
     }
 
 }
