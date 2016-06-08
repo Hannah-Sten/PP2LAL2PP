@@ -967,11 +967,10 @@ public class Compiler {
         }
 
         if (!skipVariables && vars.size() > 0) {
+            function.updatePointers(-call.getArguments().size());
             assembly.append(Template.fillStatement("", "ADD", Constants.REG_STACK_POINTER,
                     "" + vars.size(), "Reset the stack pointer position.\n"));
         }
-
-        function.updatePointers(-call.getArguments().size());
     }
 
     /**
