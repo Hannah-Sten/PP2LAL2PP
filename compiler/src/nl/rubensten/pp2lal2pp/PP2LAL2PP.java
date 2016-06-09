@@ -8,9 +8,7 @@ import nl.rubensten.pp2lal2pp.parser.Parser;
 import nl.rubensten.pp2lal2pp.util.Template;
 import nl.rubensten.pp2lal2pp.util.Util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,8 +103,14 @@ public class PP2LAL2PP {
         Compiler compiler = new Compiler(dest, program);
         compiler.compile();
 
+        // Finish
+        long delta = System.currentTimeMillis() - start;
+        float time = (float)delta / 1000f;
+        System.out.println("PP2LAL2PP Compiler " + VERSION + " by Ruben-Sten");
+        System.out.println("Done (" + time + "s). " +
+                "Compiled '" + file.getName() + "' to '" + dest.getName() + ".");
+
         // Auto assemble
-        String autoAssemble = "";
         if (argList.contains("-a")) {
             int index = argList.indexOf("-a");
             String jar = argList.get(index + 1);
@@ -114,20 +118,17 @@ public class PP2LAL2PP {
 
             try {
                 compileToHex(jar, dest.getAbsolutePath(), hex);
-                autoAssemble = " and assembled to '" + hex + "'";
             }
             catch (IOException ioe) {
                 System.out.println("Couldn't auto-assemble " + dest.getName());
                 ioe.printStackTrace();
             }
-        }
 
-        // Finish
-        long delta = System.currentTimeMillis() - start;
-        float time = (float)delta / 1000f;
-        System.out.println("PP2LAL2PP Compiler " + VERSION + " by Ruben-Sten");
-        System.out.println("Done (" + time + "s). " +
-                "Compiled '" + file.getName() + "' to '" + dest.getName() + "'" + autoAssemble + ".");
+            delta = System.currentTimeMillis() - start;
+            time = (float)delta / 1000f;
+            System.out.println("Done (" + time + "s). " +
+                    "Assembled '" + dest.getName() + "' to '" + hex + ".");
+        }
     }
 
     private static void printHelp() {
@@ -169,13 +170,43 @@ public class PP2LAL2PP {
      *         The file name of the output HEX-file.
      */
     private static void compileToHex(String assembler, String input, String hex) throws IOException {
-        Process proc =
-                Runtime.getRuntime().exec("java -jar \"" + assembler + "\" \"" + input + "\" \"" +
-                        hex + "\"");
-        InputStream in = proc.getInputStream();
-        byte b[] = new byte[in.available()];
-        in.read(b, 0, b.length);
-        System.out.println(new String(b));
+        ProcessBuilder builder = new ProcessBuilder("java", "-jar", "" + assembler + "",
+                "" + input + "", hex + "\"");
+        final Process process = builder.start();
+
+        System.out.println();
+
+        new Thread(() -> readStream(process.getInputStream())).start();
+        new Thread(() -> readStream(process.getErrorStream())).start();
+
+        try {
+            process.waitFor();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        System.out.println();
+    }
+
+    /**
+     * Prints everything received in the given stream to the standard output.
+     *
+     * @param stream
+     *         The stream to output the data of.
+     */
+    private static void readStream(InputStream stream) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
