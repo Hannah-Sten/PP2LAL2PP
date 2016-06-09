@@ -109,6 +109,7 @@ public class PP2LAL2PP {
         System.out.println("PP2LAL2PP Compiler " + VERSION + " by Ruben-Sten");
         System.out.println("Done (" + time + "s). " +
                 "Compiled '" + file.getName() + "' to '" + dest.getName() + ".");
+        System.out.println();
 
         // Auto assemble
         if (argList.contains("-a")) {
@@ -173,8 +174,6 @@ public class PP2LAL2PP {
         ProcessBuilder builder = new ProcessBuilder("java", "-jar", "" + assembler + "",
                 "" + input + "", hex + "\"");
         final Process process = builder.start();
-
-        System.out.println();
 
         new Thread(() -> readStream(process.getInputStream())).start();
         new Thread(() -> readStream(process.getErrorStream())).start();
