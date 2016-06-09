@@ -1014,9 +1014,16 @@ public class Compiler {
         }
 
         // If there is a return value.
-        if (ret.getReturnValue() != null) {
+        Value returnValue = ret.getReturnValue();
+        if (returnValue != null) {
+            String toDisplay = ret.getReturnValue().toString();
+
+            if (returnValue instanceof NumberConstant) {
+                toDisplay = ((NumberConstant)returnValue).getName();
+            }
+
             assembly.append(Template.fillStatement(label, "LOAD", Constants.REG_RETURN,
-                    ret.getReturnValue().toString(), "Load the return value.\n"));
+                    toDisplay, "Load the return value.\n"));
             label = "";
         }
 

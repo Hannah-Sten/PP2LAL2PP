@@ -51,4 +51,8 @@ public class Definition implements Element {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return "{" + name + " := " + value + "}";
+    }
 }
