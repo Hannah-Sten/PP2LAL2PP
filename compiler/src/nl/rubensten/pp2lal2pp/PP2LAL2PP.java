@@ -170,7 +170,8 @@ public class PP2LAL2PP {
      */
     private static void compileToHex(String assembler, String input, String hex) throws IOException {
         Process proc =
-                Runtime.getRuntime().exec("java -jar " + assembler + " " + input + " " + hex);
+                Runtime.getRuntime().exec("java -jar \"" + assembler + "\" \"" + input + "\" \"" +
+                        hex + "\"");
         InputStream in = proc.getInputStream();
         byte b[] = new byte[in.available()];
         in.read(b, 0, b.length);
