@@ -184,7 +184,7 @@ public class Compiler {
         Number register0 = Number.MINUS_ONE;
 
         for (GlobalArray array : arrays) {
-            Number defaultValue = Number.ZERO;
+            Number defaultValue = array.getDefaultNumber(input);
 
             // Only load new value in R0 when there is a new initialisation value.
             if (!defaultValue.equals(register0)) {

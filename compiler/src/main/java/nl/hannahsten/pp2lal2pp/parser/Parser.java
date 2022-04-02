@@ -992,6 +992,12 @@ public class Parser {
         String arrayName = line.getToken(4);
         Value size = sizeDeclaration.getAccessingIndex();
 
+        // Default value for array.
+        Value defaultValue = Number.ZERO;
+        if (line.size() >= 7 && "=".equals(line.getToken(5))) {
+            defaultValue = Value.parse(line.getToken(6), program);
+        }
+
         // Array size is given by a constant.
         if (size instanceof NumberConstant) {
             String constantName = size.stringRepresentation();
@@ -1001,12 +1007,16 @@ public class Parser {
             }
 
             int arrayLength = ((Number)definition.get().getValue()).getIntValue();
-            return GlobalArray.withSize(arrayName, arrayLength, lastComment);
+            GlobalArray array = GlobalArray.withSize(arrayName, arrayLength, lastComment);
+            array.setDefaultValue(defaultValue);
+            return array;
         }
         // Array size is determined by a given integer.
         else if (size instanceof Number) {
             int arrayLength = ((Number)size).getIntValue();
-            return GlobalArray.withSize(arrayName, arrayLength, lastComment);
+            GlobalArray array = GlobalArray.withSize(arrayName, arrayLength, lastComment);
+            array.setDefaultValue(defaultValue);
+            return array;
         }
         // Undefined constant.
         else if (size instanceof Value) {

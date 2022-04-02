@@ -29,6 +29,11 @@ public class GlobalArray implements Element, Identifyable {
     private final String name;
 
     /**
+     * The default value of the variable.
+     */
+    private Value defaultValue = Number.ZERO;
+
+    /**
      * Creates a global array of {@code size} variables.
      */
     public static GlobalArray withSize(String name, int size, Comment lastComment) {
@@ -76,6 +81,24 @@ public class GlobalArray implements Element, Identifyable {
 
     public String getName() {
         return name;
+    }
+
+    public Number getDefaultNumber(Program program) {
+        if (defaultValue instanceof NumberConstant) {
+            return (Number)program.getDefinition(((NumberConstant)defaultValue).getName()).get().getValue();
+        }
+        if (defaultValue instanceof Number) {
+            return (Number)defaultValue;
+        }
+        return null;
+    }
+
+    public Value getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(Value defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override
