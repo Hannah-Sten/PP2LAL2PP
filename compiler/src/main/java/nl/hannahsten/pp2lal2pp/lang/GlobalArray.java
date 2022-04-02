@@ -1,6 +1,7 @@
 package nl.hannahsten.pp2lal2pp.lang;
 
 import nl.hannahsten.pp2lal2pp.IDManager;
+import nl.hannahsten.pp2lal2pp.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +31,10 @@ public class GlobalArray implements Element, Identifyable {
     /**
      * Creates a global array of {@code size} variables.
      */
-    public static GlobalArray withSize(String name, int size) {
+    public static GlobalArray withSize(String name, int size, Comment lastComment) {
         List<GlobalVariable> variables = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            variables.add(new GlobalVariable(name));
+            variables.add(new GlobalVariable(name, lastComment));
         }
         return new GlobalArray(name, variables);
     }
@@ -50,6 +51,13 @@ public class GlobalArray implements Element, Identifyable {
         this.id = IDManager.newId();
         this.name = name;
         this.variables = Collections.unmodifiableList(variables);
+    }
+
+    public GlobalVariable get(int index) {
+        if (index < 0 || index >= variables.size()) {
+            throw new ParseException("Index out of bounds: " + index + " (size: " + variables.size() + ")");
+        }
+        return variables.get(index);
     }
 
     /**

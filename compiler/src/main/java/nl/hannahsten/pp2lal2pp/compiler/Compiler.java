@@ -70,35 +70,7 @@ public class Compiler {
         assembly.append("\n");
 
         // Initialisation
-        assembly.append(";#\n;#  Initialisation of the program.\n;#\n");
-        String label = "init:";
-        Number R0 = Number.MINUS_ONE;
-        List<GlobalVariable> globalVariables = new ArrayList<>(input.getGlobalVariables());
-        globalVariables.sort(Comparator.comparing(Variable::getDefaultValue));
-
-        // Initialisation: IOAREA
-        assembly.append(Template.fillStatement("init:", "LOAD", Constants.REG_IOAREA, "IOAREA",
-                "Store the address of the IOAREA for later use.\n"));
-
-        // Initialisation: Global Variables.
-        GlobalVariable lastOutput = new GlobalVariable("LAST_OUTPUT", Number.ZERO);
-        lastOutput.setPointer(0);
-        globalVariables.add(lastOutput);
-        for (GlobalVariable gv : globalVariables) {
-            if (!R0.equals(gv.getDefaultValue())) {
-                R0 = (Number)gv.getDefaultValue();
-
-                assembly.append(Template.fillStatement("", "LOAD", Constants.REG_GENERAL, "" + gv
-                        .getDefaultValue().stringRepresentation(), "Default value to load in global base.\n"));
-            }
-
-            assembly.append(Template.fillStatement("", "STOR", Constants.REG_GENERAL,
-                    "[" + Constants.REG_GLOBAL_BASE + "+" + gv.getName() + "]",
-                    "Give global variable " + gv.getName() + " initial value " + gv
-                            .getDefaultValue() + ".\n"));
-        }
-
-        assembly.append("\n");
+        compileInit();
 
         // Main function
         compileFunction(input.getMainFunction());
@@ -141,6 +113,101 @@ public class Compiler {
 
         // Write to file
         write();
+    }
+
+    /**
+     * Compiles the initialisation function.
+     */
+    private void compileInit() {
+        assembly.append(";#\n;#  Initialisation of the program.\n;#\n");
+
+        // Initialisation: IOAREA
+        assembly.append(Template.fillStatement(
+                "init:",
+                "LOAD",
+                Constants.REG_IOAREA,
+                "IOAREA",
+                "Store the address of the IOAREA for later use.\n"
+        ));
+
+        // Initialisation: Global Variables.
+        compileGlobalVariableInitialisation();
+        compileGlobalArrayInitialisation();
+
+        assembly.append("\n");
+    }
+
+    /**
+     * Adds assembly to initialise all global variables.
+     */
+    private void compileGlobalVariableInitialisation() {
+        Number register0 = Number.MINUS_ONE;
+        List<GlobalVariable> globalVariables = new ArrayList<>(input.getGlobalVariables());
+        globalVariables.sort(Comparator.comparing(Variable::getDefaultValue));
+
+        GlobalVariable lastOutput = new GlobalVariable("LAST_OUTPUT", Number.ZERO);
+        lastOutput.setPointer(0);
+        globalVariables.add(lastOutput);
+
+        for (GlobalVariable global : globalVariables) {
+            Number defaultValue = (Number)global.getDefaultValue();
+
+            // Default value is new, so load this default value in R0 first.
+            if (!defaultValue.equals(register0)) {
+                register0 = (Number)global.getDefaultValue();
+
+                assembly.append(Template.fillStatement(
+                        "",
+                        "LOAD",
+                        Constants.REG_GENERAL,
+                        defaultValue.stringRepresentation() + "",
+                        "Default value to load in global base.\n"
+                ));
+            }
+
+            // R0 already contains the default value: recycle the value in R0.
+            assembly.append(Template.fillStatement(
+                    "",
+                    "STOR",
+                    Constants.REG_GENERAL,
+                    "[" + Constants.REG_GLOBAL_BASE + "+" + global.getName() + "]",
+                    "Give global variable " + global.getName() + " initial value " + defaultValue + ".\n"
+            ));
+        }
+    }
+
+    /**
+     * Adds assembly to initialise all global arrays.
+     */
+    private void compileGlobalArrayInitialisation() {
+        List<GlobalArray> arrays = input.getGlobalArrays();
+        Number register0 = Number.MINUS_ONE;
+
+        for (GlobalArray array : arrays) {
+            Number defaultValue = Number.ZERO;
+
+            // Only load new value in R0 when there is a new initialisation value.
+            if (!defaultValue.equals(register0)) {
+                register0 = defaultValue;
+                assembly.append(Template.fillStatement(
+                        "",
+                        "LOAD",
+                        Constants.REG_GENERAL,
+                        defaultValue.stringRepresentation() + "",
+                        "Default value to load to all global array elements of " + array.getName() + ".\n"
+                ));
+            }
+
+            for (int offset = 0; offset < array.size(); offset++) {
+                assembly.append(Template.fillStatement(
+                        "",
+                        "STOR",
+                        Constants.REG_GENERAL,
+                        "[" + Constants.REG_GLOBAL_BASE + "+" + array.getName() + "+" + offset + "]",
+                        "Give global variable " + array.getName() + "[" + offset + "] initial value " + defaultValue + ".\n"
+                ));
+            }
+        }
     }
 
     /**
@@ -1138,15 +1205,54 @@ public class Compiler {
     }
 
     /**
-     * Writes all the global variables of the program to the assembly-StringBuilder.
+     * Writes all the global variables and arrays of the program to the assembly-StringBuilder.
      */
     private void compileGlobal() {
-        for (GlobalVariable gv : input.getGlobalVariables()) {
-            assembly.append(Template.EQU.replace("NAME", gv.getName(), "VALUE", gv.getPointer() +
-                    "").replace("{$COMMENT}",
-                    (gv.getComment() == null ? "" : gv.getComment().getContents())));
-            assembly.append("\n");
+        compileGlobalVariableDefinitions();
+        compileGlobalArrayDefinitions();
+    }
+
+    /**
+     * Writes all the global variable definitions to the assembly-StringBuilder.
+     */
+    private void compileGlobalVariableDefinitions() {
+        for (GlobalVariable global : input.getGlobalVariables()) {
+            compileGlobalVariableDefinition(global);
         }
+    }
+
+    /**
+     * Writes all the global array definitions to the assembly-StringBuilder.
+     */
+    private void compileGlobalArrayDefinitions() {
+        for (GlobalArray array : input.getGlobalArrays()) {
+            compileGlobalVariableDefinition(array.get(0), "Array");
+        }
+    }
+
+    /**
+     * Writes the definition of the given global variable to the assembly-StringBuilder.
+     */
+    private void compileGlobalVariableDefinition(GlobalVariable global) {
+        compileGlobalVariableDefinition(global, null);
+    }
+
+    /**
+     * Writes the definition of the given global variable to the assembly-StringBuilder.
+     *
+     * @param extraComment Extra info to append to the comment.
+     */
+    private void compileGlobalVariableDefinition(GlobalVariable global, String extraComment) {
+        Template template = Template.EQU;
+
+        String comment = (global.getComment() == null ? "" : global.getComment().getContents());
+        String extra = (extraComment == null ? "" : " (" + extraComment + ")");
+        String code = template
+                .replace("NAME", global.getName(), "VALUE", global.getPointer() + "")
+                .replace("{$COMMENT}", comment + extra);
+
+        assembly.append(code);
+        assembly.append("\n");
     }
 
     /**

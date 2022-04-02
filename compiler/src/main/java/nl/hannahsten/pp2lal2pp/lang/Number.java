@@ -1,5 +1,7 @@
 package nl.hannahsten.pp2lal2pp.lang;
 
+import java.util.Objects;
+
 /**
  * @author Hannah Schellekens
  */
@@ -74,4 +76,23 @@ public class Number extends Value implements Element {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Number)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        Number number = (Number)o;
+        return intValue == number.intValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(intValue);
+    }
 }

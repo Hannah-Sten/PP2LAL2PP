@@ -141,13 +141,13 @@ public enum Template {
     /**
      * The directory where the templates are stored followed by a slash.
      */
-    private static String DIR = "/template/";
+    private static final String DIR = "/template/";
 
     /**
      * The file path relative to the program's root and {@link Template#DIR} where the template is
      * located.
      */
-    private String filePath;
+    private final String filePath;
 
     /**
      * The contents of the template.

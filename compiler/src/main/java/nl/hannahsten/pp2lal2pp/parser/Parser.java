@@ -970,6 +970,13 @@ public class Parser {
         return true;
     }
 
+    /**
+     * Parses the global array definition that is on this {@code line}.
+     * Assumes that this line actually is a global array: throws an exception when there is a
+     * problem parsing the global array definition.
+     *
+     * @return The parsed global array.
+     */
     private GlobalArray parseGlobalArray(Tokeniser line) {
         if (line.size() < 5) {
             throw new ParseException(
@@ -994,12 +1001,12 @@ public class Parser {
             }
 
             int arrayLength = ((Number)definition.get().getValue()).getIntValue();
-            return GlobalArray.withSize(arrayName, arrayLength);
+            return GlobalArray.withSize(arrayName, arrayLength, lastComment);
         }
         // Array size is determined by a given integer.
         else if (size instanceof Number) {
             int arrayLength = ((Number)size).getIntValue();
-            return GlobalArray.withSize(arrayName, arrayLength);
+            return GlobalArray.withSize(arrayName, arrayLength, lastComment);
         }
         // Undefined constant.
         else if (size instanceof Value) {
