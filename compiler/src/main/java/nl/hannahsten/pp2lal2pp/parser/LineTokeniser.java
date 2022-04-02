@@ -1,8 +1,9 @@
 package nl.hannahsten.pp2lal2pp.parser;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import nl.hannahsten.pp2lal2pp.util.Regex;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,11 +15,11 @@ public class LineTokeniser implements Iterable<String> {
     /**
      * A list of all lines in the given code.
      */
-    private List<String> lines;
+    private final List<String> lines;
 
     public LineTokeniser(String code) {
         String[] strings = Regex.split("(\\s)*\\n(\\s)*", code);
-        lines = new UnmodifiableArrayList<>(strings, strings.length);
+        lines = Collections.unmodifiableList(Arrays.asList(strings));
     }
 
     /**

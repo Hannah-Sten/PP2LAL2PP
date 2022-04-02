@@ -1,28 +1,28 @@
 package nl.hannahsten.pp2lal2pp.lang;
 
-import com.sun.javafx.UnmodifiableArrayList;
 import nl.hannahsten.pp2lal2pp.IDManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author Hannah Schellekens
  */
-public class Block implements Iterable, Identifyable {
+public class Block implements Iterable<Element>, Identifyable {
 
     /**
      * A block with absolutely NO CONTENTS.
      * <p>
      * The contents can't be modified.
      */
-    public static final Block EMPTY = new Block(new UnmodifiableArrayList<>(new Element[0], 0));
+    public static final Block EMPTY = new Block(Collections.emptyList());
 
     /**
      * The unique id of the code block.
      */
-    private int id;
+    private final int id;
 
     /**
      * All the statements in chronological order that are present in the code block.
@@ -54,7 +54,7 @@ public class Block implements Iterable, Identifyable {
     }
 
     @Override
-    public Iterator iterator() {
+    public Iterator<Element> iterator() {
         return contents.iterator();
     }
 
