@@ -1,0 +1,21 @@
+
+plugins {
+    id 'application'
+}
+
+apply plugin: 'java'
+
+group 'nl.hannahsten.pp2lal2pp'
+version '2.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+application {
+    mainClassName = "nl.hannahsten.pp2lal2pp.PP2LAL2PP"
+}

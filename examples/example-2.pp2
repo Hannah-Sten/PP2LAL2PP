@@ -2,6 +2,8 @@
 #; Example file of how a PP2LAL2PP language file looks like.
 #; This is a descriptive doc comment
 #;
+#; WARNING: Just a syntax illustration. Code is busted.
+#;
 
 # Include contents of const.pp2 or const.pp2lal2pp
 include const
