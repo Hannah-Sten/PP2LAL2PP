@@ -1,6 +1,6 @@
 <img style="float: right;" width="143" src="http://i.imgur.com/Sno5FKo.png">
 
-**[Visit the epic website!](http://ruben-sten.github.io/PP2LAL2PP/)**
+**[Visit the epic website!](http://hannah-sten.github.io/PP2LAL2PP/)**
 
 The **P**racticum **P**rocessor **2** **L**earn **A**ssembly **L**anguage **2** **P**reserve **P**rosperity language is an awesome, but extremely basic little language for a horrible processor. The goal for this language and supplied (in development) compiler is to minimise the work needed to build and debug applications for the PP2-processor used solely in TU/e projects.
 The compiler will be able (in the future) to generate nice `.asm`-files all complete with comments to make it understandable even in assembly-form.
@@ -11,7 +11,7 @@ All hail the perfectly annoying palindrome :)
 ## Installation and setup
 
 ### Getting the files
-Download the [release](https://github.com/Ruben-Sten/PP2LAL2PP/releases) of your choice and unpack the contents to a directory of your choice.
+Download the [release](https://github.com/Hannah-Sten/PP2LAL2PP/releases) of your choice and unpack the contents to a directory of your choice.
 
 ### Getting Java 8+
 You need at least Java 8 in order to run PP2LAL2PP. You can get java [here](https://java.com/download/).

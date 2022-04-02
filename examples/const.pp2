@@ -4,7 +4,7 @@
 ;#  This is just a file with a constants that illustrates that these
 ;#  files can be included by other files using the include-keyword.
 ;#
-;#  @author Ruben Schellekens
+;#  @author Hannah Schellekens
 ;##
 
 # The maximum value + 1 that a single digit in the 7-segment display can display.

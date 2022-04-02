@@ -6,7 +6,9 @@
 #;  corresponding counter that will be displayed on the 7-segment
 #;  display. Only the most recently pressed button will show its number.
 #;
-#;  @author Ruben Schellekens
+#;  WARNING: Just a syntax illustration. Code is busted.
+#;
+#;  @author Hannah Schellekens
 #;
 
 # Include is just for illustration purposes.
