@@ -37,10 +37,21 @@ public class Program {
     private final List<GlobalVariable> globalVariables;
 
     /**
+     * All the global arrays in the program.
+     */
+    private final List<GlobalArray> globalArrays;
+
+    /**
      * Dictionary where the names of the global variables are mapped to their location in {@link
      * Program#globalVariables}.
      */
     private final Map<String, Integer> globalVariableIndices;
+
+    /**
+     * Dictionary where the names of the global arrays are mapped to their location in {@link
+     * Program#globalArrays}.
+     */
+    private final Map<String, Integer> globalArrayIndices;
 
     /**
      * List of all the definitions (using define).
@@ -52,7 +63,8 @@ public class Program {
         functionIndices = new HashMap<>();
         globalVariables = new ArrayList<>();
         globalVariableIndices = new HashMap<>();
-        apiFunctions = new HashSet<>();
+        globalArrays = new ArrayList<>();
+        globalArrayIndices = new HashMap<>();
         apiFunctions = new HashSet<>();
         definitions = new ArrayList<>();
     }
@@ -89,6 +101,13 @@ public class Program {
      */
     public List<GlobalVariable> getGlobalVariables() {
         return Collections.unmodifiableList(globalVariables);
+    }
+
+    /**
+     * @return An unmodifyable list of global arrays.
+     */
+    public List<GlobalArray> getGlobalArrays() {
+        return globalArrays;
     }
 
     /**
@@ -150,6 +169,14 @@ public class Program {
     }
 
     /**
+     * Adds a global array to the program.
+     */
+    public void addGlobalArray(GlobalArray globalArray) {
+        globalArrays.add(globalArray);
+        globalArrayIndices.put(globalArray.getName(), globalArray.size() - 1);
+    }
+
+    /**
      * Get the global variable object with the given name.
      *
      * @param name
@@ -163,6 +190,36 @@ public class Program {
 
         int index = globalVariableIndices.get(name);
         return Optional.of(globalVariables.get(index));
+    }
+
+    /**
+     * Get the global array object with the given name.
+     *
+     * @param name
+     *         The name of the global array to look up.
+     * @return The global array with the given name.
+     */
+    public Optional<GlobalArray> getGlobalArray(String name) {
+        if (globalArrayIndices.get(name) == null) {
+            return Optional.empty();
+        }
+
+        int index = globalArrayIndices.get(name);
+        return Optional.of(globalArrays.get(index));
+    }
+
+    /**
+     * Get the definition with the given name.
+     *
+     * @param name The name of the definition.
+     */
+    public Optional<Definition> getDefinition(String name) {
+        for (Definition definition : definitions) {
+            if (definition.getName().equals(name)) {
+                return Optional.of(definition);
+            }
+        }
+        return Optional.empty();
     }
 
     public void setHeader(List<String> header) {
@@ -181,6 +238,8 @@ public class Program {
                 ", functionIndices=" + functionIndices +
                 ", globalVariables=" + globalVariables +
                 ", globalVariableIndices=" + globalVariableIndices +
+                ", globalArrays=" + globalArrays +
+                ", globalArrayIndices=" + globalArrayIndices +
                 '}';
     }
 }

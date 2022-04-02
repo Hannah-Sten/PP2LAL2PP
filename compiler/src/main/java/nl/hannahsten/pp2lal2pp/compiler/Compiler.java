@@ -13,10 +13,7 @@ import nl.hannahsten.pp2lal2pp.util.Template;
 import nl.hannahsten.pp2lal2pp.util.Util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Hannah Schellekens
@@ -77,7 +74,7 @@ public class Compiler {
         String label = "init:";
         Number R0 = Number.MINUS_ONE;
         List<GlobalVariable> globalVariables = new ArrayList<>(input.getGlobalVariables());
-        globalVariables.sort((c1, c2) -> c1.getDefaultValue().compareTo(c2.getDefaultValue()));
+        globalVariables.sort(Comparator.comparing(Variable::getDefaultValue));
 
         // Initialisation: IOAREA
         assembly.append(Template.fillStatement("init:", "LOAD", Constants.REG_IOAREA, "IOAREA",

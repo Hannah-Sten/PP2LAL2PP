@@ -30,17 +30,17 @@ public class Value implements Element, Comparable<Value> {
     public static Value parse(String string, Program program) {
         // Character
         if (string.equals("'''")) {
-            return new Number((int)'\'');
+            return new Number('\'');
         }
         if (Regex.matches("'.+'", string)) {
             String meat = string.replace("'", "");
             char[] chars = meat.toCharArray();
 
-            if (chars.length > 1 || chars.length == 0) {
+            if (chars.length != 1) {
                 throw new ParseException("Invalid character " + string + ".");
             }
 
-            return new Number((int)chars[0]);
+            return new Number(chars[0]);
         }
         // Binary
         if (Regex.matches("0b[0-1]+", string)) {
@@ -68,7 +68,7 @@ public class Value implements Element, Comparable<Value> {
             return new Number(Integer.parseInt(string));
         }
         catch (NumberFormatException nfe) {
-            if (program.getDefinitions().parallelStream().anyMatch(d -> d.getName().equals(string))) {
+            if (program.getDefinition(string).isPresent()) {
                 return new NumberConstant(string);
             }
             else {

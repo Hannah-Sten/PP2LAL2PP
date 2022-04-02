@@ -33,11 +33,16 @@ public class Tokeniser implements Iterable<String> {
         code2 = Regex.replaceAll("((((?<!')\\-(?![=\\d])))|(\\-(?!['=\\d]))|((?<!')\\-(?!['=\\d])" + "))", code2, " - ");
         code2 = Regex.replaceAll("((((?<!')\\}))|(\\}(?!'))|((?<!')\\}(?!')))", code2, " } ");
         code2 = Regex.replaceAll("((((?<!')\\{))|(\\{(?!'))|((?<!')\\{(?!')))", code2, " { ");
+        code2 = Regex.replaceAll("((((?<!')\\]))|(\\](?!'))|((?<!')\\](?!')))", code2, " ] ");
+        code2 = Regex.replaceAll("((((?<!')\\[))|(\\[(?!'))|((?<!')\\[(?!')))", code2, " [ ");
 
         for (Operator op : Operator.values()) {
             String c = op.getRegexSign();
-            code2 = Regex.replaceAll("((((?<!')" + c + "))|(" + c + "(?!'))|((?<!')" + c + "(?!')" +
-                    "))", code2, "櫓\uF214(" + op.name() + ")");
+            code2 = Regex.replaceAll(
+                    "((((?<!')" + c + "))|(" + c + "(?!'))|((?<!')" + c + "(?!')" + "))",
+                    code2,
+                    "櫓\uF214(" + op.name() + ")"
+            );
         }
 
         for (Operator op : Operator.values()) {
@@ -235,4 +240,8 @@ public class Tokeniser implements Iterable<String> {
         return tokens.listIterator();
     }
 
+    @Override
+    public String toString() {
+        return String.join(" ", tokens);
+    }
 }

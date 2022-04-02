@@ -2,8 +2,8 @@ package nl.hannahsten.pp2lal2pp.parser;
 
 import nl.hannahsten.pp2lal2pp.ParseException;
 import nl.hannahsten.pp2lal2pp.api.APIFunction;
-import nl.hannahsten.pp2lal2pp.lang.*;
 import nl.hannahsten.pp2lal2pp.lang.Number;
+import nl.hannahsten.pp2lal2pp.lang.*;
 import nl.hannahsten.pp2lal2pp.util.Regex;
 
 import java.util.*;
@@ -944,19 +944,95 @@ public class Parser {
             return false;
         }
 
+        // Global variable array.
         String firstToken = line.getToken(1);
+        if ("[".equals(firstToken)) {
+            GlobalArray array = parseGlobalArray(line);
+            if (array != null) {
+                program.addGlobalArray(array);
+                return true;
+            }
+        }
+
+        // Single global variable.
         GlobalVariable var;
 
         // If there is no value specified
         if (line.sizeNoComments() == 2) {
             var = new GlobalVariable(firstToken, lastComment);
         }
+        // It has a default value.
         else {
             var = new GlobalVariable(firstToken, Value.parse(line.getToken(3), program), lastComment);
         }
 
         program.addGlobalVariable(var);
         return true;
+    }
+
+    private GlobalArray parseGlobalArray(Tokeniser line) {
+        if (line.size() < 5) {
+            throw new ParseException(
+                    "Invalid global array definition (too few elements): '" + line.getOriginal() + "'"
+            );
+        }
+
+        ArrayAccess sizeDeclaration = parseArrayAccess(line, 1, true);
+        if (sizeDeclaration == null) {
+            throw new ParseException("Could not parse array size declaration of '" + line.getOriginal() + "'");
+        }
+
+        String arrayName = line.getToken(4);
+        Value size = sizeDeclaration.getAccessingIndex();
+
+        // Array size is given by a constant.
+        if (size instanceof NumberConstant) {
+            String constantName = size.stringRepresentation();
+            Optional<Definition> definition = program.getDefinition(constantName);
+            if (!definition.isPresent()) {
+                throw new ParseException("Could not find constant '" + constantName + "', line: '" + line.getOriginal() + "'");
+            }
+
+            int arrayLength = ((Number)definition.get().getValue()).getIntValue();
+            return GlobalArray.withSize(arrayName, arrayLength);
+        }
+        // Array size is determined by a given integer.
+        else if (size instanceof Number) {
+            int arrayLength = ((Number)size).getIntValue();
+            return GlobalArray.withSize(arrayName, arrayLength);
+        }
+        // Undefined constant.
+        else if (size instanceof Value) {
+            throw new ParseException("Undefined constant '" + size.stringRepresentation() + "' on line: '" + line.getOriginal() + "'");
+        }
+
+        throw new ParseException("Could not parse global array on line: '" + line.getOriginal() + "'");
+    }
+
+    /**
+     * Parses an array access.
+     *
+     * @param line The line that is being parsed.
+     * @param startIndex The index of the first access token.
+     * @param isGlobal Whether it is a global array size definition (true) or not (false).
+     * @return The parsed array access, or `null` when it could not be parsed.
+     */
+    private ArrayAccess parseArrayAccess(Tokeniser line, int startIndex, boolean isGlobal) {
+        if (line.size() - startIndex - 3 <= 0) {
+            return null;
+        }
+        if (!"[".equals(line.getToken(startIndex)) || !"]".equals(line.getToken(startIndex + 2))) {
+            return null;
+        }
+
+        String index = line.getToken(startIndex + 1);
+        if (isGlobal) {
+            Value value = Value.parse(index, program);
+            return ArrayAccess.newValueIndex(value);
+        }
+
+        // TODO: Variable parsing.
+        return null;
     }
 
     /**
