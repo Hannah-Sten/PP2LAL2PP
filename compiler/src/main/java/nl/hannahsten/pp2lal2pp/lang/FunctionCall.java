@@ -12,17 +12,17 @@ public class FunctionCall extends Value implements Element, Identifyable {
     /**
      * Unique id of the function call.
      */
-    private int id;
+    private final int id;
 
     /**
      * The name of the function that is called.
      */
-    private String called;
+    private final String called;
 
     /**
      * The list of arguments to call the function with.
      */
-    private List<Variable> arguments;
+    private final List<Variable> arguments;
 
     public FunctionCall(String called, List<Variable> arguments) {
         super(called);

@@ -161,34 +161,34 @@ public enum Operator implements Identifyable {
     /**
      * The unique ID of the operator.
      */
-    private int id;
+    private final int id;
 
     /**
      * The string characterisation of the operator.
      */
-    private String sign;
+    private final String sign;
 
     /**
      * The escpaed character for regex. Yay.
      */
-    private String regexSign;
+    private final String regexSign;
 
     /**
      * The type of operator.
      */
-    private OperatorType type;
+    private final OperatorType type;
 
     /**
      * The instruction that the operator executes.
      * <p>
      * Or <code>null</code> if there is none.
      */
-    private String instruction;
+    private final String instruction;
 
     /**
      * Function to execute when executing the operator on two numbers.
      */
-    private OperationFunction<Number> numbersFunction;
+    private final OperationFunction<Number> numbersFunction;
 
     Operator(String sign, String regexSign, OperatorType type, String instruction,
              OperationFunction<Number>

@@ -26,17 +26,17 @@ public class Compiler {
     /**
      * The file to output the result to.
      */
-    private File output;
+    private final File output;
 
     /**
      * The parsed program that should be compiled.
      */
-    private Program input;
+    private final Program input;
 
     /**
      * The compiled output assembly code.
      */
-    private StringBuilder assembly;
+    private final StringBuilder assembly;
 
     /**
      * The function the compiler is currently working with.

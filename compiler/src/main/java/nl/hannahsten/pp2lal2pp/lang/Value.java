@@ -13,7 +13,7 @@ public class Value implements Element, Comparable<Value> {
      */
     public static final Value EMPTY = new Value("");
 
-    private Object object;
+    private final Object object;
 
     public Value(Object object) {
         this.object = object;

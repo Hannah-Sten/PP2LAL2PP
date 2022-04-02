@@ -10,12 +10,12 @@ public class Inject implements Element, Identifyable {
     /**
      * The unique id of the injection.
      */
-    private int id;
+    private final int id;
 
     /**
      * The raw Assembly.
      */
-    private String contents;
+    private final String contents;
 
     public Inject(String contents) {
         this.id = IDManager.newId();

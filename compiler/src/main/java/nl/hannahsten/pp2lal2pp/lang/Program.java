@@ -18,7 +18,7 @@ public class Program {
     /**
      * All the functions that are in the program.
      */
-    private List<Function> functions;
+    private final List<Function> functions;
 
     /**
      * A set of all names of api functions that are included in the program.
@@ -29,23 +29,23 @@ public class Program {
      * Dictionary where the names of the functions are mapped to their location in {@link
      * Program#functions}.
      */
-    private Map<String, Integer> functionIndices;
+    private final Map<String, Integer> functionIndices;
 
     /**
      * All the global variables in the program.
      */
-    private List<GlobalVariable> globalVariables;
+    private final List<GlobalVariable> globalVariables;
 
     /**
      * Dictionary where the names of the global variables are mapped to their location in {@link
      * Program#globalVariables}.
      */
-    private Map<String, Integer> globalVariableIndices;
+    private final Map<String, Integer> globalVariableIndices;
 
     /**
      * List of all the definitions (using define).
      */
-    private List<Definition> definitions;
+    private final List<Definition> definitions;
 
     public Program() {
         functions = new ArrayList<>();

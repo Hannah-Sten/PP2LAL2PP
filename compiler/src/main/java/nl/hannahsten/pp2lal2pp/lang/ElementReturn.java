@@ -10,7 +10,7 @@ public class ElementReturn extends Return {
     /**
      * The element to return.
      */
-    private Element value;
+    private final Element value;
 
     public ElementReturn(Element value) {
         this.value = value;

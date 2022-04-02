@@ -12,7 +12,7 @@ public class IfElse implements Element, Identifyable {
     /**
      * The unique id of the statement.
      */
-    private int id;
+    private final int id;
 
     /**
      * The expression that determines if the if or else block gets executed.
@@ -20,17 +20,17 @@ public class IfElse implements Element, Identifyable {
      * If the expression evaluates to true (or 1), then if gets executed, otherwise the else
      * block must get executed.
      */
-    private Operation expression;
+    private final Operation expression;
 
     /**
      * The block to be executed when the expression holds.
      */
-    private Block ifBlock;
+    private final Block ifBlock;
 
     /**
      * The block to be executed when the expression doesn't hold.
      */
-    private Block elseBlock;
+    private final Block elseBlock;
 
     public IfElse(Operation expression, Block ifBlock) {
         this.id = IDManager.newId();

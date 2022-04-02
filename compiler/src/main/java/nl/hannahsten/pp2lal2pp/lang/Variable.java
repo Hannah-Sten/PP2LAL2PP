@@ -12,7 +12,7 @@ public class Variable implements Identifyable, Element {
     /**
      * The unique id of the variable.
      */
-    private int id;
+    private final int id;
 
     /**
      * The offset from the stack pointer where the value of the variable is stored.
@@ -22,7 +22,7 @@ public class Variable implements Identifyable, Element {
     /**
      * The name of the variable.
      */
-    private String name;
+    private final String name;
 
     /**
      * The default value of the variable.

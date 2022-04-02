@@ -10,7 +10,7 @@ public class Continue implements Identifyable, Element {
     /**
      * The unique ID of the return statement.
      */
-    private int id;
+    private final int id;
 
     public Continue() {
         this.id = IDManager.newId();

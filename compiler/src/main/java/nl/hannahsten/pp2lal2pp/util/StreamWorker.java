@@ -15,7 +15,7 @@ public class StreamWorker {
     /**
      * The stream to work with.
      */
-    private InputStream stream;
+    private final InputStream stream;
 
     public StreamWorker(InputStream stream) {
         this.stream = stream;

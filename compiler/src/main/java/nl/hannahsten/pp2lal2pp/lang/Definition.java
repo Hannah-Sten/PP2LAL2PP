@@ -10,17 +10,17 @@ public class Definition implements Element {
     /**
      * The name of the definition.
      */
-    private String name;
+    private final String name;
 
     /**
      * The value of the definition.
      */
-    private Value value;
+    private final Value value;
 
     /**
      * The documentation of the definition.
      */
-    private String docString;
+    private final String docString;
 
     /**
      * @param docString <code>null</code> for no docstring.

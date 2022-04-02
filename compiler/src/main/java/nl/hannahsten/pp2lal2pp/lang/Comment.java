@@ -8,7 +8,7 @@ public class Comment implements Element {
     /**
      * The comment.
      */
-    private String contents;
+    private final String contents;
 
     public Comment(String contents) {
         this.contents = contents;

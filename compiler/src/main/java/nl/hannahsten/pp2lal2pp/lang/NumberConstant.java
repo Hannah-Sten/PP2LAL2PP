@@ -12,7 +12,7 @@ public class NumberConstant extends Number {
     /**
      * The name of the constant.
      */
-    private String name;
+    private final String name;
 
     public NumberConstant(String name) {
         super(-1);

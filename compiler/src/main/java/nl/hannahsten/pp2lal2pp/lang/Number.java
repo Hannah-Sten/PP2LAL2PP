@@ -28,7 +28,7 @@ public class Number extends Value implements Element {
     /**
      * The numerical value of the Number.
      */
-    private int intValue;
+    private final int intValue;
 
     public Number(int integer) {
         super(integer);

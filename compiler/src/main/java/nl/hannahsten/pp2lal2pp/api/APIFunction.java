@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class APIFunction {
 
-    private static Set<String> apiFunctions = new HashSet<String>() {{
+    private static final Set<String> apiFunctions = new HashSet<String>() {{
         add("exit");
         add("getInputStates");
         add("isInputOn");

@@ -12,7 +12,7 @@ public class FileWorker {
     /**
      * The file to work with.
      */
-    private File file;
+    private final File file;
 
     public FileWorker(File file) {
         this.file = file;

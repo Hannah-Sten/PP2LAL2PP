@@ -10,7 +10,7 @@ public class Return implements Element, Identifyable {
     /**
      * The unique ID of the return statement.
      */
-    private int id;
+    private final int id;
 
     /**
      * The value that must be returned.

@@ -16,7 +16,7 @@ public class GlobalVariable extends Variable {
     /**
      * A list containing all the global base addresses that can't be used to store values.
      */
-    private static Set<Integer> bannedLocations = new HashSet<>();
+    private static final Set<Integer> bannedLocations = new HashSet<>();
 
     /**
      * Prevents the given pointer from being used.

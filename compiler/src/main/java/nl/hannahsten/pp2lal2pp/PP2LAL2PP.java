@@ -132,7 +132,7 @@ public class PP2LAL2PP {
     }
 
     private static void printHelp() {
-        System.out.println("");
+        System.out.println();
         System.out.println
                 ("-=-----------------------------------------------------------------------------=-");
         System.out.println("       Practicum Processor 2 Learn Assembly Language 2 Preserve " +

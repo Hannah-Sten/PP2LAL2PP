@@ -10,32 +10,32 @@ public class Loop implements Element, Identifyable {
     /**
      * The unique id of the loop.
      */
-    private int id;
+    private final int id;
 
     /**
      * The variable that keeps track of the counting.
      */
-    private Variable base;
+    private final Variable base;
 
     /**
      * The starting value of the base variable.
      */
-    private Value from;
+    private final Value from;
 
     /**
      * The end value of the base variable.
      */
-    private Value to;
+    private final Value to;
 
     /**
      * The amount the base value changes per iteration.
      */
-    private Value step;
+    private final Value step;
 
     /**
      * The block of code to iterate.
      */
-    private Block content;
+    private final Block content;
 
     public Loop(Block content, Variable base, Value from, Value to, Value step) {
         this.id = IDManager.newId();

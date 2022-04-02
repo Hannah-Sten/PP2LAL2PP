@@ -17,7 +17,7 @@ public enum Regex {
     /**
      * Hashmap with all compiled patterns.
      */
-    private Map<String, Pattern> patterns = new HashMap<>();
+    private final Map<String, Pattern> patterns = new HashMap<>();
 
     /**
      * Compiles said regex if it hasn't been compiled yet, otherwise use the already compiled
