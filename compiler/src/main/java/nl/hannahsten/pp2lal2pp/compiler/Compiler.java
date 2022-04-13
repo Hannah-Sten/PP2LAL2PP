@@ -631,23 +631,18 @@ public class Compiler {
                         operationComment
                 ));
 
-                // Global array assignment.
-                if (leftOperand instanceof GlobalArray) {
+                // Assignment of a single element in a global array.
+                if (operation instanceof GlobalArrayIndexedAssignment) {
+                    GlobalArrayIndexedAssignment indexedAssignment = (GlobalArrayIndexedAssignment)operation;
                     GlobalArray globalArray = (GlobalArray)leftOperand;
+                    ArrayAccess access = indexedAssignment.getAccess();
 
-                    List<GlobalVariable> variables = globalArray.getVariables();
-                    for (int i = 0, variablesSize = variables.size(); i < variablesSize; i++) {
-                        GlobalVariable global = variables.get(i);
-                        operationLabel = "";
-                        assembly.append(Template.fillStatement(
-                                operationLabel,
-                                "STOR",
-                                "R0",
-                                "[" + Constants.REG_GLOBAL_BASE + "+" + global.getName() + "+" + i + "]",
-                                ">\n"
-                        ));
-                    }
-
+                    compileGlobalArrayIndexedAssignment(globalArray, access);
+                    return;
+                }
+                // Global array assignment.
+                else if (operation instanceof GlobalArrayAssignment) {
+                    compileGlobalArrayAssignment((GlobalArray)leftOperand);
                     return;
                 }
 
@@ -733,6 +728,112 @@ public class Compiler {
         }
 
         operationComment = ">\n";
+    }
+
+    /**
+     * Compiles the assignment of the value loaded in R0 to be assigned to all variables in
+     * the given global array.
+     *
+     * @param array
+     *          The array that must have all its values assigned.
+     */
+    private void compileGlobalArrayAssignment(GlobalArray array) {
+        List<GlobalVariable> variables = array.getVariables();
+        for (int i = 0, variablesSize = variables.size(); i < variablesSize; i++) {
+            GlobalVariable global = variables.get(i);
+            assembly.append(Template.fillStatement(
+                    "",
+                    "STOR",
+                    "R0",
+                    "[" + Constants.REG_GLOBAL_BASE + "+" + global.getName() + "+" + i + "]",
+                    "> assign " + global.getName() + "[" + i + "]\n"
+            ));
+        }
+    }
+
+    /**
+     * Compiles the assignment of a single element in a global array.
+     * Assumes that the value to load is already loaded in R0.
+     *
+     * @param array
+     *          The array to assign an element of to.
+     * @param access
+     *          How the element should be accessed.
+     * @throws CompilerException
+     *          When the index is surely out of bounds.
+     */
+    private void compileGlobalArrayIndexedAssignment(GlobalArray array, ArrayAccess access) {
+        checkIndexOutOfBounds(array, access);
+
+        Value accessingIndex = access.getAccessingIndex();
+        Variable accessingVariable = access.getAccessingVariable();
+
+        // Array accesssing assembly that comes after "[GB" and before "]"
+        String indexString = "";
+        // Documentation comment at the end of the assembly line between access brackets [X], X.
+        String documentationString = "";
+
+        if (accessingIndex != null) {
+            indexString = array.getName() + "+" + accessingIndex.stringRepresentation();
+            documentationString = accessingIndex.stringRepresentation();
+        }
+
+        assembly.append(Template.fillStatement(
+                "",
+                "STOR",
+                "R0",
+                "[" + Constants.REG_GLOBAL_BASE + "+" + indexString + "]",
+                "> assign " + array.getName() + "[" + documentationString + "]\n"
+        ));
+    }
+
+    /**
+     * Checks if the given array access is surely out of bounds for the array.
+     *
+     * @param array
+     *          The global array to check for.
+     * @param access
+     *          How to access the array.
+     * @throws CompilerException
+     *          When the array access is out of bounds.
+     */
+    private void checkIndexOutOfBounds(GlobalArray array, ArrayAccess access) {
+        Value accessingIndex = access.getAccessingIndex();
+        if (accessingIndex == null) {
+            return;
+        }
+
+        String actualIndexString = "";
+        int actualIndex;
+
+        if (accessingIndex instanceof NumberConstant) {
+            String possibleConstant = ((NumberConstant)accessingIndex).getName();
+            Optional<Definition> definition = input.getDefinition(possibleConstant);
+            if (!definition.isPresent()) {
+                return;
+            }
+
+            Value constantValue = definition.get().getValue();
+            if (!(constantValue instanceof Number)) {
+                return;
+            }
+            actualIndex = ((Number)constantValue).getIntValue();
+            actualIndexString = possibleConstant + "(" + actualIndex + ")";
+        }
+        else {
+            actualIndex = ((Number)accessingIndex).getIntValue();
+            actualIndexString = Integer.toString(actualIndex);
+        }
+
+        int expectedMaxIndex = array.size() - 1;
+        if (actualIndex < 0 || actualIndex > expectedMaxIndex) {
+            throw new CompilerException(String.format(
+                    "Global array index out of bounds for array '%s'. Got <%s>, must be in range 0..%d.",
+                    array.getName(),
+                    actualIndexString,
+                    expectedMaxIndex
+            ));
+        }
     }
 
     /**

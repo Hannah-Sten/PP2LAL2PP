@@ -136,7 +136,13 @@ public class Operation implements Element {
             first = ((Value)firstElement).stringRepresentation();
         }
         else if (firstElement instanceof GlobalArray) {
-            first = ((GlobalArray)firstElement).getName() + "[]";
+            String index = "";
+            if (this instanceof GlobalArrayIndexedAssignment) {
+                ArrayAccess access = ((GlobalArrayIndexedAssignment)this).getAccess();
+                index = access.getAccessorString();
+            }
+
+            first = ((GlobalArray)firstElement).getName() + "[" + index + "]";
         }
         else {
             first = ((Variable)firstElement).getName();

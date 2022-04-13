@@ -3,14 +3,20 @@ package nl.hannahsten.pp2lal2pp.lang;
 import java.util.Optional;
 
 /**
- * Assigns a certain value to all elements in an array.
+ * Assigns a certain value to a certain index in an array.
  *
  * @author Hannah Schellekens
  */
-public class GlobalArrayAssignment extends Operation {
+public class GlobalArrayIndexedAssignment extends Operation {
 
-    public GlobalArrayAssignment(GlobalArray array, Element assignedValue) {
+    /**
+     * Representation of the index.
+     */
+    private final ArrayAccess access;
+
+    public GlobalArrayIndexedAssignment(GlobalArray array, ArrayAccess access, Element assignedValue) {
         super(array, Operator.ASSIGN, assignedValue);
+        this.access = access;
     }
 
     public GlobalArray getArray() {
@@ -25,9 +31,8 @@ public class GlobalArrayAssignment extends Operation {
         return (Value)second.get();
     }
 
-    @Override
-    public String toHumanReadableString() {
-        return super.toHumanReadableString();
+    public ArrayAccess getAccess() {
+        return access;
     }
 
     @Override
@@ -37,7 +42,7 @@ public class GlobalArrayAssignment extends Operation {
 
     @Override
     public String toString() {
-        return "ArrayAssignment{array=" + getArray() +
+        return "ArrayAssignment[" + access.toString() + "]{array=" + getArray() +
                 ", assignedValue=" + getAssignedValue() +
                 '}';
     }

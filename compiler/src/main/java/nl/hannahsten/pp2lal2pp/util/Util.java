@@ -1,5 +1,7 @@
 package nl.hannahsten.pp2lal2pp.util;
 
+import java.util.ListIterator;
+
 /**
  * @author Hannah Schellekens
  */
@@ -22,4 +24,17 @@ public class Util {
         return sb.toString();
     }
 
+    /**
+     * Looks ahead and returns the next value if it exists (null otherwise).
+     * The iterator has the same pointer afterward as before this method is called.
+     */
+    public static <T> T peekNext(ListIterator<T> iterator) {
+        if (!iterator.hasNext()) {
+            return null;
+        }
+
+        T result = iterator.next();
+        iterator.previous();
+        return result;
+    }
 }

@@ -5,6 +5,7 @@ import nl.hannahsten.pp2lal2pp.api.APIFunction;
 import nl.hannahsten.pp2lal2pp.lang.Number;
 import nl.hannahsten.pp2lal2pp.lang.*;
 import nl.hannahsten.pp2lal2pp.util.Regex;
+import nl.hannahsten.pp2lal2pp.util.Util;
 
 import java.util.*;
 
@@ -508,6 +509,7 @@ public class Parser {
      */
     private Operation parseOperation(Iterator<String> lineIterator, Tokeniser line) {
         Element leftOperandResult;
+        ArrayAccess leftOperandArrayAccess = null;
         Operator operatorResult;
         Element rightOperandResult;
         ListIterator<String> listIterator = (ListIterator<String>)lineIterator;
@@ -595,9 +597,20 @@ public class Parser {
 
                 break;
             default:
+                // First token is regular text, hence a variable.
+                // When followed by '[', it is a global array.
                 Value val = Value.parse(currentToken, program);
                 if (val.getObject() instanceof String) {
-                    leftOperandResult = new Variable(currentToken);
+                    String variableName = (String)val.getObject();
+                    String nextToken = Util.peekNext(listIterator);
+                    if ("[".equals(nextToken)) {
+                        leftOperandResult = program.getGlobalArray(variableName).orElseThrow(() ->
+                                new ParseException("Undefined global array '" + variableName + "'")
+                        );
+                    }
+                    else {
+                        leftOperandResult = new Variable(currentToken);
+                    }
                 }
                 else {
                     leftOperandResult = val;
@@ -660,10 +673,13 @@ public class Parser {
 
             // Global variable assignment.
             if ("]".equals(currentToken)) {
+                // No index: assign all.
                 String globalArrayName = line.getToken(0);
                 leftOperandResult = program.getGlobalArray(globalArrayName).orElse(null);
             }
             else {
+                // With index: assign only at the index.
+                leftOperandArrayAccess = parseArrayAccess(line, listIterator.nextIndex() - 2, true);
                 lineIterator.next();
             }
 
@@ -729,9 +745,18 @@ public class Parser {
             }
         }
 
-        // Global array assignment has a different type.
+        // Global array assignment:
         if (leftOperandResult instanceof GlobalArray) {
-            return new GlobalArrayAssignment((GlobalArray)leftOperandResult, rightOperandResult);
+            GlobalArray globalArray = (GlobalArray)leftOperandResult;
+
+            // - Assign by index.
+            if (leftOperandArrayAccess != null) {
+                return new GlobalArrayIndexedAssignment(globalArray, leftOperandArrayAccess, rightOperandResult);
+            }
+            // - Assign all
+            else {
+                return new GlobalArrayAssignment(globalArray, rightOperandResult);
+            }
         }
 
         return new Operation(leftOperandResult, operatorResult, rightOperandResult);

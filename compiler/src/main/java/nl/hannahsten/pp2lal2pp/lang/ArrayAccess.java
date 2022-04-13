@@ -46,6 +46,15 @@ public class ArrayAccess implements Element, Identifyable {
         return accessingVariable;
     }
 
+    public String getAccessorString() {
+        if (accessingIndex != null) {
+            return accessingIndex.stringRepresentation();
+        }
+        else {
+            return accessingVariable.getName();
+        }
+    }
+
     @Override
     public Value getValue() {
         return null;
