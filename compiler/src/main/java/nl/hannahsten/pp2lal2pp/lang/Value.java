@@ -26,6 +26,8 @@ public class Value implements Element, Comparable<Value> {
      *         The string to parse.
      * @param program
      *         The program-instance where the parsed value will be used.
+     *
+     * @return The corresponding Number, NumberConstant, or Value when it is not a number.
      */
     public static Value parse(String string, Program program) {
         // Character

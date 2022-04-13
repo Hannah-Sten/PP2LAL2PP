@@ -10,17 +10,17 @@ public class Declaration implements Element {
     /**
      * The variable.
      */
-    private final Variable variable;
+    protected final Variable variable;
 
     /**
      * The initial value of the variable.
      */
-    private final Value declaration;
+    protected final Value declaration;
 
     /**
      * The scope of the variable.
      */
-    private final DeclarationScope scope;
+    protected final DeclarationScope scope;
 
     public Declaration(Variable variable, DeclarationScope scope) {
         this.variable = variable;

@@ -151,7 +151,7 @@ public class Parser {
 
             // Variable declarations.
             if (line.isFirst("var")) {
-                body.add(parseVariable(line));
+                body.add(parseVariableDeclaration(line));
                 parsed = true;
             }
             // Loops
@@ -424,7 +424,7 @@ public class Parser {
 
             // Variable declarations.
             if (line.isFirst("var")) {
-                body.add(parseVariable(line));
+                body.add(parseVariableDeclaration(line));
                 parsed = true;
             }
             // Loops
@@ -978,58 +978,70 @@ public class Parser {
     }
 
     /**
-     * Turns a line into a variable.
+     * Turns a line into a variable declaration.
      *
      * @param line
      *         The line where the variable declaration occurs.
      * @return The variable-object representing the declared variable.
      */
-    private Declaration parseVariable(Tokeniser line) throws ParseException {
+    private Declaration parseVariableDeclaration(Tokeniser line) throws ParseException {
+        // Simple declaration without specified value.
         if (line.sizeNoComments() == 2) {
             String varName = line.getToken(1);
             return new Declaration(new Variable(varName), Declaration.DeclarationScope.LOCAL);
         }
-        else if (line.sizeNoComments() >= 4) {
-            if (!line.equals(2, "=")) {
-                throw new ParseException("Wrong declaration for variable '" + line.getOriginal() +
-                        "'.");
-            }
 
-            String varName = line.getToken(1);
-            Value value = null;
-
-            // Function call
-            if (line.equals(4, "(")) {
-                String funcName = line.getToken(3);
-                List<Variable> variables = new ArrayList<>();
-
-                if (!line.equals(5, ")")) {
-                    for (int i = 5; i < line.sizeNoComments(); i += 2) {
-                        Value val = Value.parse(line.getToken(i), program);
-
-                        if (val instanceof Number) {
-                            variables.add(new Variable("num", val).setJustNumber(true));
-                        }
-                        else {
-                            variables.add(new Variable(val.stringRepresentation()));
-                        }
-                    }
-                }
-
-                value = new FunctionCall(funcName, variables);
-                program.registerAPIFunction(funcName);
-            }
-            // Variable declaration
-            else {
-                value = Value.parse(line.getToken(3), program);
-            }
-
-            return new Declaration(new Variable(varName, value), value,
-                    Declaration.DeclarationScope.LOCAL);
-        }
-        else {
+        if (line.sizeNoComments() < 4 || !line.equals(2, "=")) {
             throw new ParseException("Wrong declaration for variable '" + line.getOriginal() + "'.");
         }
+
+        String variableName = line.getToken(1);
+
+        // Function call
+        if (line.equals(4, "(")) {
+            String funcName = line.getToken(3);
+            List<Variable> variables = new ArrayList<>();
+
+            if (!line.equals(5, ")")) {
+                for (int i = 5; i < line.sizeNoComments(); i += 2) {
+                    Value val = Value.parse(line.getToken(i), program);
+
+                    if (val instanceof Number) {
+                        variables.add(new Variable("num", val).setJustNumber(true));
+                    }
+                    else {
+                        variables.add(new Variable(val.stringRepresentation()));
+                    }
+                }
+            }
+
+            Value defaultValue = new FunctionCall(funcName, variables);
+            program.registerAPIFunction(funcName);
+
+            Variable variableToDeclare = new Variable(variableName, defaultValue);
+            return new Declaration(variableToDeclare, defaultValue, Declaration.DeclarationScope.LOCAL);
+        }
+
+        // First check if it is a variable declaration with an array accessor.
+        if (line.equals(4, "[")) {
+            ArrayAccess access = parseArrayAccess(line, 4, true);
+            if (access == null) {
+                throw new ParseException(String.format("Invalid array accessor on line '%s'", line.getOriginal()));
+            }
+
+            String arrayName = line.getToken(3);
+            GlobalArray array = program.getGlobalArray(arrayName).orElseThrow(() ->
+                    new ParseException("Undefined global array '" + arrayName + "'")
+            );
+
+            GlobalArrayRead read = new GlobalArrayRead(array, access);
+            return new DeclarationFromGlobalArray(new Variable(variableName), read);
+        }
+
+        // Regular variable declaration.
+        Value defaultValue = Value.parse(line.getToken(3), program);
+        Variable variableToDeclare = new Variable(variableName, defaultValue);
+        return new Declaration(variableToDeclare, defaultValue, Declaration.DeclarationScope.LOCAL);
     }
 
     /**
@@ -1133,7 +1145,7 @@ public class Parser {
      * @return The parsed array access, or `null` when it could not be parsed.
      */
     private ArrayAccess parseArrayAccess(Tokeniser line, int startIndex, boolean isGlobal) {
-        if (line.size() - startIndex - 3 <= 0) {
+        if (line.size() - startIndex - 3 < 0) {
             return null;
         }
         if (!"[".equals(line.getToken(startIndex)) || !"]".equals(line.getToken(startIndex + 2))) {
@@ -1143,10 +1155,17 @@ public class Parser {
         String index = line.getToken(startIndex + 1);
         if (isGlobal) {
             Value value = Value.parse(index, program);
-            return ArrayAccess.newValueIndex(value);
+
+            if (value instanceof Number || value instanceof NumberConstant) {
+                return ArrayAccess.newValueIndex(value);
+            }
+            else {
+                // It is a variable when it is not a number.
+                Variable variable = new Variable(index);
+                return ArrayAccess.newVariableIndex(variable);
+            }
         }
 
-        // TODO: Variable parsing.
         return null;
     }
 

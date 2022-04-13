@@ -5,15 +5,18 @@ import nl.hannahsten.pp2lal2pp.Constants;
 import nl.hannahsten.pp2lal2pp.PP2LAL2PPException;
 import nl.hannahsten.pp2lal2pp.ParseException;
 import nl.hannahsten.pp2lal2pp.api.APIFunction;
-import nl.hannahsten.pp2lal2pp.lang.*;
 import nl.hannahsten.pp2lal2pp.lang.Number;
+import nl.hannahsten.pp2lal2pp.lang.*;
 import nl.hannahsten.pp2lal2pp.util.FileWorker;
 import nl.hannahsten.pp2lal2pp.util.Regex;
 import nl.hannahsten.pp2lal2pp.util.Template;
 import nl.hannahsten.pp2lal2pp.util.Util;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Hannah Schellekens
@@ -415,25 +418,66 @@ public class Compiler {
             call = true;
         }
 
-        Variable variable = declaration.getVariable();
-        Value value = declaration.getDeclaration();
-        String valArg = loadValueString(value);
-
         // Register variable.
+        Variable variable = declaration.getVariable();
         function.declareLocal(variable);
 
-        String comment = this.comment == null ?
-                "Load the initial value of " + variable.getName() + ". {declare " +
-                        variable.getName() + "}\n" :
-                this.comment.getContents() + " {declare " + variable.getName() + "}\n";
+        // Generate descriptive comments.
+        String variableName = variable.getName();
+        Value declarationValue = declaration.getDeclaration();
+        String declarationString = (declarationValue == null) ? "" : declarationValue.stringRepresentation();
+        String comment = (this.comment == null)
+                ? String.format("Load the initial value of %s. {declare %s = %s}\n", variableName, variable, declarationString)
+                : this.comment.getContents() + " {declare " + variableName + " = " + declarationString + "}\n";
 
+        // When the value is a function call, the load from the return register has already
+        // been added to the assembly.
         if (!call) {
-            assembly.append(Template.fillStatement(label, "LOAD", "R0", valArg,
-                    comment));
+            if (declaration instanceof DeclarationFromGlobalArray) {
+                DeclarationFromGlobalArray globalArrayDeclaration = (DeclarationFromGlobalArray)declaration;
+                GlobalArrayRead read = globalArrayDeclaration.getArrayRead();
+                compileGlobalArrayRead(read, label);
+            }
+            else {
+                Value value = declaration.getDeclaration();
+                String valueArgument = loadValueString(value);
+
+                assembly.append(Template.fillStatement(
+                        label,
+                        "LOAD",
+                        Constants.REG_GENERAL,
+                        valueArgument,
+                        comment
+                ));
+            }
         }
 
-        assembly.append(Template.fillStatement("", "PUSH", call ? Constants.REG_RETURN : "R0", "",
-                call ? comment : "Save the initial value of " + variable.getName() + ".\n"));
+        assembly.append(Template.fillStatement(
+                "",
+                "PUSH",
+                call ? Constants.REG_RETURN : Constants.REG_GENERAL,
+                "",
+                call ? comment : "Save the initial value of " + variable.getName() + ".\n"
+        ));
+    }
+
+    /**
+     * Generate the assembly to load a value from an array in memory.
+     */
+    private void compileGlobalArrayRead(GlobalArrayRead read, String label) {
+        GlobalArray array = read.getArray();
+        ArrayAccess access = read.getAccess();
+        checkIndexOutOfBounds(array, access);
+
+        String address = globalArrayAccessAddress(array, access);
+
+        assembly.append(Template.fillStatement(
+                label,
+                "LOAD",
+                Constants.REG_GENERAL,
+                address,
+                "Load value " + array.getName() + "[" + access.getAccessorString() + "].\n"
+        ));
     }
 
     /**
@@ -768,22 +812,94 @@ public class Compiler {
         Value accessingIndex = access.getAccessingIndex();
         Variable accessingVariable = access.getAccessingVariable();
 
-        // Array accesssing assembly that comes after "[GB" and before "]"
-        String indexString = "";
         // Documentation comment at the end of the assembly line between access brackets [X], X.
         String documentationString = "";
+        // The register address of the array element to assign a value to.
+        String storeAddress = "";
 
         if (accessingIndex != null) {
-            indexString = array.getName() + "+" + accessingIndex.stringRepresentation();
+            // Access by numeric/constant value.
+            storeAddress = globalArrayAccessAddress(array, access);
             documentationString = accessingIndex.stringRepresentation();
+        }
+        else if (accessingVariable != null) {
+            // Access by variable value.
+            compileIndexLoad(array, accessingVariable);
+            storeAddress = globalArrayAccessAddress(array, access);
+            documentationString = accessingVariable.getName();
+        }
+        else {
+            throw new IllegalStateException("ArrayAccess " + access + " has no index and no variable.");
         }
 
         assembly.append(Template.fillStatement(
                 "",
                 "STOR",
                 "R0",
-                "[" + Constants.REG_GLOBAL_BASE + "+" + indexString + "]",
-                "> assign " + array.getName() + "[" + documentationString + "]\n"
+                storeAddress,
+                "> assign " + array.getName() + "[" + documentationString + "].\n"
+        ));
+    }
+
+    /**
+     * Get the memory access string for the given array and accessor.
+     *
+     * @param array
+     *          The array to access.
+     * @param access
+     *          The accessor for the element in the array.
+     *
+     * @return The memory address for the address.
+     */
+    private String globalArrayAccessAddress(GlobalArray array, ArrayAccess access) {
+        Value accessingIndex = access.getAccessingIndex();
+        Variable accessingVariable = access.getAccessingVariable();
+
+        if (accessingIndex != null) {
+            // Access by numeric/constant value.
+            String indexString = array.getName() + "+" + accessingIndex.stringRepresentation();
+            return "[" + Constants.REG_GLOBAL_BASE + "+" + indexString + "]";
+        }
+        else if (accessingVariable != null) {
+            return "[" + Constants.REG_GLOBAL_BASE + "+" + Constants.REG_INDEX + "]";
+        }
+        else {
+            throw new IllegalStateException("ArrayAccess " + access + " has no index and no variable.");
+        }
+    }
+
+    /**
+     * Prepares the array index offset in {@code Constants.REG_INDEX}.
+     *
+     * @param array
+     *          The array to access an array in.
+     * @param indexVariable
+     *          The variable that contains the element offset.
+     */
+    private void compileIndexLoad(GlobalArray array, Variable indexVariable) {
+        String variableRegister = "";
+        if (input.getGlobalVariable(indexVariable.getName()).isPresent()) {
+            variableRegister = "[" + Constants.REG_GLOBAL_BASE + "+" + array.getName() + "]";
+        }
+        else {
+            int pointer = function.getVariableByVariable(indexVariable).getPointer();
+            variableRegister = "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]";
+        }
+
+        assembly.append(Template.fillStatement(
+                "",
+                "LOAD",
+                Constants.REG_INDEX,
+                variableRegister,
+                "> prepare addition of array index '" + indexVariable.getName() + "'.\n"
+        ));
+
+        assembly.append(Template.fillStatement(
+                "",
+                "ADD",
+                Constants.REG_INDEX,
+                array.getName(),
+                "> add the array index to the global base address '" + array.getName() + "'.\n"
         ));
     }
 
@@ -820,9 +936,12 @@ public class Compiler {
             actualIndex = ((Number)constantValue).getIntValue();
             actualIndexString = possibleConstant + "(" + actualIndex + ")";
         }
-        else {
+        else if (accessingIndex instanceof Number) {
             actualIndex = ((Number)accessingIndex).getIntValue();
             actualIndexString = Integer.toString(actualIndex);
+        }
+        else {
+            return;
         }
 
         int expectedMaxIndex = array.size() - 1;

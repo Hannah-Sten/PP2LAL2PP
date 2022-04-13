@@ -31,6 +31,11 @@ public class Constants {
     public static final String REG_VARIABLE = "R3";
 
     /**
+     * The register that is used for storing and manipulating array indices.
+     */
+    public static final String REG_INDEX = "R2";
+
+    /**
      * The general purpose register.
      */
     public static final String REG_GENERAL = "R0";
