@@ -551,7 +551,14 @@ public class Parser {
                 rightOperandResult = parseOperation(newLine.iterator(), newLine);
 
                 if (leftOperandResult instanceof GlobalArray) {
-                    return new GlobalArrayAssignment((GlobalArray)leftOperandResult, rightOperandResult);
+                    ArrayAccess access = parseArrayAccess(originalTokens, 1, true);
+
+                    if (access == null) {
+                        return new GlobalArrayAssignment((GlobalArray)leftOperandResult, rightOperandResult);
+                    }
+                    else {
+                        return new GlobalArrayIndexedAssignment((GlobalArray)leftOperandResult, access, rightOperandResult);
+                    }
                 }
                 return new Operation(leftOperandResult, Operator.ASSIGN, rightOperandResult);
             }
