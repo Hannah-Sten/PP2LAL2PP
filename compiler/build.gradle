@@ -19,3 +19,9 @@ dependencies {
 application {
     mainClassName = "nl.hannahsten.pp2lal2pp.PP2LAL2PP"
 }
+
+jar {
+    manifest {
+        from 'src/main/resources/manifest.MF'
+    }
+}
