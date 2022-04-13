@@ -508,7 +508,7 @@ public class Parser {
      * @return The parsed operation.
      */
     private Operation parseOperation(Iterator<String> lineIterator, Tokeniser line) {
-        Element leftOperandResult;
+        Element leftOperandResult = null;
         ArrayAccess leftOperandArrayAccess = null;
         Operator operatorResult;
         Element rightOperandResult;
@@ -604,24 +604,7 @@ public class Parser {
 
                 break;
             default:
-                // First token is regular text, hence a variable.
-                // When followed by '[', it is a global array.
-                Value val = Value.parse(currentToken, program);
-                if (val.getObject() instanceof String) {
-                    String variableName = (String)val.getObject();
-                    String nextToken = Util.peekNext(listIterator);
-                    if ("[".equals(nextToken)) {
-                        leftOperandResult = program.getGlobalArray(variableName).orElseThrow(() ->
-                                new ParseException("Undefined global array '" + variableName + "'")
-                        );
-                    }
-                    else {
-                        leftOperandResult = new Variable(currentToken);
-                    }
-                }
-                else {
-                    leftOperandResult = val;
-                }
+                leftOperandResult = parseValue(currentToken, listIterator);
                 break;
         }
 
@@ -726,12 +709,12 @@ public class Parser {
             rightOperandResult = Value.parse("-" + lineIterator.next(), program);
         }
         else {
-            Value val = Value.parse(currentToken, program);
-            if (val.getObject() instanceof String) {
-                rightOperandResult = new Variable(currentToken);
-            }
-            else {
-                rightOperandResult = val;
+            rightOperandResult = parseValue(currentToken, listIterator);
+
+            // Parse index accessor
+            if (rightOperandResult instanceof GlobalArray) {
+                ArrayAccess access = parseArrayAccess(line,listIterator.nextIndex(),true);
+                rightOperandResult = new GlobalArrayRead((GlobalArray)rightOperandResult, access);
             }
         }
 
@@ -767,6 +750,36 @@ public class Parser {
         }
 
         return new Operation(leftOperandResult, operatorResult, rightOperandResult);
+    }
+
+    /**
+     * Parses this token as a value.
+     *
+     * @param currentToken
+     *          The token to parse.
+     * @param listIterator
+     *          Iterator over the tokens.
+     * @return The parsed value element.
+     */
+    private Element parseValue(String currentToken, ListIterator<String> listIterator) {
+        // First token is regular text, hence a variable.
+        // When followed by '[', it is a global array.
+        Value value = Value.parse(currentToken, program);
+        if (value.getObject() instanceof String) {
+            String variableName = (String)value.getObject();
+            String nextToken = Util.peekNext(listIterator);
+            if ("[".equals(nextToken)) {
+                return program.getGlobalArray(variableName).orElseThrow(() ->
+                        new ParseException("Undefined global array '" + variableName + "'")
+                );
+            }
+            else {
+                return new Variable(currentToken);
+            }
+        }
+        else {
+            return value;
+        }
     }
 
     /**

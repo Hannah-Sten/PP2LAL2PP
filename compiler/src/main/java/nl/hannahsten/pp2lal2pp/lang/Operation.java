@@ -160,6 +160,9 @@ public class Operation implements Element {
         else if (secondElement instanceof Value) {
             second = ((Value)secondElement).stringRepresentation();
         }
+        else if (secondElement instanceof GlobalArrayRead) {
+            second = ((GlobalArrayRead)secondElement).toHumanReadableString();
+        }
         else if (secondElement != null) {
             second = ((Variable)secondElement).getName();
         }

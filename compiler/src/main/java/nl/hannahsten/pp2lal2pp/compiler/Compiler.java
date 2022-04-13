@@ -418,16 +418,14 @@ public class Compiler {
             call = true;
         }
 
-        // Register variable.
         Variable variable = declaration.getVariable();
-        function.declareLocal(variable);
 
         // Generate descriptive comments.
         String variableName = variable.getName();
         Value declarationValue = declaration.getDeclaration();
         String declarationString = (declarationValue == null) ? "" : declarationValue.stringRepresentation();
         String comment = (this.comment == null)
-                ? String.format("Load the initial value of %s. {declare %s = %s}\n", variableName, variable, declarationString)
+                ? String.format("Load the initial value of %s. {declare %s = %s}\n", variableName, variableName, declarationString)
                 : this.comment.getContents() + " {declare " + variableName + " = " + declarationString + "}\n";
 
         // When the value is a function call, the load from the return register has already
@@ -437,8 +435,10 @@ public class Compiler {
                 DeclarationFromGlobalArray globalArrayDeclaration = (DeclarationFromGlobalArray)declaration;
                 GlobalArrayRead read = globalArrayDeclaration.getArrayRead();
                 compileGlobalArrayRead(read, label);
+                function.declareLocal(variable);
             }
             else {
+                function.declareLocal(variable);
                 Value value = declaration.getDeclaration();
                 String valueArgument = loadValueString(value);
 
@@ -469,8 +469,12 @@ public class Compiler {
         ArrayAccess access = read.getAccess();
         checkIndexOutOfBounds(array, access);
 
-        String address = globalArrayAccessAddress(array, access);
+        Variable accessVariable = access.getAccessingVariable();
+        if (accessVariable != null) {
+            compileIndexLoad(array, accessVariable);
+        }
 
+        String address = globalArrayAccessAddress(array, access);
         assembly.append(Template.fillStatement(
                 label,
                 "LOAD",
@@ -666,14 +670,13 @@ public class Compiler {
                     compileFunctionCall(functionCall, operationLabel);
                 }
 
-                // Single value store: used for simple assignments and global variable arrays.
-                assembly.append(Template.fillStatement(
-                        operationLabel,
-                        "LOAD",
-                        "R0",
-                        loadValueString(rightOperand),
-                        operationComment
-                ));
+                // Get the value to load before storing.
+                if (rightOperand instanceof GlobalArrayRead) {
+                    compileGlobalArrayRead((GlobalArrayRead)rightOperand, operationLabel);
+                }
+                else {
+                    compileValueLoad(operationLabel, rightOperand);
+                }
 
                 // Assignment of a single element in a global array.
                 if (operation instanceof GlobalArrayIndexedAssignment) {
@@ -772,6 +775,24 @@ public class Compiler {
         }
 
         operationComment = ">\n";
+    }
+
+    /**
+     * Generates assembly for loading a value into the general purpose register.
+     *
+     * @param label
+     *          The assembly label to prepend.
+     * @param operand
+     *          The element representing the value to load.
+     */
+    private void compileValueLoad(String label, Element operand) {
+        assembly.append(Template.fillStatement(
+                label,
+                "LOAD",
+                Constants.REG_GENERAL,
+                loadValueString(operand),
+                operationComment
+        ));
     }
 
     /**
@@ -879,7 +900,7 @@ public class Compiler {
     private void compileIndexLoad(GlobalArray array, Variable indexVariable) {
         String variableRegister = "";
         if (input.getGlobalVariable(indexVariable.getName()).isPresent()) {
-            variableRegister = "[" + Constants.REG_GLOBAL_BASE + "+" + array.getName() + "]";
+            variableRegister = "[" + Constants.REG_GLOBAL_BASE + "+" + indexVariable.getName() + "]";
         }
         else {
             int pointer = function.getVariableByVariable(indexVariable).getPointer();

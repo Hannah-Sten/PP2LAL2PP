@@ -30,6 +30,10 @@ public class GlobalArrayRead implements Element {
         return access;
     }
 
+    public String toHumanReadableString() {
+        return array.getName() + "[" + access.getAccessorString() + "]";
+    }
+
     @Override
     public Value getValue() {
         return null;
