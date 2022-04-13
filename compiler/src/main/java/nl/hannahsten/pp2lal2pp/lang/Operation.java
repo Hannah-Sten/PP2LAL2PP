@@ -26,11 +26,6 @@ public class Operation implements Element {
      */
     private Element secondElement;
 
-    /**
-     * The value represented by the statement.
-     */
-    private Value value;
-
     public Operation(Element first, Operator operator, Element second) {
         this.firstElement = first;
         this.operator = operator;
@@ -139,6 +134,9 @@ public class Operation implements Element {
         }
         else if (firstElement instanceof Value) {
             first = ((Value)firstElement).stringRepresentation();
+        }
+        else if (firstElement instanceof GlobalArray) {
+            first = ((GlobalArray)firstElement).getName() + "[]";
         }
         else {
             first = ((Variable)firstElement).getName();

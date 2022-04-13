@@ -95,4 +95,9 @@ public class Number extends Value implements Element {
     public int hashCode() {
         return Objects.hash(intValue);
     }
+
+    @Override
+    public String toString() {
+        return Integer.toString(intValue);
+    }
 }

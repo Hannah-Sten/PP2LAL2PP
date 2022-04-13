@@ -542,140 +542,194 @@ public class Compiler {
                 "Dummy instruction to always make the label work.\n"));
     }
 
-    // Hihi
-    private String operationLabel;
     private String operationComment;
 
     /**
      * Compiles an operation statement.
      *
-     * @param op
+     * @param operation
      *         The operation to compile.
      * @param label
      *         The label to put in front of the first statement.
      */
-    private void compileOperation(Operation op, String label) {
-        operationLabel = label;
+    private void compileOperation(Operation operation, String label) {
+        String operationLabel = label;
+        if (operation.getOperator().isPresent() && operation.getOperator().get().isAssignOperator()) {
 
-        if (op.getOperator().isPresent()) {
-            if (EnumSet.of(Operator.ASSIGN, Operator.ASSIGN_ALT_LEFT, Operator.ASSIGN_ALT_RIGHT)
-                    .contains(op.getOperator().get())) {
+            // Support both := and =:, but treat the latter as a regular assignment.
+            if (operation.getOperator().get() == Operator.ASSIGN_ALT_RIGHT) {
+                operation.swap();
+            }
 
-                if (op.getOperator().get() == Operator.ASSIGN_ALT_RIGHT) {
-                    op.swap();
+            // Compile binary operation.
+            if (operation.getSecondElement().isPresent()) {
+                Element leftOperand = operation.getFirstElement();
+                Element rightOperand = operation.getSecondElement().get();
+
+                // Don't assign to numbers.
+                if (leftOperand instanceof Number) {
+                    throw new CompilerException("Can't assign a value to a Number, got: '" + leftOperand + "'");
                 }
 
-                if (op.getSecondElement().isPresent()) {
-                    Element first = op.getFirstElement();
-                    Element second = op.getSecondElement().get();
+                // When first evaluating operation, then assign.
+                if (rightOperand instanceof Operation) {
+                    Operation secondOp = (Operation)rightOperand;
+                    if (secondOp.getOperator().isPresent()) {
+                        compileOperation((Operation)rightOperand, operationLabel);
 
-                    // When first evaluating operation, then assign.
-                    if (second instanceof Operation) {
-                        Operation secondOp = (Operation)second;
-                        if (secondOp.getOperator().isPresent()) {
-                            compileOperation((Operation)second, operationLabel);
+                        if (leftOperand instanceof Variable) {
+                            Variable variableToAssignTo = (Variable)leftOperand;
 
-                            if (first instanceof Variable) {
-                                Variable var = (Variable)first;
-
-                                if (input.getGlobalVariable(var.getName()).isPresent()) {
-                                    assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                                    Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]",
-                                            operationComment));
-                                }
-                                else {
-                                    int pointer = function.getVariableByVariable(var).getPointer();
-                                    assembly.append(Template.fillStatement("", "STOR", "R0", "[" +
-                                                    Constants.REG_STACK_POINTER + "+" + pointer +
-                                                    "]",
-                                            operationComment));
-                                }
+                            // Store value in a global variable.
+                            if (input.getGlobalVariable(variableToAssignTo.getName()).isPresent()) {
+                                assembly.append(Template.fillStatement(
+                                        "",
+                                        "STOR",
+                                        "R0",
+                                        "[" + Constants.REG_GLOBAL_BASE + "+" + variableToAssignTo.getName() + "]",
+                                        operationComment
+                                ));
                             }
+                            // Store value in local variable.
                             else {
-                                throw new CompilerException("you can only assign a value to " +
-                                        "variables");
+                                int pointer = function.getVariableByVariable(variableToAssignTo).getPointer();
+                                assembly.append(Template.fillStatement(
+                                        "",
+                                        "STOR",
+                                        "R0",
+                                        "[" + Constants.REG_STACK_POINTER + "+" + pointer + "]",
+                                        operationComment
+                                ));
                             }
-
-                            operationComment = ">\n";
-
-                            return;
                         }
-                        else if (secondOp.getFirstElement() instanceof FunctionCall) {
-                            compileFunctionCall((FunctionCall)secondOp.getFirstElement(), operationLabel);
-                            operationLabel = "";
+                        else {
+                            throw new CompilerException("you can only assign a value to variables");
                         }
-                    }
 
-                    if (op.getFirstElement() instanceof Number) {
-                        throw new CompilerException("can't assign a value to a Number");
-                    }
+                        operationComment = ">\n";
 
-                    if (!op.getOperator().isPresent()) {
-                        second = new Number(((Number)op.getFirstElement()).getIntValue());
+                        return;
                     }
+                    else if (secondOp.getFirstElement() instanceof FunctionCall) {
+                        compileFunctionCall((FunctionCall)secondOp.getFirstElement(), operationLabel);
+                        operationLabel = "";
+                    }
+                }
 
-                    // Simple a=34 assignment.
-                    assembly.append(Template.fillStatement(operationLabel, "LOAD", "R0",
-                            loadValueString(second), operationComment));
-                    operationLabel = "";
-                    assembly.append(Template.fillStatement(operationLabel, "STOR", "R0",
-                            loadValueString(op.getFirstElement()), ">\n"));
-                    operationComment = ">\n";
+                // When the right side is a function call, compile the call first.
+                if (rightOperand instanceof FunctionCall) {
+                    FunctionCall functionCall = (FunctionCall)rightOperand;
+                    compileFunctionCall(functionCall, operationLabel);
+                }
+
+                // Single value store: used for simple assignments and global variable arrays.
+                assembly.append(Template.fillStatement(
+                        operationLabel,
+                        "LOAD",
+                        "R0",
+                        loadValueString(rightOperand),
+                        operationComment
+                ));
+
+                // Global array assignment.
+                if (leftOperand instanceof GlobalArray) {
+                    GlobalArray globalArray = (GlobalArray)leftOperand;
+
+                    List<GlobalVariable> variables = globalArray.getVariables();
+                    for (int i = 0, variablesSize = variables.size(); i < variablesSize; i++) {
+                        GlobalVariable global = variables.get(i);
+                        operationLabel = "";
+                        assembly.append(Template.fillStatement(
+                                operationLabel,
+                                "STOR",
+                                "R0",
+                                "[" + Constants.REG_GLOBAL_BASE + "+" + global.getName() + "+" + i + "]",
+                                ">\n"
+                        ));
+                    }
 
                     return;
                 }
-                else if (op.getFirstElement() instanceof FunctionCall) {
 
-                    if (op.getFirstElement() instanceof FunctionCall) {
-                        compileFunctionCall((FunctionCall)op.getFirstElement(), operationLabel);
-                        operationLabel = "";
-                    }
+                // Simple a=34 assignment, LOAD value of the right operand,
+                // then STORe the in the right place corresponding to the left operand.
+                operationLabel = "";
+                assembly.append(Template.fillStatement(
+                        operationLabel,
+                        "STOR",
+                        "R0",
+                        loadValueString(leftOperand),
+                        ">\n"
+                ));
+                operationComment = ">\n";
+
+                return;
+            }
+            // Compile function call.
+            else if (operation.getFirstElement() instanceof FunctionCall) {
+                if (operation.getFirstElement() instanceof FunctionCall) {
+                    compileFunctionCall((FunctionCall)operation.getFirstElement(), operationLabel);
+                    operationLabel = "";
                 }
             }
         }
 
-        if (op.getFirstElement() instanceof Operation) {
-            compileOperation((Operation)op.getFirstElement(), operationLabel);
+        if (operation.getFirstElement() instanceof Operation) {
+            compileOperation((Operation)operation.getFirstElement(), operationLabel);
         }
 
-        if (op.getSecondElement().isPresent()) {
-            if (op.getSecondElement().get() instanceof Operation) {
-                compileOperation((Operation)op.getSecondElement().get(), operationLabel);
+        if (operation.getSecondElement().isPresent()) {
+            if (operation.getSecondElement().get() instanceof Operation) {
+                compileOperation((Operation)operation.getSecondElement().get(), operationLabel);
                 return;
             }
         }
 
-        Element first = op.getFirstElement();
-
-        if (!op.getOperator().isPresent()) {
+        if (!operation.getOperator().isPresent()) {
             return;
         }
 
-        Operator operator = op.getOperator().get();
-
-        if (!op.getSecondElement().isPresent()) {
+        Operator operator = operation.getOperator().get();
+        if (!operation.getSecondElement().isPresent()) {
             return;
         }
 
-        Element second = op.getSecondElement().get();
+        Element rightOperand = operation.getSecondElement().get();
 
         // If function call.
-        if (second instanceof FunctionCall) {
-            compileFunctionCall((FunctionCall)second, operationLabel);
+        if (rightOperand instanceof FunctionCall) {
+            compileFunctionCall((FunctionCall)rightOperand, operationLabel);
             operationLabel = "";
         }
 
-        assembly.append(Template.fillStatement(operationLabel, "LOAD", "R0", loadValueString(first),
-                operationComment));
+        Element leftOperand = operation.getFirstElement();
+        assembly.append(Template.fillStatement(
+                operationLabel,
+                "LOAD",
+                "R0",
+                loadValueString(leftOperand),
+                operationComment
+        ));
+
         operationLabel = "";
         if (operator.getInstruction().isPresent()) {
-            assembly.append(Template.fillStatement(operationLabel, operator.getInstruction().get(),
-                    "R0", loadValueString(second), ">\n"));
+            assembly.append(Template.fillStatement(
+                    operationLabel,
+                    operator.getInstruction().get(),
+                    "R0",
+                    loadValueString(rightOperand),
+                    ">\n"
+            ));
         }
 
         if (operator.getType() == Operator.OperatorType.ASSIGNMENT) {
-            assembly.append(Template.fillStatement(operationLabel, "STOR", "R0",
-                    loadValueString(first), ">\n"));
+            assembly.append(Template.fillStatement(
+                    operationLabel,
+                    "STOR",
+                    "R0",
+                    loadValueString(leftOperand),
+                    ">\n"
+            ));
         }
 
         operationComment = ">\n";
@@ -708,8 +762,7 @@ public class Compiler {
             Variable var = (Variable)element;
 
             if (input.getGlobalVariable(var.getName()).isPresent()) {
-                return "[" + Constants.REG_GLOBAL_BASE + "+" + var.getName() +
-                        "]";
+                return "[" + Constants.REG_GLOBAL_BASE + "+" + var.getName() + "]";
             }
 
             int pointer = function.getVariableByVariable(var).getPointer();
@@ -732,8 +785,9 @@ public class Compiler {
             return loadValueString(var);
         }
 
-        throw new ParseException("the element '" + element + "' must be either a Number or " +
-                "Variable");
+        throw new ParseException("Type of element '" + element +
+                "' unsupported. Required: Operation/Number/Variable/FunctionCall/Value"
+        );
     }
 
     /**

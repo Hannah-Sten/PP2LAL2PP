@@ -173,7 +173,7 @@ public class Program {
      */
     public void addGlobalArray(GlobalArray globalArray) {
         globalArrays.add(globalArray);
-        globalArrayIndices.put(globalArray.getName(), globalArray.size() - 1);
+        globalArrayIndices.put(globalArray.getName(), globalArrays.size() - 1);
     }
 
     /**

@@ -500,17 +500,17 @@ public class Parser {
     /**
      * Parses the operation that is present on the given line.
      *
-     * @param it
+     * @param lineIterator
      *         The iterator of the line to continue from.
      * @param line
      *         The line containing the expression.
      * @return The parsed operation.
      */
-    private Operation parseOperation(Iterator<String> it, Tokeniser line) {
-        Element first;
-        Operator op = null;
-        Element second;
-        ListIterator<String> li = (ListIterator<String>)it;
+    private Operation parseOperation(Iterator<String> lineIterator, Tokeniser line) {
+        Element leftOperandResult;
+        Operator operatorResult;
+        Element rightOperandResult;
+        ListIterator<String> listIterator = (ListIterator<String>)lineIterator;
 
         // isInputOn API function shizz.
         if (line.isFirst("!") && line.equals(1, "isInputOn")) {
@@ -525,205 +525,271 @@ public class Parser {
         }
 
         // Check for assignments
-        String or = line.getOriginal();
-        Tokeniser orTokens = new Tokeniser(or);
-        if (orTokens.sizeNoComments() > 3) {
-            if (orTokens.equals(1, "=") || orTokens.equals(orTokens.sizeNoComments() - 2, ":=")) {
-                first = new Variable(orTokens.getToken(0));
-                op = Operator.ASSIGN;
+        String original = line.getOriginal();
+        Tokeniser originalTokens = new Tokeniser(original);
 
-                Tokeniser newLine = new Tokeniser(orTokens.join(2, orTokens.sizeNoComments() - 2, " "));
-                second = parseOperation(newLine.iterator(), newLine);
+        // When there are more than 3 tokens, this is a complex assignment (e.g. a = b + 4).
+        // When there is an array assignment, there may be more tokens before the `=`-sign.
+        int baseIndex = arrayAssignmentSize(originalTokens);
+        if (originalTokens.sizeNoComments() > 3 + baseIndex) {
+            // Complex left assignment with regular = and :=
+            if (originalTokens.equals(1 + baseIndex, "=") || originalTokens.equals(originalTokens.sizeNoComments() - 2, ":=")) {
+                // Array assignment.
+                if (baseIndex > 0) {
+                    leftOperandResult = program.getGlobalArray(originalTokens.getToken(0)).orElseThrow(() ->
+                            new ParseException("Global array '" + originalTokens.getToken(0) + "' is undefined.")
+                    );
+                }
+                // Variable assignment.
+                else {
+                    leftOperandResult = new Variable(originalTokens.getToken(0));
+                }
 
-                return new Operation(first, op, second);
+                Tokeniser newLine = new Tokeniser(originalTokens.join(2 + baseIndex, originalTokens.sizeNoComments() - 2 - baseIndex, " "));
+                rightOperandResult = parseOperation(newLine.iterator(), newLine);
+
+                if (leftOperandResult instanceof GlobalArray) {
+                    return new GlobalArrayAssignment((GlobalArray)leftOperandResult, rightOperandResult);
+                }
+                return new Operation(leftOperandResult, Operator.ASSIGN, rightOperandResult);
             }
-            else if (orTokens.equals(orTokens.sizeNoComments() - 2, "=:")) {
-                Tokeniser newLine = new Tokeniser(orTokens.join(0, orTokens.sizeNoComments() - 2, " "));
-                second = parseOperation(newLine.iterator(), newLine);
+            // Complex right assignment with =: (thanks Sten)
+            else if (originalTokens.equals(originalTokens.sizeNoComments() - 2, "=:")) {
+                Tokeniser newLine = new Tokeniser(originalTokens.join(0, originalTokens.sizeNoComments() - 2, " "));
+                rightOperandResult = parseOperation(newLine.iterator(), newLine);
+                leftOperandResult = new Variable(originalTokens.getToken(originalTokens.sizeNoComments() - 1));
 
-                op = Operator.ASSIGN;
-                first = new Variable(orTokens.getToken(orTokens.sizeNoComments() - 1));
-
-                return new Operation(first, op, second);
-            }
-        }
-
-        String token = it.next();
-        if (token.equals(")")) {
-            token = it.next();
-        }
-
-        // First element
-        if (token.equals("(")) {
-            first = parseOperation(it, line);
-        }
-        // Unary number negation.
-        else if (token.equals("-")) {
-            try {
-                token = it.next();
-                first = new nl.hannahsten.pp2lal2pp.lang.Number(Integer.parseInt("-" + token));
-            }
-            catch (NumberFormatException nfe) {
-                return new Operation(new Variable(token), Operator.MULTIPLICATION, nl.hannahsten.pp2lal2pp.lang.Number.MINUS_ONE);
+                return new Operation(leftOperandResult, Operator.ASSIGN, rightOperandResult);
             }
         }
-        // Unary NOT
-        else if (token.equals("~")) {
-            try {
-                token = it.next();
-                first = new nl.hannahsten.pp2lal2pp.lang.Number(~Integer.parseInt(token));
-            }
-            catch (NumberFormatException nfe) {
-                return new Operation(new Variable(token), Operator.BITWISE_XOR, nl.hannahsten.pp2lal2pp.lang.Number.ALL_1S);
-            }
 
+        // Skip over ()
+        String currentToken = lineIterator.next();
+        if (currentToken.equals(")")) {
+            currentToken = lineIterator.next();
         }
-        else {
-            Value val = Value.parse(token, program);
-            if (val.getObject() instanceof String) {
+
+        switch (currentToken) {
+            case "(":
+                leftOperandResult = parseOperation(lineIterator, line);
+                break;
+            // Unary number negation.
+            case "-":
+                try {
+                    currentToken = lineIterator.next();
+                    leftOperandResult = new Number(Integer.parseInt("-" + currentToken));
+                }
+                catch (NumberFormatException nfe) {
+                    return new Operation(new Variable(currentToken), Operator.MULTIPLICATION, Number.MINUS_ONE);
+                }
+                break;
+            // Unary NOT
+            case "~":
+                try {
+                    currentToken = lineIterator.next();
+                    leftOperandResult = new Number(~Integer.parseInt(currentToken));
+                }
+                catch (NumberFormatException nfe) {
+                    return new Operation(new Variable(currentToken), Operator.BITWISE_XOR, Number.ALL_1S);
+                }
+
+                break;
+            default:
+                Value val = Value.parse(currentToken, program);
                 if (val.getObject() instanceof String) {
-                    first = new Variable(token);
+                    leftOperandResult = new Variable(currentToken);
                 }
                 else {
-                    first = new Variable(token);
+                    leftOperandResult = val;
                 }
-            }
-            else {
-                first = val;
-            }
+                break;
         }
 
-        if (!it.hasNext()) {
+        if (!lineIterator.hasNext()) {
             return null;
         }
 
-        token = it.next();
-        if (token.equals(")")) {
-            if (!it.hasNext()) {
+        // Skip over ()
+        currentToken = lineIterator.next();
+        if (currentToken.equals(")")) {
+            if (!lineIterator.hasNext()) {
                 return null;
             }
 
-            token = it.next();
+            currentToken = lineIterator.next();
         }
 
         // Operator
         // Function call.
-        if (token.equals("(")) {
-            String prevToken = line.getToken(li.previousIndex() - 1);
-            boolean apiFunction = APIFunction.isAPIFunction(prevToken);
-            if ((program.getFunction(prevToken).isPresent() || currentFunction.equals(prevToken))
-                    || apiFunction) {
-                if (apiFunction) {
+        if (currentToken.equals("(")) {
+            String prevToken = line.getToken(listIterator.previousIndex() - 1);
+            boolean isApiFunction = APIFunction.isAPIFunction(prevToken);
+            boolean isDefinedFunction = program.getFunction(prevToken).isPresent();
+            boolean isCurrentFunction = currentFunction.equals(prevToken);
+
+            if ((program.getFunction(prevToken).isPresent() || currentFunction.equals(prevToken)) || isApiFunction) {
+                if (isApiFunction) {
                     program.registerAPIFunction(prevToken);
                 }
 
-                List<Variable> arguments = new ArrayList<>();
-
-                String elt = "";
-                while (it.hasNext()) {
-                    elt = it.next();
-                    if (elt.equals(")")) {
-                        break;
-                    }
-
-                    if (elt.equals(",")) {
-                        continue;
-                    }
-
-                    Value value = Value.parse(elt, program);
-
-                    if (value instanceof nl.hannahsten.pp2lal2pp.lang.Number) {
-                        arguments.add(new Variable(elt, value).setJustNumber(true));
-                    }
-                    else {
-                        arguments.add(new Variable(elt));
-                    }
-                }
-
-                first = new FunctionCall(prevToken, arguments);
+                List<Variable> arguments = parseArguments(lineIterator);
+                leftOperandResult = new FunctionCall(prevToken, arguments);
                 program.registerAPIFunction(prevToken);
 
-                if (it.hasNext()) {
-                    token = it.next();
+                if (lineIterator.hasNext()) {
+                    currentToken = lineIterator.next();
                 }
                 else {
-                    return new Operation(first, null, null);
+                    return new Operation(leftOperandResult, null, null);
                 }
             }
             else {
-                throw new ParseException("Wrong function call at line '" + or + "'.");
+                throw new ParseException("Wrong function call at line '" + original +
+                        "': isDefined=" + isDefinedFunction +
+                        ", isApi=" + isApiFunction +
+                        ", isCurrentFunction=" + isCurrentFunction
+                );
             }
         }
+
+        // Global array assignment.
+        if ("[".equals(currentToken) && lineIterator.hasNext()) {
+            // When the next token is ], it means a general array assignment, otherwise it is
+            // an indexed assignment.
+            currentToken = lineIterator.next();
+
+            // Global variable assignment.
+            if ("]".equals(currentToken)) {
+                String globalArrayName = line.getToken(0);
+                leftOperandResult = program.getGlobalArray(globalArrayName).orElse(null);
+            }
+            else {
+                lineIterator.next();
+            }
+
+            // Skip over last bracket.
+            currentToken = lineIterator.next();
+        }
+
         // Regular operator.
-        Optional<Operator> operator = Operator.getBySign(token);
+        Optional<Operator> operator = Operator.getBySign(currentToken);
         if (!operator.isPresent()) {
             // Negative number
-            if (first instanceof Variable) {
-                Variable var = (Variable)first;
+            if (leftOperandResult instanceof Variable) {
+                Variable var = (Variable)leftOperandResult;
                 if (var.getName().equals("-")) {
-                    first = Value.parse("-" + token, program);
-                    return new Operation(first, null, null);
+                    leftOperandResult = Value.parse("-" + currentToken, program);
+                    return new Operation(leftOperandResult, null, null);
                 }
             }
 
-            throw new ParseException("Could not find operator '" + token + "' for line '" + or +
-                    "'.");
+            throw new ParseException("Could not find operator '" + currentToken + "' for line '" + original + "'.");
         }
         else {
-            op = operator.get();
+            operatorResult = operator.get();
         }
 
-        if (!it.hasNext()) {
-            return new Operation(first, null, null);
+        if (!lineIterator.hasNext()) {
+            return new Operation(leftOperandResult, null, null);
         }
 
-        token = it.next();
+        currentToken = lineIterator.next();
 
         // Second element
-        if (token.equals("(")) {
-            second = parseOperation(it, line);
+        if (currentToken.equals("(")) {
+            rightOperandResult = parseOperation(lineIterator, line);
         }
-        else if (token.equals("-")) {
-            second = Value.parse("-" + it.next(), program);
+        else if (currentToken.equals("-")) {
+            rightOperandResult = Value.parse("-" + lineIterator.next(), program);
         }
         else {
-            Value val = Value.parse(token, program);
+            Value val = Value.parse(currentToken, program);
             if (val.getObject() instanceof String) {
-                second = new Variable(token);
+                rightOperandResult = new Variable(currentToken);
             }
             else {
-                second = val;
+                rightOperandResult = val;
             }
         }
 
-        if (it.hasNext()) {
-            token = it.next();
+        if (lineIterator.hasNext()) {
+            currentToken = lineIterator.next();
         }
 
         // Second function call.
-        if (token.equals("(")) {
-            String prevToken = line.getToken(li.previousIndex() - 1);
-            if ((program.getFunction(prevToken).isPresent() || currentFunction.equals(prevToken))) {
-                List<Variable> arguments = new ArrayList<>();
-
-                String elt;
-                while (!(elt = it.next()).equals(")")) {
-                    if (elt.equals(",")) {
-                        continue;
-                    }
-
-                    arguments.add(new Variable(elt));
-                }
-
-                second = new FunctionCall(prevToken, arguments);
+        if (currentToken.equals("(")) {
+            String prevToken = line.getToken(listIterator.previousIndex() - 1);
+            if ((program.getFunction(prevToken).isPresent() || currentFunction.equals(prevToken)) || APIFunction.isAPIFunction(prevToken)) {
+                List<Variable> arguments = parseArguments(lineIterator);
+                rightOperandResult = new FunctionCall(prevToken, arguments);
                 program.registerAPIFunction(prevToken);
             }
             else {
-                throw new ParseException("Wrong function call at line '" + or + "'.");
+                throw new ParseException("Wrong function call at line '" + original + "' (prevToken: " + prevToken + ").");
             }
         }
 
-        return new Operation(first, op, second);
+        // Global array assignment has a different type.
+        if (leftOperandResult instanceof GlobalArray) {
+            return new GlobalArrayAssignment((GlobalArray)leftOperandResult, rightOperandResult);
+        }
+
+        return new Operation(leftOperandResult, operatorResult, rightOperandResult);
+    }
+
+    /**
+     * Counts the total amount of tokens that represent an array index.
+     *
+     * E.g. {@code []} returns {@code 2}, {@code [34]} returns {@code 3}, {@code 3 + 4}
+     * returns {@code 0}.
+     */
+    private int arrayAssignmentSize(Tokeniser tokens) {
+        int count = 0;
+        for (int i = 0, size = tokens.size(); i < size; i++) {
+            String token = tokens.getToken(i);
+            if (count > 0 && "]".equals(token)) {
+                count++;
+                return count;
+            }
+            else if ("[".equals(token)) {
+                count++;
+            }
+            // Whenever we have a token after the opening bracket.
+            else if (count > 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Parses the list of arguments starting at the current line iterator position.
+     */
+    private List<Variable> parseArguments(Iterator<String> lineIterator) {
+        List<Variable> arguments = new ArrayList<>();
+
+        String elt;
+        while (lineIterator.hasNext()) {
+            elt = lineIterator.next();
+            if (")".equals(elt)) {
+                break;
+            }
+
+            if (",".equals(elt)) {
+                continue;
+            }
+
+            Value value = Value.parse(elt, program);
+
+            if (value instanceof Number) {
+                arguments.add(new Variable(elt, value).setJustNumber(true));
+            }
+            else {
+                arguments.add(new Variable(elt));
+            }
+        }
+
+        return arguments;
     }
 
     /**

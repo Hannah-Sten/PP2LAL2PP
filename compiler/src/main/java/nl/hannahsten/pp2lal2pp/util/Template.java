@@ -170,18 +170,18 @@ public enum Template {
      *         The first argument of the instruction.
      * @param arg2
      *         The second argument of the instruction.
-     * @param cmt
+     * @param comment
      *         The comment without the ";"
      * @return A nicely formatted line of code.
      */
     public static String fillStatement(String label, String instruction, String arg1, String arg2,
-                                       String cmt) {
+                                       String comment) {
         return Regex.replace("{$COMMENT}", Template.STATEMENT.replace(
                 "LABEL", label,
                 "INSTRUCTION", instruction,
                 "ARG1", arg1,
                 "ARG2", arg2),
-                (cmt != null ? "; " + cmt : ""));
+                (comment != null ? "; " + comment : ""));
     }
 
     /**

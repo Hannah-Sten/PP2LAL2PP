@@ -37,14 +37,14 @@ public class FunctionCall extends Value implements Element, Identifyable {
     public String getFormattedArguments() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("[");
+        sb.append("(");
         String sep = "";
         for (Variable var : arguments) {
             sb.append(sep);
             sb.append(var.getName());
             sep = ", ";
         }
-        sb.append("]");
+        sb.append(")");
 
         return sb.toString();
     }

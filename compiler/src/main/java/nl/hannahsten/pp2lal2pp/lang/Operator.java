@@ -255,6 +255,19 @@ public enum Operator implements Identifyable {
     }
 
     /**
+     * @return {@code true} when this operator is an assignment operator, {@code false} when not.
+     */
+    public boolean isAssignOperator() {
+        switch (this) {
+            case ASSIGN:
+            case ASSIGN_ALT_LEFT:
+            case ASSIGN_ALT_RIGHT:
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * @return The type of operator.
      */
     public OperatorType getType() {

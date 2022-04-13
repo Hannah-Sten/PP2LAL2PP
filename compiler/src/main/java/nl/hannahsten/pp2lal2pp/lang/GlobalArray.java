@@ -65,6 +65,10 @@ public class GlobalArray implements Element, Identifyable {
         return variables.get(index);
     }
 
+    public List<GlobalVariable> getVariables() {
+        return Collections.unmodifiableList(variables);
+    }
+
     /**
      * @return The pointer to the first variable in the array.
      */
