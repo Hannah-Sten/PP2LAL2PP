@@ -411,14 +411,15 @@ public class Compiler {
             return;
         }
 
+        Variable variable = declaration.getVariable();
+
         boolean call = false;
         if (declaration.getDeclaration() instanceof FunctionCall) {
+            function.declareLocal(variable);
             compileFunctionCall((FunctionCall)declaration.getDeclaration(), label);
             label = "";
             call = true;
         }
-
-        Variable variable = declaration.getVariable();
 
         // Generate descriptive comments.
         String variableName = variable.getName();
