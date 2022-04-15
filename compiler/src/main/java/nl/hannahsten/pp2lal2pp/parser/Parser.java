@@ -1130,6 +1130,10 @@ public class Parser {
             }
 
             int arrayLength = ((Number)definition.get().getValue()).getIntValue();
+            if (arrayLength <= 0) {
+                throw new ParseException("Array length must be positive, got <" + constantName + "(" + arrayLength + ")> on array '" + arrayName + "'");
+            }
+
             GlobalArray array = GlobalArray.withSize(arrayName, arrayLength, lastComment);
             array.setDefaultValue(defaultValue);
             return array;
@@ -1137,6 +1141,10 @@ public class Parser {
         // Array size is determined by a given integer.
         else if (size instanceof Number) {
             int arrayLength = ((Number)size).getIntValue();
+            if (arrayLength <= 0) {
+                throw new ParseException("Array length must be positive, got <" + arrayLength + "> on array '" + arrayName + "'");
+            }
+
             GlobalArray array = GlobalArray.withSize(arrayName, arrayLength, lastComment);
             array.setDefaultValue(defaultValue);
             return array;

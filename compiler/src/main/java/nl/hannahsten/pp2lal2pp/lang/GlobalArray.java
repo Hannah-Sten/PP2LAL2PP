@@ -77,6 +77,20 @@ public class GlobalArray implements Element, Identifyable {
     }
 
     /**
+     * Updates the pointers of the variables in the global array.
+     *
+     * @param firstPointer
+     *          The new pointer of the first element in the array.
+     */
+    public void setPointers(int firstPointer) {
+        int variableCount = size();
+        for (int i = 0; i < variableCount; i++) {
+            Variable variable = variables.get(i);
+            variable.setPointer(firstPointer + i);
+        }
+    }
+
+    /**
      * The amount of variables in the array.
      */
     public int size() {

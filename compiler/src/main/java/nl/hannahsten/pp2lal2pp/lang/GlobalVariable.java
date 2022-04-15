@@ -1,5 +1,6 @@
 package nl.hannahsten.pp2lal2pp.lang;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,6 +47,13 @@ public class GlobalVariable extends Variable {
         while (bannedLocations.contains(pointerCounter)) {
             pointerCounter++;
         }
+    }
+
+    /**
+     * Get an unmodifiable set containing all banned global base locations.
+     */
+    public static Set<Integer> getBannedLocations() {
+        return Collections.unmodifiableSet(bannedLocations);
     }
 
     /**

@@ -23,6 +23,8 @@ public class PP2LAL2PP {
     public static String VERSION = "Version 2.0";
 
     public static void main(String[] args) {
+        System.out.println("PP2LAL2PP Compiler " + VERSION + " by Hannah-Sten");
+
         long start = System.currentTimeMillis();
 
         if (args.length == 0) {
@@ -42,19 +44,14 @@ public class PP2LAL2PP {
                 System.out.println("There is no assembler JAR called '" + jar + "'.");
                 System.exit(1);
             }
+
+            System.out.println("Using assembler " + file.getAbsolutePath());
         }
 
         // Unpack templates.
         if (argList.contains("-u")) {
             int amount = Template.unpack();
             System.out.println("Unpacked " + amount + " template files.");
-            return;
-        }
-
-        // Parse file name.
-        File file = new File(args[args.length - 1]);
-        if (!file.exists()) {
-            System.out.println("File '" + file.getName() + "' does not exist!");
             return;
         }
 
@@ -69,6 +66,7 @@ public class PP2LAL2PP {
             }
 
             dest = new File(argList.get(index + 1));
+            System.out.println("Destination file " + dest.getAbsolutePath());
         }
 
         // Banned global base flag.
@@ -92,11 +90,42 @@ public class PP2LAL2PP {
                 }
             }
             GlobalVariable.adjustCounter();
+
+            System.out.println("Banned global base addresses " + GlobalVariable.getBannedLocations());
         }
+
+        // Max global base size
+        int maxGlobalBaseSize = 512;
+        if (argList.contains("-g")) {
+            int index = argList.indexOf("-g");
+
+            if (index + 1 >= argList.size()) {
+                System.out.println("No global base size has been specified.");
+                return;
+            }
+
+            try {
+                maxGlobalBaseSize = Integer.parseInt(argList.get(index + 1));
+            }
+            catch (NumberFormatException nfe) {
+                System.out.println("Illegal global base size '" + argList.get(index + 1) + "'");
+            }
+        }
+        System.out.println("Using maximum global base size of " + maxGlobalBaseSize);
+
+        // Parse file name.
+        File file = new File(args[args.length - 1]);
+        if (!file.exists()) {
+            System.out.println("File '" + file.getName() + "' does not exist!");
+            return;
+        }
+        System.out.println("Compiling " + file.getAbsolutePath());
 
         // Parse file
         Parser parser = new FileParser(file);
         Program program = parser.parse();
+
+        program.packGlobalVariables(maxGlobalBaseSize);
 
         // Compile file
         Compiler compiler = new Compiler(dest, program);
@@ -105,7 +134,6 @@ public class PP2LAL2PP {
         // Finish
         long delta = System.currentTimeMillis() - start;
         float time = (float)delta / 1000f;
-        System.out.println("PP2LAL2PP Compiler " + VERSION + " by Hannah-Sten");
         System.out.println("Done (" + time + "s). " +
                 "Compiled '" + file.getName() + "' to '" + dest.getName() + ".");
         System.out.println();

@@ -2,6 +2,7 @@ package nl.hannahsten.pp2lal2pp.lang;
 
 import nl.hannahsten.pp2lal2pp.ParseException;
 import nl.hannahsten.pp2lal2pp.api.APIFunction;
+import nl.hannahsten.pp2lal2pp.compiler.PointerPacker;
 
 import java.util.*;
 
@@ -58,6 +59,38 @@ public class Program {
      */
     private final List<Definition> definitions;
 
+    /**
+     * Squishes all global variables and arrays together while skipping banned global base
+     * segments.
+     *
+     * @param maxGlobalBaseSize
+     *          The maximum memory size of the global base storage.
+     */
+    public static void packGlobalVariables(Program program, int maxGlobalBaseSize) {
+        List<GlobalVariable> globals = program.getGlobalVariables();
+        List<GlobalArray> arrays = program.getGlobalArrays();
+        List<PointerPacker.PointerObject> pointerObjects = new ArrayList<>(globals.size() + arrays.size());
+
+        for (GlobalVariable global : globals) {
+            pointerObjects.add(new PointerPacker.PointerObject(global, global.getPointer()));
+        }
+        for (GlobalArray array : arrays) {
+            pointerObjects.add(new PointerPacker.PointerObject(array, array.getPointer(), array.size()));
+        }
+
+        PointerPacker packer = new PointerPacker(2, pointerObjects, GlobalVariable.getBannedLocations(), maxGlobalBaseSize);
+        packer.pack().forEach((obj) -> {
+            if (obj.getObject() instanceof GlobalVariable) {
+                GlobalVariable global = (GlobalVariable)obj.getObject();
+                global.setPointer(obj.getPointer());
+            }
+            if (obj.getObject() instanceof GlobalArray) {
+                GlobalArray array = (GlobalArray)obj.getObject();
+                array.setPointers(obj.getPointer());
+            }
+        });
+    }
+
     public Program() {
         functions = new ArrayList<>();
         functionIndices = new HashMap<>();
@@ -67,6 +100,17 @@ public class Program {
         globalArrayIndices = new HashMap<>();
         apiFunctions = new HashSet<>();
         definitions = new ArrayList<>();
+    }
+
+    /**
+     * Squishes all global variables and arrays together while skipping banned global base
+     * segments.
+     *
+     * @param maxGlobalBaseSize
+     *          The maximum memory size of the global base storage.
+     */
+    public void packGlobalVariables(int maxGlobalBaseSize) {
+        Program.packGlobalVariables(this, maxGlobalBaseSize);
     }
 
     /**
